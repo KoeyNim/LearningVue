@@ -1,35 +1,40 @@
 $(document).ready(function() {
     var app = new Vue({
-      el: '#app',
-      data: {
-        message: '안녕하세요 Vue!',
-        board: {
-          content: '',
-          }
-      },
-  methods: {
-    method1() {
-      console.log("111");
-    }
-  }
+        el: '#app',
+        data: {
+            message: '안녕하세요 Vue!',
+        },
     })
-    
-    var app2 = new Vue({
-      el: '#app-2',
-      data: {
-        message: '이 페이지는 ' + new Date() + ' 에 로드 되었습니다'
-      }
-})
-
-var app5 = new Vue({
-  el: '#app-5',
-  data: {
-    message: '안녕하세요! Vue.js!'
-  },
-  methods: {
-    reverseMessage: function () {
-      this.message = this.message.split('').reverse().join('')
-    }
-  }
-})
+    const regist = new Vue({
+        el: '#regist',
+        data: {
+            board: {
+                title: "test1",
+                content: "test2",
+            }
+        },
+        methods: {
+            save() {
+                const ex = !!this.id;
+                const board = Object.assign({}, this.board);
+                $.ajax({
+                    type: ex ? 'PUT' : 'POST',
+                    url: '/board' + (ex ? '/modify'+ '/' + this.id : '/create'),
+                    contentType: 'application/json; charset=UTF-8',
+                    data: JSON.stringify(board),
+                    beforeSend(xhr) {
+                       var header = $("meta[name='_csrf_header']").attr("content");
+                       var token = $("meta[name='_csrf']").attr("content");
+                       xhr.setRequestHeader(header, token);
+                    }
+                }).done(function() {
+                    alert('글이 등록되었습니다.');
+                    location.href = '/board';
+                }).fail(() => alert('잘못된 요청입니다.'));
+            },
+            cancel() {
+                location.href = '/board';
+            }
+        }
+    })
 });

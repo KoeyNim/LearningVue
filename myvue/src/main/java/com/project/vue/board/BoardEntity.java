@@ -9,19 +9,16 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
+import com.project.vue.common.BaseTimeEntity;
 
 import lombok.Data;
 
 @Data
 @Entity
 @Table(name = "board")
-public class BoardEntity {
+public class BoardEntity extends BaseTimeEntity {
 
 	@Id
-	@NotEmpty
-	@NotBlank
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
@@ -39,22 +36,9 @@ public class BoardEntity {
 	@Column(columnDefinition = "varchar(32)")
 	private String userId;
 
-	@NotEmpty
-	@NotBlank
-	@CreatedDate
-	private Integer registDate;
+	@Column(columnDefinition = "BIGINT default 0" )
+	private Integer count;
 
-	@NotEmpty
-	@NotBlank
-	@LastModifiedDate
-	private Integer modifyDate;
-
-	@NotEmpty
-	@NotBlank
-	private Integer count = 0;
-
-	@NotEmpty
-	@NotBlank
 	private String fileId;
 
 }

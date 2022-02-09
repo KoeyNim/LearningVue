@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/layout}">
+<body>
+<div layout:fragment="content">
+<span class="pagetit">게시글 리스트</span>
+<table class="list-tbl">
+<tr>
+    <th>No</th>
+    <th>제목</th>
+    <th>내용</th>
+    <th>작성자</th>
+    <th>작성일</th>
+    <th>조회수</th>
+</tr>
+<tbody v-if="list.length == 0">
+    <tr>
+        <td colspan="15" class="fs16 fc-lightgrey" style="text-align: center;"> 조회된 내용이 없습니다. </td>
+        </tr>
+    </tbody>
+    <tbody v-if="list.length > 0">
+        <tr v-for="(data, index) in list">
+            <td class="efw500 fc-lightgrey">{{setRowNum(index)}}</td>
+            <td><a href="javascript:void(0)" @click="goDetail(data.applicantId)">{{data.title}}</a></td>
+            <td style="text-overflow:ellipsis; overflow:hidden">{{data.content}}</td>
+            <td>{{data.userId}}</td>
+            <td>{{data.applicantDate}}</td>
+            <td class="efw500 fc-lightgrey">{{data.count}}</td>
+        </tr>
+    </tbody>
+</table>
+<a th:href="@{board/regist}">등록</a>
+<a th:href="@{/}">이전</a>
+</div>
+</body>
+</html>
