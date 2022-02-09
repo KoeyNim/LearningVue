@@ -1,0 +1,30 @@
+server:
+  port: 8801 # port 번호
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: update # drop-create
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/my-vue?serverTimezone=Asia/Seoul
+    username: my_vue
+    password: myvue
+  devtools:
+    livereload:
+      enabled: true
+    remote:
+      restart:
+        enabled: false
+  mvc:
+    static-path-pattern: /static/** # static path 경로
+  thymeleaf:
+    mode: HTML
+    encoding: UTF-8
+    check-template-location: true
+    cache: false
+  web:
+    resources:
+      cache:
+        period: 0
+      static-locations:
+        - classpath:/static/
