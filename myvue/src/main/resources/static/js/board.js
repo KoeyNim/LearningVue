@@ -17,6 +17,8 @@ $(document).ready(function() {
             save() {
                 const ex = !!this.id;
                 const board = Object.assign({}, this.board);
+                console.log(ex);
+                console.log(board);
                 $.ajax({
                     type: ex ? 'PUT' : 'POST',
                     url: '/board' + (ex ? '/modify'+ '/' + this.id : '/create'),

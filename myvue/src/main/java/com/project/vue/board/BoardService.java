@@ -14,9 +14,7 @@ public class BoardService {
 	
 	@Transactional
     public boolean save(BoardEntity board) {
-    		
     	return this.boardRepository.save(board) != null;
-    		
     }
 }
 
