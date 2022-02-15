@@ -6,10 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <meta name="_csrf" th:content="${_csrf.token}">
     <meta name="_csrf_header" th:content="${_csrf.headerName}">
+    <script th:src="@{/static/scripts/head.js}"></script>
     <script th:src="@{/static/scripts/vue.min.js}"></script>
     <script th:src="@{/static/scripts/axios.min.js}"></script>
     <script th:src="@{/static/scripts/jquery-3.6.0.min.js}"></script>
-    <script th:src="@{/static/js/board.js}"></script>
+    <script th:src="@{/static/scripts/dayjs.min.js}"></script>
     <title></title>
     <script src="https://rawgit.com/enyo/dropzone/master/dist/dropzone.js"></script>
     <link rel="stylesheet" href="https://rawgit.com/enyo/dropzone/master/dist/dropzone.css">

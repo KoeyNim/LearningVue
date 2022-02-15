@@ -2,8 +2,10 @@ server:
   port: 8801 # port 번호
 spring:
   jpa:
-    hibernate:
-      ddl-auto: create #update # drop-create
+    hibernate.ddl-auto: update # create : drop-create
+    properties.hibernate: # hibernate query console 에 출력
+      format_sql: true # 보기 좋게 바꿔줌
+      use_sql_comments: true # 추가적인 주석 표시
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://127.0.0.1:3306/my-vue?serverTimezone=Asia/Seoul
@@ -31,4 +33,4 @@ spring:
 logging:
   level:
     root: info
-    com.project.vue: info
+    com.project.vue: trace # 해당 패키지의 log 범위 (TRACE > DEBUG > INFO > WARN > ERROR > FATAL)

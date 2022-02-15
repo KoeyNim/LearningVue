@@ -12,9 +12,11 @@ import javax.validation.constraints.NotEmpty;
 import com.project.vue.common.BaseTimeEntity;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
 @Entity
+@EqualsAndHashCode(callSuper=true)
 @Table(name = "board")
 public class BoardEntity extends BaseTimeEntity {
 
@@ -30,14 +32,12 @@ public class BoardEntity extends BaseTimeEntity {
 	@NotBlank
 	@Column(columnDefinition = "LONGTEXT")
 	private String content;
-
-	@NotEmpty
-	@NotBlank
+	
 	@Column(columnDefinition = "varchar(32)")
 	private String userId;
 
-	@Column(columnDefinition = "BIGINT default 0" )
-	private Integer count;
+	@Column(columnDefinition = "BIGINT" )
+	private Integer count = 0;
 
 	private String fileId;
 

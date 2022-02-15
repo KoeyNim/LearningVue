@@ -1,21 +1,26 @@
 <!DOCTYPE html>
-<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/layout}">
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout/layout}">
+<head>
+<script th:src="@{/static/js/board/board-form.js}"></script>
+</head>
 <body>
 	<div id="regist" layout:fragment="content">
-	<span class="pagetit">{{ board.id ? '게시글 수정' : '게시글 등록' }} </span></br>
+		<span class="pagetit">{{ board.id ? '게시글 수정' : '게시글 등록' }} </span></br> 
 		<span class="form-label">제목 *</span>
 		<div class="form-field">
-			<input type="text" class="form-input full" id="title" name="title" maxlength="50" v-model="board.title"/>
+			<input type="text" class="form-input full" id="title" name="title" maxlength="50" v-model="board.title" />
 		</div>
 		<span class="form-label">내용​ *</span>
 		<div class="form-field">
 			<textarea class="form-txtarea lg" name="content" id="content" v-model="board.content"></textarea>
 		</div>
 		<form name="fname">
-			<div class="dropzone" id="fileDropzone"></div> <button id="btn-upload-file">서버전송</button>
+			<div class="dropzone" id="fileDropzone"></div>
+			<button id="btn-upload-file">서버전송</button>
 		</form>
-        <button type="button" @click="save">저장</button>
-        <button type="button" @click="cancel">취소</button>
+		<button type="button" @click="save">저장</button>
+		<button type="button" @click="cancel">취소</button>
 	</div>
 </body>
 </html>

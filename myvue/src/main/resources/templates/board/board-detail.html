@@ -1,8 +1,44 @@
 <!DOCTYPE html>
-<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/layout}">
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout/layout}">
 <body>
-<div layout:fragment="content">
-board-detail
-</div>
+<head>
+<script th:src="@{/static/js/board/board-form.js}"></script>
+</head>
+<body>
+	<div id="regist" layout:fragment="content">
+		<span class="pagetit">게시글 상세</span></br>
+		<div class="mt0 card-wrap">
+			<div class="card">
+				<fieldset class="mt10">
+					<div class="form-wrap">
+						<div class="form-row">
+							<span class="pt0 form-label">아이디​</span>
+							<div class="form-field">
+								<p class="form-txt">{{board.userId}}​</p>
+							</div>
+						</div>
+						<span class="card-hr"></span>
+						<div class="form-row">
+							<span class="pt0 form-label">제목​</span>
+							<div class="form-field">
+								<p class="form-txt">{{board.title}}​</p>
+							</div>
+						</div>
+						<span class="card-hr"></span>
+						<div class="form-row">
+							<span class="pt0 form-label">내용​</span>
+							<div class="form-field">
+								<p class="form-txt">{{board.content}}​​</p>
+							</div>
+						</div>
+					</div>
+				</fieldset>
+			</div>
+			<button type="button" @click="update">수정</button>
+			<button type="button" @click="list">목록</button>
+			<button type="button" @click="delete">삭제</button>
+		</div>
+	</div>
 </body>
 </html>
