@@ -1,0 +1,78 @@
+@charset "UTF-8";
+
+html {
+  font-size: 18px;
+}
+
+.pagetit {
+	font-weight: 500;
+	font-size: 1.5rem;
+}
+
+.list-tbl {
+    border-collapse: collapse;
+}
+
+.list-tbl th {
+    border: 1px solid #444444;
+}
+
+.list-tbl tr td {
+    border: 1px solid #444444;
+}
+
+.list tr {
+	text-align: center;
+	cursor: pointer;
+	
+}
+
+.list tr:hover {
+	background-color : rgb(211,211,211);
+	color : rgb(255,0,0);
+}
+
+/* page */
+.page_wrap {
+	padding-top: 1rem;
+    margin-top: 1rem;
+    text-align:center;
+    font-size:0;
+ }
+.page_nation {
+    display:inline-block;
+}
+.page_nation .none {
+    display:none;
+}
+.page_nation a {
+    display:block;
+    margin:0 3px;
+    float:left;
+    border:1px solid #e6e6e6;
+    width:28px;
+    height:28px;
+    line-height:28px;
+    text-align:center;
+    background-color:#fff;
+    font-size:13px;
+    color:#999999;
+    text-decoration:none;
+    cursor: pointer;
+}
+.page_nation .arrow {
+    border:1px solid #ccc;
+}
+.page_nation .prev {
+    background:#f8f8f8 url('../images/common/page_prev.png') no-repeat center center;
+    margin-right:7px;
+}
+.page_nation .next {
+    background:#f8f8f8 url('../images/common/page_next.png') no-repeat center center;
+    margin-left:7px;
+}
+.page_nation a.active {
+    background-color:#42454c;
+    color:#fff;
+    border:1px solid #42454c;
+}

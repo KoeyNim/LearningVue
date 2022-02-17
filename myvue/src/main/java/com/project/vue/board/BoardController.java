@@ -1,8 +1,8 @@
 package com.project.vue.board;
 
-import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.project.vue.common.Constants;
@@ -32,22 +33,17 @@ public class BoardController {
 	
 	@ResponseBody
 	@GetMapping
-	public ResponseEntity<List<BoardEntity>> BoardList() {
-		return ResponseEntity.ok(boardService.findAll());
+	public ResponseEntity<Page<BoardEntity>> BoardList(@RequestParam int pageIndex, @RequestParam int pageSize) {
+		return ResponseEntity.ok(boardService.findAll(pageIndex, pageSize));
 	}
 	
-	@GetMapping("/detail/{id}")
-	public String BoardDetail(@PathVariable("id") Long id) {
-		return "board/board-detail";
-	}
-	
-	@GetMapping("/update/{id}")
+	@GetMapping("find/{id}")
 	public ResponseEntity<Optional<BoardEntity>> BoardFindById(@PathVariable("id") Long id) {
 		return ResponseEntity.ok(boardService.findById(id));
 	}
 	
 	@ResponseBody
-	@PostMapping("/create")
+	@PostMapping("create")
 	public ResponseEntity<SimpleResponse> BoardCreate(@RequestBody BoardEntity board) {
 		boolean r = true;
 		try {
@@ -73,12 +69,11 @@ public class BoardController {
 	}
 	*/
 
-	@PutMapping("/update/{id}")
+	@PutMapping("update/{id}")
 	public ResponseEntity<SimpleResponse> Boardupdate(@RequestBody BoardEntity board, @PathVariable("id") Long id) {
 		log.debug("@@@@@@id{}",id);
 		boolean r = true;
 		try {
-			board.setId(id);
 			boardService.save(board);
 		} catch (Exception e) {
 			r = false;
@@ -89,8 +84,18 @@ public class BoardController {
 					.build());
 	}
 	
-	@DeleteMapping("/delete/{id}")
-	public ResponseEntity BoardDelete(@PathVariable("id") Long id) {
-		return null;
+	@DeleteMapping("delete/{id}")
+	public ResponseEntity<SimpleResponse> BoardDelete(@PathVariable("id") Long id) {
+		log.debug("@@@@@@id{}",id);
+		boolean r = true;
+		try {
+			boardService.deleteById(id);
+		} catch (Exception e) {
+			r = false;
+		}
+		return ResponseEntity.ok(SimpleResponse.builder()
+					.success(r)
+					.message(r ? "글이 삭제되었습니다." : "잘못된 요청입니다.")
+					.build());
 	}
 }

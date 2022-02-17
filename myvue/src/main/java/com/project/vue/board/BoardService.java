@@ -1,10 +1,12 @@
 package com.project.vue.board;
 
-import java.util.List;
 import java.util.Optional;
 
 import javax.transaction.Transactional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
@@ -39,12 +41,18 @@ public class BoardService {
 		boardRepository.save(board);
     }
 	
-    public List<BoardEntity> findAll() {
-		return boardRepository.findAll();
+    public Page<BoardEntity> findAll(int pageIndex, int pageSize) {
+    	PageRequest pageRequest = PageRequest.of(pageIndex, pageSize, Sort.by("registDate").descending());
+		return boardRepository.findAll(pageRequest);
     }
     
     public Optional<BoardEntity> findById(Long id) {
 		return boardRepository.findById(id);
+    }
+    
+    public void deleteById(Long id) {
+    	log.debug("## id: {}", id);
+    	boardRepository.deleteById(id);
     }
 	
 }

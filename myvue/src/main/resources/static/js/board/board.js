@@ -1,34 +1,57 @@
+var vu = null;
 $(document).ready(function() {
-    const getList = new Vue({
-        el: '#getList',
+    vu = new Vue({
+        el: '#page',
         data: {
-            list: [],
+            pagingSize:5,
+            pageIndex:0,
+            pageSize:5,
+            pagingList:[],
+            options: pageSizeArr,
+            result:{},
         },
         created() {
-          this.getList();
+          this.fnGetList();
         },
         methods: {
-            regOrMod(id = '') {
-                location.href ='/board/regist' + (id ? '?id=' + id : '');
+            goRegOrDetail(id = '') {
+                location.href ='/board/' + (id ? 'detail?id=' + id : 'regist');
             },
-            getList() {
+            fnGetList(idx) {
                 const me = this;
+                me.pageIndex = idx || 0;
                 $.ajax({
                     type: 'GET',
-                    url: API_VERSION + '/board',
+                    url: API_VERSION + '/board' + '?pageIndex=' + me.pageIndex + '&pageSize=' + me.pageSize,
                     beforeSend(xhr) {
                        var header = $("meta[name='_csrf_header']").attr("content");
                        var token = $("meta[name='_csrf']").attr("content");
                        xhr.setRequestHeader(header, token);
                     }
                 }).done(function(response) {
-                    me.list = response;
+                    me.result = response;
+                    me.setPagination();
                 }).fail(() => alert('잘못된 요청입니다.') );
             },
+            setPagination: function() {
+                const me = this;
+                let totalpages = me.result.totalPages;
+                let currentPage = me.pageIndex+1;
+                let pagingSize = me.pagingSize;
+                let currentPagingBlockNumber = Math.ceil(currentPage/pagingSize);
+                let startPageNumber = (currentPagingBlockNumber * pagingSize) - (pagingSize -1);
+                let endPageNumber = (currentPagingBlockNumber * pagingSize) > totalpages ? totalpages : (currentPagingBlockNumber * pagingSize);
+                me.pagingList = [];
+                for (let i=startPageNumber; i<=endPageNumber; i++) {
+                    me.pagingList.push(i);
+                }
+            }
         }
     });
 });
-$(document).ajaxError((event, response) => {
+
+// 사용하지 않는 에러 처리
+/*$(document).ajaxError((event, response) => {
     console.log('common error', event, response);
     alert(response.responseJSON.message);
-});
+});*/

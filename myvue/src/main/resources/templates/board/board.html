@@ -5,8 +5,15 @@
 <script th:src="@{/static/js/board/board.js}"></script>
 </head>
 <body>
-	<div id="getList" layout:fragment="content">
-		<span class="pagetit">게시글 리스트</span>
+	<div id="page" layout:fragment="content">
+        <div class="flex-box flex-spc-btw">
+			<span class="pagetit">게시글 리스트</span>
+				<select class="form-select" id="pageSizeSelector" v-model="pageSize" @change="fnGetList(0)">
+					<option v-for="data in options" :value="data">
+					   {{ data }}개씩
+					</option>
+				</select>
+		</div>
 		<table class="list-tbl">
 			<tr>
 				<th>No</th>
@@ -16,25 +23,36 @@
 				<th>작성일</th>
 				<th>조회수</th>
 			</tr>
-			<tbody v-if="list.length == 0">
+			<tbody v-if="result.empty">
 				<tr>
 					<td colspan="15" class="fs16 fc-lightgrey" style="text-align: center;">조회된 내용이 없습니다.</td>
 				</tr>
 			</tbody>
-			<tbody v-if="list.length > 0">
-				<tr v-for="(data, index) in list">
-					<td class="efw500 fc-lightgrey">{{data.id}}</td>
-					<td><a href="javascript:void(0)" @click="regOrMod(data.id)">{{data.title}}</a></td>
+			<tbody class="list" v-else>
+				<tr v-for="(data, index) in result.content" @click="goRegOrDetail(data.id)">
+					<td class="efw500">{{result.totalElements - index - (result.pageable.pageNumber * result.pageable.pageSize)}}</td>
+					<td>{{data.title}}</td>
 					<td style="text-overflow: ellipsis; overflow: hidden">{{data.content}}</td>
 					<td>{{data.userId}}</td>
-					<td>{{dayjs(data.registDate === data.modifyDate ?
-						data.registDate : data.modifyDate).format('YYYY.MM.DD HH:mm')}}</td>
-					<td class="efw500 fc-lightgrey">{{data.count}}</td>
+					<td>{{dayjs(data.registDate).format('YYYY.MM.DD HH:mm')}}</td>
+					<td class="efw500">{{data.count}}</td>
 				</tr>
 			</tbody>
 		</table>
-		<a href="javascript:void(0);" @click="regOrMod()">등록</a> 
-		<a th:href="@{/}">이전</a>
+		<div class="page_wrap">
+	        <div class="page_nation">
+	            <a v-if="!result.first" class="arrow prev" @click="fnGetList(pageIndex - 1)"></a>
+	            <a v-for="(data, index) in pagingList" :class="{active : pageIndex === data-1}" @click="fnGetList(data-1)">{{data}}</a>
+	            <a v-if="!result.last" class="arrow next" @click="fnGetList(pageIndex + 1)"></a>
+	        </div>
+        </div>
+		<div class="card-btn-box noline flex-box flex-spc-btw">
+			<div class="lt"></div>
+			<div class="rt">
+				<button type="button" class="btn solidbtn md mo-full sm-h pink" @click="goRegOrDetail()">등록</button>
+				<button type="button" class="btn solidbtn md mo-full sm-h lightblue" @click="location.href='/'">이전</button>
+			</div>
+		</div>
 	</div>
 </body>
 </html>

@@ -3,10 +3,10 @@
 	layout:decorate="~{layout/layout}">
 <body>
 <head>
-<script th:src="@{/static/js/board/board-form.js}"></script>
+<script th:src="@{/static/js/board/board-detail.js}"></script>
 </head>
 <body>
-	<div id="regist" layout:fragment="content">
+	<div id="page" layout:fragment="content">
 		<span class="pagetit">게시글 상세</span></br>
 		<div class="mt0 card-wrap">
 			<div class="card">
@@ -32,12 +32,33 @@
 								<p class="form-txt">{{board.content}}​​</p>
 							</div>
 						</div>
+						<span class="card-hr"></span>
+						<div class="form-row">
+							<span class="pt0 form-label">작성일​</span>
+							<div class="form-field">
+								<p class="form-txt">{{dayjs(board.registDate).format('YYYY.MM.DD HH:mm:ss')}}​​</p>
+							</div>
+						</div>
+						<div v-if="!(board.registDate === board.modifyDate)">
+							<span class="card-hr"></span>
+							<div class="form-row">
+								<span class="pt0 form-label">수정일​</span>
+								<div class="form-field">
+									<p class="form-txt">{{dayjs(board.modifyDate).format('YYYY.MM.DD HH:mm:ss')}}​​</p>
+								</div>
+							</div>
+						</div>
 					</div>
 				</fieldset>
 			</div>
-			<button type="button" @click="update">수정</button>
-			<button type="button" @click="list">목록</button>
-			<button type="button" @click="delete">삭제</button>
+			<div class="card-btn-box noline flex-box flex-spc-btw">
+				<div class="lt"></div>
+				<div class="rt">
+					<button type="button" class="btn solidbtn md mo-full sm-h pink" @click="fnUpdate">수정</button>
+					<button type="button" class="btn solidbtn md mo-full sm-h lightblue" @click="fnList">목록</button>
+					<button type="button" class="btn solidbtn md mo-full sm-h black" @click="fnDelete">삭제</button>
+				</div>
+			</div>
 		</div>
 	</div>
 </body>

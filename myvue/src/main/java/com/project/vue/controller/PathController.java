@@ -20,4 +20,9 @@ public class PathController {
 	public String BoardRegist() {
 		return "board/board-form";
 	}
+	
+	@GetMapping("board/detail")
+	public String BoardDetail() {
+		return "board/board-detail";
+	}
 }
