@@ -6,8 +6,12 @@
 </head>
 <body>
 	<div id="page" layout:fragment="content">
-        <div class="flex-box flex-spc-btw">
+        <div class="tbl-sort-box flex-box flex-spc-btw">
 			<span class="pagetit">게시글 리스트</span>
+                <span class="form-search">
+                    <input type="text" class="form-input"  :maxlength="20" @click.prevent="goSearch"/>
+                    <button class="btn" @click.prevent="goSearch"></button>
+                </span>
 				<select class="form-select" id="pageSizeSelector" v-model="pageSize" @change="fnGetList(0)">
 					<option v-for="data in options" :value="data">
 					   {{ data }}개씩

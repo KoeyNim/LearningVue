@@ -12,17 +12,17 @@ public class PathController {
 	}
 
 	@GetMapping("board")
-	public String Board() {
+	public String board() {
 		return "board/board";
 	}
 	
 	@GetMapping("board/regist")
-	public String BoardRegist() {
+	public String boardRegist() {
 		return "board/board-form";
 	}
 	
 	@GetMapping("board/detail")
-	public String BoardDetail() {
+	public String boardDetail() {
 		return "board/board-detail";
 	}
 }

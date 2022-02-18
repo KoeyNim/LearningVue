@@ -1,16 +1,17 @@
+let vu;
 $(document).ready(function() {
-    const vu = new Vue({
+    vu = new Vue({
         el: '#page',
         data: {
-            board: {
-            }
+            result:{},
+            imgFile:[]
         },
         created() {
             const me = this;
             // insert or update
-            me.id = URLSearch.get('id');
-            if (!me.id) return;
-            $.ajax(API_VERSION + '/board/find/' + me.id, {
+            me.result.id = URLSearch.get('id');
+            if (!me.result.id) return;
+            $.ajax(API_VERSION + '/board/find/' + me.result.id, {
                 async: false,
                 beforeSend(xhr) {
                     var header = $("meta[name='_csrf_header']").attr("content");
@@ -18,18 +19,29 @@ $(document).ready(function() {
                     xhr.setRequestHeader(header, token);
                 }
             }).done(data => {
-                me.board = data;
+                me.result = data;
+                console.log(data);
             }).fail(() => alert('잘못된 요청입니다.'));
         },
         methods: {
+            $fileSelect : function $fileSelect(){ 
+                this.imgFile = this.$refs.imgFile.files[0];
+                console.log(this.imgFile);
+            },
             fnSave() {
-                const ex = !!this.board.id;
-                const board = Object.assign({}, this.board);
+                const ex = !!this.result.id;
+                const formData = new FormData();
+                formData.append('title', this.result.title);
+                formData.append('content', this.result.content);
+                formData.append('imgFile', this.imgFile);
                 $.ajax({
                     type: ex ? 'PUT' : 'POST',
-                    url: API_VERSION + '/board' + (ex ? '/update/' + this.id : '/create'),
-                    contentType: 'application/json; charset=UTF-8',
-                    data: JSON.stringify(board),
+                    url: API_VERSION + '/board' + (ex ? '/update/' + this.result.id : '/create'),
+                    enctype: 'multipart/form-data',
+                    processData: false,
+                    contentType: false,
+                    cache: false,
+                    data: formData,
                     beforeSend(xhr) {
                         var header = $("meta[name='_csrf_header']").attr("content");
                         var token = $("meta[name='_csrf']").attr("content");

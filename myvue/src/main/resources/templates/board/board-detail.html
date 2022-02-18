@@ -15,39 +15,48 @@
 						<div class="form-row">
 							<span class="pt0 form-label">아이디​</span>
 							<div class="form-field">
-								<p class="form-txt">{{board.userId}}​</p>
+								<p class="form-txt">{{result.userId}}​</p>
 							</div>
 						</div>
 						<span class="card-hr"></span>
 						<div class="form-row">
 							<span class="pt0 form-label">제목​</span>
 							<div class="form-field">
-								<p class="form-txt">{{board.title}}​</p>
+								<p class="form-txt">{{result.title}}​</p>
 							</div>
 						</div>
 						<span class="card-hr"></span>
 						<div class="form-row">
 							<span class="pt0 form-label">내용​</span>
 							<div class="form-field">
-								<p class="form-txt">{{board.content}}​​</p>
+								<p class="form-txt">{{result.content}}​​</p>
 							</div>
 						</div>
 						<span class="card-hr"></span>
 						<div class="form-row">
 							<span class="pt0 form-label">작성일​</span>
 							<div class="form-field">
-								<p class="form-txt">{{dayjs(board.registDate).format('YYYY.MM.DD HH:mm:ss')}}​​</p>
+								<p class="form-txt">{{dayjs(result.registDate).format('YYYY.MM.DD HH:mm:ss')}}​​</p>
 							</div>
 						</div>
-						<div v-if="!(board.registDate === board.modifyDate)">
+						<div v-if="!(result.registDate === result.modifyDate)">
 							<span class="card-hr"></span>
 							<div class="form-row">
 								<span class="pt0 form-label">수정일​</span>
 								<div class="form-field">
-									<p class="form-txt">{{dayjs(board.modifyDate).format('YYYY.MM.DD HH:mm:ss')}}​​</p>
+									<p class="form-txt">{{dayjs(result.modifyDate).format('YYYY.MM.DD HH:mm:ss')}}​​</p>
 								</div>
 							</div>
 						</div>
+                        <div v-if="result.fileEntity">
+                            <span class="card-hr"></span>
+                            <div class="form-row">
+                                <span class="pt0 form-label">파일 다운로드</span>
+                                <div class="form-field">
+                                    <a :href="result.fileEntity.filePath"><p class="form-txt">{{result.fileEntity.orignFileNm}}</p></a>
+                                </div>
+                            </div>
+                        </div>
 					</div>
 				</fieldset>
 			</div>

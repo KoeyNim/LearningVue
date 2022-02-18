@@ -14,7 +14,7 @@ import lombok.Getter;
 @Getter
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
-public class BaseTimeEntity {
+public abstract class TimeEntity {
 	
 	@CreatedDate
 	private LocalDateTime registDate;

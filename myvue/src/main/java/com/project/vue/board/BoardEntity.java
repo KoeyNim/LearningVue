@@ -1,15 +1,19 @@
 package com.project.vue.board;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 
-import com.project.vue.common.BaseTimeEntity;
+import com.project.vue.common.TimeEntity;
+import com.project.vue.file.FileEntity;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -18,7 +22,7 @@ import lombok.EqualsAndHashCode;
 @Entity
 @EqualsAndHashCode(callSuper=true)
 @Table(name = "board")
-public class BoardEntity extends BaseTimeEntity {
+public class BoardEntity extends TimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,13 +36,15 @@ public class BoardEntity extends BaseTimeEntity {
 	@NotBlank
 	@Column(columnDefinition = "LONGTEXT")
 	private String content;
-	
+
 	@Column(columnDefinition = "varchar(32)")
 	private String userId;
 
-	@Column(columnDefinition = "BIGINT" )
+	@Column(columnDefinition = "BIGINT")
 	private Integer count = 0;
 
-	private String fileId;
+	@OneToOne(cascade = CascadeType.REMOVE) // 게시글 삭제 시 파일 데이터도 같이 삭제
+	@JoinColumn (name = "fileEntity")
+	private FileEntity fileEntity;
 
 }

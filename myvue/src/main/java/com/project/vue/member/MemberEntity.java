@@ -17,37 +17,24 @@ import lombok.Data;
 public class MemberEntity {
 
 	@Id
-	@NotEmpty
-	@NotBlank
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long memberId;
 
-	@NotEmpty
-	@NotBlank
+
 	@Column(columnDefinition = "varchar(32)")
 	private String userId;
 
-	@NotEmpty
-	@NotBlank
 	@Column(columnDefinition = "varchar(32)")
 	private String userName;
 
-	@NotEmpty
-	@NotBlank
 	@Column(columnDefinition = "varchar(32)")
 	private String userPwd;
 
-	@NotEmpty
-	@NotBlank
 	private Integer age;
 
-	@NotEmpty
-	@NotBlank
 	@Column(columnDefinition = "varchar(50)")
 	private String email;
 
-	@NotEmpty
-	@NotBlank
 	@Column(columnDefinition = "varchar(10)")
 	private String gender;
 

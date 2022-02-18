@@ -1,6 +1,11 @@
+
 server:
   port: 8801 # port 번호
 spring:
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
   jpa:
     hibernate.ddl-auto: update # create : drop-create
     properties.hibernate: # hibernate query console 에 출력
