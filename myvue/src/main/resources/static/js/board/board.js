@@ -9,6 +9,14 @@ $(document).ready(function() {
             pagingList:[],
             options: pageSizeArr,
             result:{},
+            srchOptions: [
+                {text: '전체', value: ''},
+                {text: '제목', value: 'title'},
+                {text: '내용', value: 'content'},
+            ],
+            srchKey:'',
+            srchVal:''
+
         },
         created() {
           this.fnGetList();
@@ -22,7 +30,10 @@ $(document).ready(function() {
                 me.pageIndex = idx || 0;
                 $.ajax({
                     type: 'GET',
-                    url: API_VERSION + '/board' + '?pageIndex=' + me.pageIndex + '&pageSize=' + me.pageSize,
+                    url: API_VERSION + '/board' + '?pageIndex=' + me.pageIndex + 
+                                                  '&pageSize='  + me.pageSize +
+                                                  '&srchKey='   + me.srchKey + 
+                                                  '&srchVal='   + me.srchVal,
                     beforeSend(xhr) {
                        var header = $("meta[name='_csrf_header']").attr("content");
                        var token = $("meta[name='_csrf']").attr("content");

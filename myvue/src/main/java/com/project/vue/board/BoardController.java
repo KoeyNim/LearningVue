@@ -10,10 +10,11 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.project.vue.common.Constants;
 import com.project.vue.common.SimpleResponse;
@@ -32,8 +33,12 @@ public class BoardController {
 	
 	@ResponseBody
 	@GetMapping
-	public ResponseEntity<Page<BoardEntity>> boardList(@RequestParam int pageIndex, @RequestParam int pageSize) {
-		return ResponseEntity.ok(boardService.findAll(pageIndex, pageSize));
+	public ResponseEntity<Page<BoardEntity>> boardList(
+			@RequestParam int pageIndex, 
+			@RequestParam int pageSize,
+			@RequestParam String srchKey,
+			@RequestParam String srchVal) {
+		return ResponseEntity.ok(boardService.findAll(pageIndex, pageSize, srchKey, srchVal));
 	}
 	
 	@GetMapping("find/{id}")
@@ -43,11 +48,10 @@ public class BoardController {
 
 	@ResponseBody
 	@PostMapping("create")
-	public ResponseEntity<SimpleResponse> boardCreate(BoardEntity board, MultipartFile imgFile) {
-		log.debug("@@@@@{}",board);
+	public ResponseEntity<SimpleResponse> boardCreate(@RequestBody BoardEntity board) {
 		boolean r = true;
 		try {
-			boardService.save(board, imgFile);
+			boardService.save(board);
 		} catch (Exception e) {
 			e.printStackTrace();
 			r = false;
@@ -70,19 +74,19 @@ public class BoardController {
 	}
 	*/
 
-//	@PutMapping("update/{id}")
-//	public ResponseEntity<SimpleResponse> boardupdate(@RequestBody BoardEntity board, @PathVariable("id") Long id) {
-//		boolean r = true;
-//		try {
-//			boardService.save(board);
-//		} catch (Exception e) {
-//			r = false;
-//		}
-//		return ResponseEntity.ok(SimpleResponse.builder()
-//					.success(r)
-//					.message(r ? "글이 수정되었습니다." : "잘못된 요청입니다.")
-//					.build());
-//	}
+	@PutMapping("update/{id}")
+	public ResponseEntity<SimpleResponse> boardupdate(@RequestBody BoardEntity board, @PathVariable("id") Long id) {
+		boolean r = true;
+		try {
+			boardService.save(board);
+		} catch (Exception e) {
+			r = false;
+		}
+		return ResponseEntity.ok(SimpleResponse.builder()
+					.success(r)
+					.message(r ? "글이 수정되었습니다." : "잘못된 요청입니다.")
+					.build());
+	}
 	
 	@DeleteMapping("delete/{id}")
 	public ResponseEntity<SimpleResponse> boardDelete(@PathVariable("id") Long id) {

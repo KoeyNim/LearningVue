@@ -16,7 +16,7 @@
 			<textarea class="form-txtarea lg" name="content" id="content" v-model="result.content"></textarea>
 		</div>
 		<div class="input-container"> 
-		    <input v-on:change="$fileSelect()" type="file" ref="imgFile" /> 
+		    <input @change="$fileSelect()" type="file" ref="imgFile" /> 
 		</div>
 		<div class="card-btn-box noline flex-box flex-spc-btw">
 		    <div class="lt"></div>

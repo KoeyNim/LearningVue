@@ -8,9 +8,14 @@
 	<div id="page" layout:fragment="content">
         <div class="tbl-sort-box flex-box flex-spc-btw">
 			<span class="pagetit">게시글 리스트</span>
+                <select class="form-select" v-model="srchKey">
+                    <option v-for="data in srchOptions" :value="data.value">
+                       {{ data.text }}
+                    </option>
+                </select>
                 <span class="form-search">
-                    <input type="text" class="form-input"  :maxlength="20" @click.prevent="goSearch"/>
-                    <button class="btn" @click.prevent="goSearch"></button>
+                    <input type="text" class="form-input"  :maxlength="20" v-model="srchVal" @keydown.enter.prevent="fnGetList(0)" />
+                    <button class="btn" @click.prevent="fnGetList(0)"></button>
                 </span>
 				<select class="form-select" id="pageSizeSelector" v-model="pageSize" @change="fnGetList(0)">
 					<option v-for="data in options" :value="data">

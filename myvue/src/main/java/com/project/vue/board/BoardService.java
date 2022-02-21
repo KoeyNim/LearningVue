@@ -8,11 +8,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
-import com.project.vue.file.FileEntity;
-import com.project.vue.file.FileRepository;
-import com.project.vue.file.FileService;
+import com.project.vue.specification.SearchSpecification;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,9 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 public class BoardService {
 	
 	private final BoardRepository boardRepository;
-	private final FileRepository fileRepository;
-	
-	private final FileService fileService;
 
 	/*
     public boolean save(BoardEntity board) {
@@ -43,21 +37,29 @@ public class BoardService {
     	//return this.boardRepository.save(board) != null; // 변경해야됨
     }*/
 
+//	@Transactional
+//    public void save(BoardEntity board, MultipartFile imgFile) throws Exception {
+//		log.debug("## board: {}", board);
+//		log.debug("## imgFile: {}", imgFile);
+//		if (imgFile != null) {
+//			FileEntity file = fileService.save(imgFile);
+//			board.setFileEntity(file);
+//			log.debug("## fileEntity: {}", board.getFileEntity());
+//		}
+//		boardRepository.save(board);
+//    }
+	
 	@Transactional
-    public void save(BoardEntity board, MultipartFile imgFile) throws Exception {
-		log.debug("## board: {}", board);
-		log.debug("## imgFile: {}", imgFile);
-		if (imgFile != null) {
-			FileEntity file = fileService.save(imgFile);
-			board.setFileEntity(file);
-			log.debug("## fileEntity: {}", board.getFileEntity());
-		}
+    public void save(BoardEntity board) {
 		boardRepository.save(board);
     }
 	
-    public Page<BoardEntity> findAll(int pageIndex, int pageSize) {
+    public Page<BoardEntity> findAll(int pageIndex, int pageSize, String srchKey, String srchVal) {
     	PageRequest pageRequest = PageRequest.of(pageIndex, pageSize, Sort.by("registDate").descending());
-		return boardRepository.findAll(pageRequest);
+    	BoardEntity boardEntity = new BoardEntity();
+    	boardEntity.setSrchKey(srchKey);
+    	boardEntity.setSrchVal(srchVal);
+		return boardRepository.findAll(SearchSpecification.searchBoardSpecification(boardEntity), pageRequest);
     }
     
     public Optional<BoardEntity> findById(Long id) {
