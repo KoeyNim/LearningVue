@@ -56,6 +56,10 @@ public class BoardService {
 //		boardRepository.save(board);
 //    }
 	
+	public void saveCount(BoardEntity board) {
+		boardRepository.save(board);
+	}
+	
 	@Transactional
 	public void save(BoardEntity board) {
 		BoardEntity findBoard = null;
