@@ -1,4 +1,4 @@
-var vu = null;
+let vu;
 $(document).ready(function() {
     vu = new Vue({
         el: '#page',

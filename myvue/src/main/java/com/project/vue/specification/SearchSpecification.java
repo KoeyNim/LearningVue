@@ -7,18 +7,18 @@ import com.project.vue.board.BoardEntity;
 
 public class SearchSpecification {
 	
-	public static Specification<BoardEntity> searchBoardSpecification(BoardEntity boardEntity) {
+	public static Specification<BoardEntity> searchBoardSpecification(String srchKey, String srchVal) {
 		return Specification.<BoardEntity>where((root, query, builder) -> {
-			if (StringUtils.isBlank(boardEntity.getSrchVal()))
+			if (StringUtils.isBlank(srchVal))
 				return builder.conjunction();
-			if (StringUtils.isBlank(boardEntity.getSrchKey()))
+			if (StringUtils.isBlank(srchKey))
 				return builder.or(
-						builder.like(root.get("title") , "%" + boardEntity.getSrchVal() + "%"),
-						builder.like(root.get("content")  , "%" + boardEntity.getSrchVal() + "%"));
-			if ("title".equals(boardEntity.getSrchKey()))
-				return builder.like(root.get("title"), "%" + boardEntity.getSrchVal() + "%");
-			if ("content".equals(boardEntity.getSrchKey()))
-				return builder.like(root.get("content"), "%" + boardEntity.getSrchVal() + "%");
+						builder.like(root.get("title") , "%" + srchVal + "%"),
+						builder.like(root.get("content")  , "%" + srchVal + "%"));
+			if ("title".equals(srchKey))
+				return builder.like(root.get("title"), "%" + srchVal + "%");
+			if ("content".equals(srchKey))
+				return builder.like(root.get("content"), "%" + srchVal + "%");
 			return builder.conjunction();
 		});
 	}

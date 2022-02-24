@@ -1,7 +1,5 @@
 package com.project.vue.board;
 
-import java.util.Optional;
-
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -36,14 +34,22 @@ public class BoardController {
 	public ResponseEntity<Page<BoardEntity>> boardList(
 			@RequestParam int pageIndex, 
 			@RequestParam int pageSize,
-			@RequestParam String srchKey,
-			@RequestParam String srchVal) {
+			@RequestParam(required = false) String srchKey,
+			@RequestParam(required = false) String srchVal) {
 		return ResponseEntity.ok(boardService.findAll(pageIndex, pageSize, srchKey, srchVal));
 	}
 	
 	@GetMapping("find/{id}")
-	public ResponseEntity<Optional<BoardEntity>> boardFindById(@PathVariable("id") Long id) {
-		return ResponseEntity.ok(boardService.findById(id));
+	public ResponseEntity<BoardEntity> boardFindById(@PathVariable("id") Long id) {
+		BoardEntity boardEntity = null;
+		boolean r = true;
+		try {
+			boardEntity = boardService.findById(id);
+		} catch (Exception e) {
+			e.printStackTrace();
+			r = false;
+		}
+		return r ? ResponseEntity.ok().body(boardEntity) : ResponseEntity.notFound().build();
 	}
 
 	@ResponseBody
@@ -58,7 +64,7 @@ public class BoardController {
 		}
 		return ResponseEntity.ok(SimpleResponse.builder()
 					.success(r)
-					.message(r ? "글이 등록되었습니다." : "잘못된 요청입니다.")
+					.message(r ? "글이 등록되었습니다." : "등록 에러.")
 					.build());
 	}
 
@@ -80,11 +86,12 @@ public class BoardController {
 		try {
 			boardService.save(board);
 		} catch (Exception e) {
+			e.printStackTrace();
 			r = false;
 		}
 		return ResponseEntity.ok(SimpleResponse.builder()
 					.success(r)
-					.message(r ? "글이 수정되었습니다." : "잘못된 요청입니다.")
+					.message(r ? "글이 수정되었습니다." : "수정 에러.")
 					.build());
 	}
 	
@@ -98,7 +105,7 @@ public class BoardController {
 		}
 		return ResponseEntity.ok(SimpleResponse.builder()
 					.success(r)
-					.message(r ? "글이 삭제되었습니다." : "잘못된 요청입니다.")
+					.message(r ? "글이 삭제되었습니다." : "삭제 에러.")
 					.build());
 	}
 }

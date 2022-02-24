@@ -23,14 +23,18 @@ public class FileEntity extends TimeEntity {
 	private Long id;
 	
 	@Column(columnDefinition = "varchar(100)")
-	private String filePath;
-
-	@Column(columnDefinition = "varchar(100)")
 	private String fileNm;
+	
+	private Long fileSize;
+	
+	@Column(columnDefinition = "varchar(100)")
+	private String filePath;
+	
+	@Column(columnDefinition = "varchar(100)")
+	private String contentType;
 
 	@Column(columnDefinition = "varchar(100)")
 	private String orignFileNm;
 
-	private Long fileSize;
 
 }

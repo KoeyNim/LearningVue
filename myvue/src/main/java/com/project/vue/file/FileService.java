@@ -7,6 +7,7 @@ import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.thymeleaf.util.StringUtils;
 
 import lombok.RequiredArgsConstructor;
 
@@ -18,22 +19,27 @@ public class FileService {
 
 	@Transactional
     public FileEntity save(MultipartFile imgFile) throws Exception {
-		
 		String uuid = UUID.randomUUID().toString().replaceAll("-", "");
+		String ext = "."+ StringUtils.substringAfter(imgFile.getOriginalFilename(), ".");
+		String fileNm = uuid + ext;
 		FileEntity file = new FileEntity();
+		String filePath = "D:/W/bin/temp/upload/";
+		File fileUpload = new File(filePath + fileNm);
 		
-		String filePath = "D:/W/bin/temp/upload/" + imgFile.getOriginalFilename();
-		File fileUpload = new File(filePath);
-		
-		file.setFileNm(uuid+'_'+imgFile.getName());
-		file.setFilePath(filePath);
+		file.setFileNm(fileNm);
 		file.setFileSize(imgFile.getSize());
+		file.setFilePath(filePath);
+		file.setContentType(imgFile.getContentType());
 		file.setOrignFileNm(imgFile.getOriginalFilename());
 		
 		imgFile.transferTo(fileUpload);
 		fileRepository.save(file);
 		return file;
     }
+	
+	public FileEntity findById(Long id) {
+		return fileRepository.findById(id).orElseThrow();
+	}
 
 	
 }

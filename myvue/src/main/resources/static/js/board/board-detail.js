@@ -3,7 +3,8 @@ $(document).ready(function() {
     vu = new Vue({
         el: '#page',
         data: {
-            result: {}
+            result: {},
+            filePath:''
         },
         created() {
             this.fnLoad();
@@ -21,8 +22,12 @@ $(document).ready(function() {
                     }
                 }).done(response => {
                     me.result = response;
+                    me.filePath = me.result.fileEntity ? API_VERSION + '/download/' + me.result.fileEntity.id : '';
                     console.log(response);
-                }).fail(() => alert('잘못된 요청입니다.'));
+                }).fail(() => {
+                    alert('잘못된 요청입니다.');
+                    location.href = '/board';
+                });
             },
             fnUpdate() {
                 location.href = '/board/regist?id=' + this.result.id;

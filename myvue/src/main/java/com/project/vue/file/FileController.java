@@ -7,7 +7,6 @@ import java.nio.file.Paths;
 
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
-import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,20 +37,24 @@ public class FileController {
 
 	}
 	
-	@GetMapping("download/{path}")
-	public ResponseEntity<Object> download(@PathVariable String path) {
+	@GetMapping("download/{id}")
+	public ResponseEntity<Resource> download(@PathVariable Long id) {
 		try {
-			Path filePath = Paths.get(path);
+			FileEntity fileEntity = fileService.findById(id); // 파일 객체 찾기
+			String path = fileEntity.getFilePath() + fileEntity.getFileNm();
+			Path filePath = Paths.get(path); // 파일 Path 얻기
 			Resource resource = new InputStreamResource(Files.newInputStream(filePath)); // 파일 resource 얻기
 			
 			File file = new File(path);
+			String contentType = Files.probeContentType(filePath); // 타입 받아오기
 			
-			HttpHeaders headers = new HttpHeaders();
-			headers.setContentDisposition(ContentDisposition.builder("attachment").filename(file.getName()).build());  // 다운로드 되거나 로컬에 저장되는 용도로 쓰이는지를 알려주는 헤더
-			
-			return new ResponseEntity<Object>(resource, headers, HttpStatus.OK);
+			return ResponseEntity.ok()
+					// attachement = 로컬에 저장, filename 파일 이름
+					.header(HttpHeaders.CONTENT_DISPOSITION, "attachement; filename=\"" + file.getName() +"\"")
+					.header(HttpHeaders.CONTENT_TYPE, contentType) 
+					.body(resource);
 		} catch(Exception e) {
-			return new ResponseEntity<Object>(null, HttpStatus.CONFLICT);
+			return new ResponseEntity<Resource>(HttpStatus.CONFLICT);
 		}
 	}
 	
