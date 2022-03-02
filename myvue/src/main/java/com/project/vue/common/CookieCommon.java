@@ -12,7 +12,6 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
-import com.project.vue.board.BoardEntity;
 import com.project.vue.board.BoardService;
 
 import lombok.RequiredArgsConstructor;
@@ -24,7 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 public class CookieCommon {
 
 	private final BoardService boardService;
-
+	
 	public HttpServletResponse readCountCookie(HttpServletResponse response, HttpServletRequest request, Long id) {
 		// 저장된 쿠키 불러오기
 		Cookie cookies[] = request.getCookies();
@@ -51,12 +50,8 @@ public class CookieCommon {
 			cookie.setComment("게시글 조회 확인"); // 해당 쿠키가 어떤 용도인지 커멘트
 			cookie.setMaxAge(60 * 60 * 24); // 해당 쿠키의 유효시간을 설정 (초 기준)
 			response.addCookie(cookie);
-
-			BoardEntity board = boardService.findById(id);
-			board.setCount(board.getCount() + 1);
-
 			// 조회수 업데이트
-			boardService.saveCount(board);
+			boardService.saveCount(id);
 		}
 		return response;
 	}

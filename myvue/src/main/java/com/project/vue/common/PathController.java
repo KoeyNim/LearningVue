@@ -19,6 +19,16 @@ public class PathController {
 	public String home() {
 		return "index";
 	}
+	
+	@GetMapping("login")
+	public String signIn() {
+		return "member/member-login";
+	}
+	
+	@GetMapping("signup")
+	public String signUp() {
+		return "member/member-signup";
+	}
 
 	@GetMapping("board")
 	public String board() {

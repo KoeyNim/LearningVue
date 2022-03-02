@@ -6,8 +6,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 import lombok.Data;
 
@@ -20,26 +19,31 @@ public class MemberEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long memberId;
 
-
-	@Column(columnDefinition = "varchar(32)")
+	@NotNull
+	@Column(columnDefinition = "varchar(16)")
 	private String userId;
-
-	@Column(columnDefinition = "varchar(32)")
+	
+	@NotNull
+	@Column(columnDefinition = "varchar(8)")
 	private String userName;
-
-	@Column(columnDefinition = "varchar(32)")
+	
+	@NotNull
+	@Column(columnDefinition = "varchar(255)")
 	private String userPwd;
-
+	
+	@NotNull
 	private Integer age;
-
+	
+	@NotNull
 	@Column(columnDefinition = "varchar(50)")
 	private String email;
-
-	@Column(columnDefinition = "varchar(10)")
+	
+	@NotNull
+	@Column(columnDefinition = "varchar(4)")
 	private String gender;
-
-	@NotEmpty
-	@NotBlank
-	private Integer phone;
+	
+	@NotNull
+	@Column(columnDefinition = "varchar(11)")
+	private String phone;
 
 }

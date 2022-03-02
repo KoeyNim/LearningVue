@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/layout}">
+<head>
+    <script th:src="@{/static/js/member/member-login.js}"></script>
+</head>
+<body>
+<div layout:fragment="content">
+<div id="page">
+	<div class="login-area">
+		<div class="grid">
+			<div class="login-tit-box">
+				<h2 class="login-tit">
+					<strong class="corp">로그인</strong>
+				</h2>
+			</div>
+			<div class="login-form-wrap">
+				<div class="login-form-row">
+					<label class="login-input id">
+						<input type="text" v-model="member.userId" name="userId" ref="userId" :maxlength="16" @keyup.enter="$refs.password.focus" autocomplete="off"
+						:data-vv-as="$('#userId').text()" v-validate="'required|min:5|max:16'"/>
+						<span class="label on" id="userId">아이디</span>
+					</label>
+					<span>{{ errors.first('userId') }}</span>
+				</div>
+				<div class="login-form-row">
+					<label class="login-input pw">
+						<input type="password" v-model="member.userPwd" name="userPwd" ref="userPwd" :maxlength="20" @keyup.enter="signIn" autocomplete="off" 
+						:data-vv-as="$('#userPwd').text()" v-validate="'required|min:5|max:20'"/>
+						<span class="label on" id="userPwd">비밀번호</span>
+					</label>
+					<span>{{ errors.first('userPwd') }}</span>
+				</div>
+				<div class="pt30 login-form-row txt-rt">
+					<label class="form-check">
+						<input type="checkbox" /> <!--v-model="saveId"-->
+						<span class="label">아이디 저장</span>
+					</label>
+				</div>
+			</div>
+			<div class="login-btn-wrap">
+				<a @click.prevent="signIn" title="로그인하기" class="btn solidbtn loginbtn lg-h pink">로그인</a>
+				<a th:href="@{/signup}" title="회원가입하기" class="btn solidbtn loginbtn lg-h pink">회원가입</a>
+			</div>
+		</div>
+	</div>
+</div>
+</div>
+</body>
+</html>

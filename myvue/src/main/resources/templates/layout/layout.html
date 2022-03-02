@@ -15,6 +15,7 @@
     <script th:src="@{/static/scripts/jquery-3.6.0.min.js}"></script>
     <script th:src="@{/static/scripts/lodash.min.js}"></script>
     <script th:src="@{/static/scripts/dayjs.min.js}"></script>
+    <script th:src="@{/static/scripts/ko.js}"></script>
     <script th:src="@{/static/scripts/head.js}"></script>
     <title></title>
 </head>
@@ -23,7 +24,7 @@
 
 <script type="text/javascript">
 $(document).ready(function () {
-    document.title = $('.pagetit').text();
+    document.title = $('.pagetit').text() || $('.login-tit').text();
 });
 </script>
 </body>

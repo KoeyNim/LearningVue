@@ -76,3 +76,10 @@ html {
     color:#fff;
     border:1px solid #42454c;
 }
+
+.form-field input[type='radio'] {
+  cursor: pointer;
+}
+.form-field label {
+  cursor: pointer;
+}

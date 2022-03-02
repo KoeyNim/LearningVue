@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{/layout/layout}">
+<head>
+    <script th:src="@{/static/js/member/member-form.js}"></script>
+</head>
+<body>
+	<div class="page-wrap" layout:fragment="content">
+		<div id="page" class="grid" v-cloak>
+			<div class="pagetit-box">
+				<h4 class="pagetit">
+					<span class="label">
+						회원가입
+					</span>
+				</h4>
+			</div>
+
+			<div class="mt0 card-wrap">
+				<div class="card">
+					<fieldset class="mt10">
+						<div class="form-wrap">
+							<div class="form-row">
+								<span class="pt0 form-label" id="userId">* 로그인 ID​</span>
+								<div class="form-field">
+									<input type="text" class="form-input" name="userId" v-model="member.userId" :maxlength="16" placeholder="아이디 입력" 
+									:data-vv-as="$('#userId').text()" v-validate="'required|alpha_num|min:5|max:16'"/>
+								</div>
+							</div>
+							<span>{{ errors.first('userId') }}</span>
+							<span class="card-hr"></span>
+							<div class="form-row">
+								<span class="pt0 form-label" id="userPwd1">* 비밀번호</span>
+								<div class="form-field">
+								    <input type="password" class="form-input" name="userPwd1" v-model="member.userPwd" :maxlength="20" placeholder="비밀번호 입력" 
+								    :data-vv-as="$('#userPwd1').text()" ref="password" data-vv-as="password" v-validate="{ required:true, is_not:member.userId, min:5, max:20 }"/>
+								</div>
+								<span>* 5~20자리 사이의 영문,숫자만 입력</span>
+							</div>
+							<span>{{ errors.first('userPwd1') }}</span>
+							<span class="card-hr"></span>
+                            <div class="form-row">
+                                <span class="pt0 form-label" id="userPwd2">* 비밀번호 확인</span>
+                                <div class="form-field">
+                                    <input type="password" class="form-input" name="userPwd2" :maxlength="20" placeholder="비밀번호 확인" 
+                                    :data-vv-as="$('#userPwd2').text()" v-validate="{ required:true, is:member.userPwd }"/>
+                                </div>
+                                <span>* 5~20자리 사이의 영문,숫자만 입력</span>
+                            </div>
+                            <span>{{ errors.first('userPwd2') }}</span>
+							<span class="card-hr"></span>
+							<div class="form-row">
+								<span class="pt0 form-label" id="userName">* 이름​​</span>
+								<div class="form-field">
+									<input type="text" class="form-input" name="userName" v-model="member.userName" placeholder="이름 입력" 
+									:data-vv-as="$('#userName').text()" v-validate="{ required:true, regex:/^[가-힣]+$/, min:3, max:4}"/>
+								</div>
+							</div>
+							<span>{{ errors.first('userName') }}</span>
+							<span class="card-hr"></span>
+							<div class="form-row">
+								<span class="form-label" id="gender">* 성별​</span>
+								<div class="form-field">
+									<input type="radio" id="남자" name="gender" v-model="member.gender" value="남자" 
+									v-validate="'required'" :data-vv-as="$('#gender').text()">
+									<label for="남자">남자</label>
+									
+									<input type="radio" id="여자" name="gender" v-model="member.gender" value="여자">
+									<label for="여자">여자</label>
+								</div>
+							</div>
+							<span>{{ errors.first('gender') }}</span>
+                            <span class="card-hr"></span>
+                            <div class="form-row">
+                                <span class="form-label" id="age">* 나이​</span>
+                                <div class="form-field">
+                                    <input type="text" class="form-input" name="age" v-model="member.age" :maxlength="3" placeholder="나이 입력" 
+                                    :data-vv-as="$('#age').text()" v-validate="'required|numeric|between:1,100'"/>
+                                </div>
+                            </div>
+                            <span>{{ errors.first('age') }}</span>
+                            <span class="card-hr"></span>
+                            <div class="form-row">
+                                <span class="form-label" id="email">* 이메일​</span>
+                                <div class="form-field">
+                                    <input type="text" class="form-input" name="email" v-model="member.email" placeholder="이메일 입력" 
+                                    :data-vv-as="$('#email').text()" v-validate="'required|email'"/>
+                                </div>
+                            </div>
+                            <span>{{ errors.first('email') }}</span>
+                            <span class="card-hr"></span>
+                            <div class="form-row">
+                                <span class="pt0 form-label" id="phone">* 휴대폰번호​</span>
+                                <div class="form-field">
+                                    <input type="text" class="form-input" name="phone" v-model="member.phone" :maxlength="11" placeholder="휴대폰번호 입력" 
+                                    :data-vv-as="$('#phone').text()" v-validate="'required|numeric|min:10|max:11'"/>
+                                </div>
+                            </div>
+                            <span>{{ errors.first('phone') }}</span>
+						</div>
+					</fieldset>
+				</div>
+
+				<div class="card-btn-box noline flex-box flex-wrap flex-spc-btw">
+					<div class="lt"></div>
+					<div class="rt">
+						<a href="javascript:history.back();" class="btn solidbtn md md-h black" >취소</a>
+						<a href="javascript:void(0);" class="btn solidbtn md md-h pink" @click="signUp">가입</a>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- //grid -->
+	</div>
+	<!-- //wrapper END -->
+</body>
+</html>

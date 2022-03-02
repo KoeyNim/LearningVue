@@ -1,11 +1,20 @@
 <!DOCTYPE html>
 <html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/layout}">
+<head>
+<script th:src="@{/static/js/index.js}"></script>
+</head>
 <body>
 <div layout:fragment="content">
 <span class="pagetit">메인화면</span>
-<div id="app">
+<div id="page">
 {{message}}</br>
-<a href="board">게시판</a>
+<div v-if="member.memberId">
+	<a th:href="@{/board}">게시판</a></br>
+	<a th:href="@{#}">로그아웃</a>
+</div>
+<a v-else th:href="@{/login}">로그인</a>
+
+<a th:href="@{/signup}">회원가입</a>
 </div>
 </div>
 </body>

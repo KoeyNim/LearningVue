@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import com.project.vue.common.SimpleResponse;
 import com.project.vue.file.FileRepository;
 import com.project.vue.specification.SearchSpecification;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +28,8 @@ public class BoardService {
 	private final BoardRepository boardRepository;
 	
 	private final FileRepository fileRepository;
+	
+	private final JPAQueryFactory queryFactory;
 
 	/*
     public boolean save(BoardEntity board) {
@@ -56,8 +59,14 @@ public class BoardService {
 //		boardRepository.save(board);
 //    }
 	
-	public void saveCount(BoardEntity board) {
-		boardRepository.save(board);
+	// 수정시간이 바뀌게되는 이슈로 인해 querydsl로 세부 조작
+	@Transactional
+	public void saveCount(Long id) {
+		QBoardEntity qBoardEntity = QBoardEntity.boardEntity;
+		queryFactory.update(qBoardEntity)
+					.set(qBoardEntity.count, qBoardEntity.count.add(1) )
+					.where(qBoardEntity.id.eq(id))
+					.execute();
 	}
 	
 	@Transactional
