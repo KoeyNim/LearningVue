@@ -8,11 +8,10 @@
 <span class="pagetit">메인화면</span>
 <div id="page">
 {{message}}</br>
-<div v-if="member.memberId">
-	<a th:href="@{/board}">게시판</a></br>
-	<a th:href="@{#}">로그아웃</a>
-</div>
-<a v-else th:href="@{/login}">로그인</a>
+<a th:href="@{/board}">게시판</a></br>
+<h2 th:text="${userId}"></h2>
+<a th:if="${userId == 'anonymousUser'}" th:href="@{/login}">로그인</a>
+<a th:unless="${userId == 'anonymousUser'}" th:href="@{/logout}">로그아웃</a>
 
 <a th:href="@{/signup}">회원가입</a>
 </div>

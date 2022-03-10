@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -73,7 +74,7 @@ public class BoardService {
 	public void save(BoardEntity board) {
 		BoardEntity findBoard = null;
 		if (ObjectUtils.isNotEmpty(board.getId())) { // board.id 값이 비어있지 않은지 확인 (비어있으면 등록상황이다.)
-			
+				
 				findBoard = boardRepository.findById(board.getId()).orElseThrow(); // 수정 전에 저장된 board 객체를 찾는다.
 
 			if (ObjectUtils.isNotEmpty(findBoard.getFileEntity()) // 수정전 board 객체의 파일이 비어있는지 확인
@@ -81,6 +82,9 @@ public class BoardService {
 
 				fileRepository.deleteById(findBoard.getFileEntity().getId()); // 조건에 모두 만족하는 파일 데이터를 삭제 (수정되어 필요없는 파일)
 			}
+		} else {
+			log.debug("Service id {}",SecurityContextHolder.getContext().getAuthentication().getName());
+			board.setUserId(SecurityContextHolder.getContext().getAuthentication().getName());
 		}
 		boardRepository.save(board);
 	}
