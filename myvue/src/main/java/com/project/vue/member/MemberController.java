@@ -5,10 +5,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -26,12 +26,13 @@ public class MemberController {
 	
 	private final MemberService memberService;
 	
-	@GetMapping("logout")
+	@PostMapping("logout")
   	public void logout(HttpServletRequest request, HttpServletResponse response) {
-		log.debug("## logout {}", SecurityContextHolder.getContext().getAuthentication());
-		if (!(ObjectUtils.isEmpty(SecurityContextHolder.getContext().getAuthentication()) 
-				&& SecurityContextHolder.getContext().getAuthentication().getPrincipal().equals("anonymousUser"))) {
-			new SecurityContextLogoutHandler().logout(request, response, SecurityContextHolder.getContext().getAuthentication());
+			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		log.debug("## logout {}", auth);
+		if (!(ObjectUtils.isEmpty(auth) 
+				&& auth.getPrincipal().equals("anonymousUser"))) {
+			new SecurityContextLogoutHandler().logout(request, response, auth);
 		}
   	}
 	

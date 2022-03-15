@@ -70,9 +70,9 @@
 			<div class="card-btn-box noline flex-box flex-spc-btw">
 				<div class="lt"></div>
 				<div class="rt">
-					<button type="button" class="btn solidbtn md mo-full sm-h pink" @click="fnUpdate">수정</button>
+					<button v-if="result.userId == authUserId" type="button" class="btn solidbtn md mo-full sm-h pink" @click="fnUpdate">수정</button>
 					<button type="button" class="btn solidbtn md mo-full sm-h lightblue" @click="fnList">목록</button>
-					<button type="button" class="btn solidbtn md mo-full sm-h black" @click="fnDelete">삭제</button>
+					<button v-if="result.userId == authUserId" type="button" class="btn solidbtn md mo-full sm-h black" @click="fnDelete">삭제</button>
 				</div>
 			</div>
 		</div>

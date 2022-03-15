@@ -1,11 +1,20 @@
 let vu;
-$(document).ready(function() {
+$().ready(() => {
     vu = new Vue({
         el: '#page',
         data: {
             member:{}
+        },        
+        created() {
+            this.fnLoad();
         },
         methods: {
+            fnLoad() {
+                if(URLSearch.get('expire')) {
+                    alert("새로운 곳에서 로그인이 시도되었습니다.");
+                    location.href = "/login";
+                }
+            },
             signIn() {
                 this.$validator.validateAll().then(success => {
                 if(success) {
@@ -13,15 +22,14 @@ $(document).ready(function() {
                 form.append('userId', this.member.userId);
                 form.append('userPwd', this.member.userPwd);
 
-                //var token = $("meta[name='_csrf']").attr("content");
-                //var header = $("meta[name='_csrf_header']").attr("content");
-                axios.post(API_VERSION + '/login/security', form, {/*headers: {[header]: token}*/})
+                var token = $("meta[name='_csrf']").attr("content");
+                var header = $("meta[name='_csrf_header']").attr("content");
+                axios.post(API_VERSION + '/login/security', form, {headers: {[header]: token}})
                 .then(response => {
-                    console.log(response);
                     location.href = "/board";
                 })
                 .catch(error => {
-                    alert(error.message);
+                    alert(error.response.data.message);
                     if (error.response) {
                       // 요청이 이루어졌으며 서버가 2xx의 범위를 벗어나는 상태 코드로 응답했습니다.
                       console.log(error.response.data);

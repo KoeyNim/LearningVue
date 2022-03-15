@@ -4,7 +4,8 @@ $(document).ready(function() {
         el: '#page',
         data: {
             result: {},
-            filePath:''
+            filePath:'',
+            authUserId:{},
         },
         created() {
             this.fnLoad();
@@ -21,7 +22,8 @@ $(document).ready(function() {
                         xhr.setRequestHeader(header, token);
                     }
                 }).done(response => {
-                    me.result = response;
+                    me.result = response.data;
+                    me.authUserId = response.authUserId;
                     me.filePath = me.result.fileEntity ? API_VERSION + '/download/' + me.result.fileEntity.id : '';
                     console.log(response);
                 }).fail(() => {

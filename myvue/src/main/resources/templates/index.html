@@ -11,9 +11,10 @@
 <a th:href="@{/board}">게시판</a></br>
 <h2 th:text="${userId}"></h2>
 <a th:if="${userId == 'anonymousUser'}" th:href="@{/login}">로그인</a>
-<a th:unless="${userId == 'anonymousUser'}" th:href="@{/logout}">로그아웃</a>
-
-<a th:href="@{/signup}">회원가입</a>
+<form th:unless="${userId == 'anonymousUser'}" method="post" th:action="@{/logout}">
+    <button type="submit">로그아웃</button>
+</form>
+<a th:if="${userId == 'anonymousUser'}" th:href="@{/signup}">회원가입</a>
 </div>
 </div>
 </body>

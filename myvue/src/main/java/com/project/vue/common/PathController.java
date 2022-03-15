@@ -27,9 +27,9 @@ public class PathController {
 	
 	@GetMapping("login")
 	public String signIn() {
-		log.debug("## test2 {}", SecurityContextHolder.getContext().getAuthentication());
-		log.debug("## authentication.getName {}", SecurityContextHolder.getContext().getAuthentication().getName());
-		return "member/member-login";
+		return SecurityContextHolder.getContext().getAuthentication().getName().equals("anonymousUser") 
+				? "member/member-login" 
+				: "redirect:board";
 	}
 	
 	@GetMapping("signup")

@@ -2,7 +2,11 @@
 <html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	layout:decorate="~{layout/layout}">
 <head>
-	<script th:src="@{/static/js/board/board-form.js}"></script>
+    <script th:src="@{/static/scripts/summernote/summernote-lite.min.js}"></script>
+    <script th:src="@{/static/scripts/summernote/lang/summernote-ko-KR.min.js}"></script>
+    <link th:href="@{/static/style/summernote/summernote-lite.min.css}" rel="stylesheet">
+    
+    <script th:src="@{/static/js/board/board-form.js}"></script>	
 </head>
 <body>
 	<div id="page" layout:fragment="content">
@@ -14,7 +18,7 @@
 		<span>{{ errors.first('title') }}</span>
 		<span class="form-label">내용​ *</span>
 		<div class="form-field">
-			<textarea class="form-txtarea lg" name="content" id="content" v-model="result.content" v-validate="'required'"></textarea>
+			<textarea class="form-txtarea lg" name="content" id="summernote" v-model="result.content" v-validate="'required'"></textarea>
 		</div>
 		<span>{{ errors.first('content') }}</span>
 		<div v-if="result.fileEntity">

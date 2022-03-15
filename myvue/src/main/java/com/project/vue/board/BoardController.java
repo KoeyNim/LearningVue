@@ -1,7 +1,11 @@
 package com.project.vue.board;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -40,16 +44,19 @@ public class BoardController {
 	}
 	
 	@GetMapping("find/{id}")
-	public ResponseEntity<BoardEntity> boardFindById(@PathVariable("id") Long id) {
+	public ResponseEntity<Map<String, Object>> boardFindById(@PathVariable("id") Long id, Authentication authentication) {
 		BoardEntity boardEntity = null;
+		Map<String, Object> result = new HashMap<>();
 		boolean r = true;
 		try {
 			boardEntity = boardService.findById(id);
+			result.put("data", boardEntity);
+			result.put("authUserId", authentication.getPrincipal());
 		} catch (Exception e) {
 			e.printStackTrace();
 			r = false;
 		}
-		return r ? ResponseEntity.ok().body(boardEntity) : ResponseEntity.notFound().build();
+		return r ? ResponseEntity.ok().body(result) : ResponseEntity.notFound().build();
 	}
 
 	@ResponseBody
@@ -67,18 +74,6 @@ public class BoardController {
 					.message(r ? "글이 등록되었습니다." : "등록 에러.")
 					.build());
 	}
-
-	/*
-	@ExceptionHandler(RuntimeException.class)
-	public ResponseEntity<SimpleResponse> exception2() {
-		return ResponseEntity
-					.badRequest()
-					.body(SimpleResponse.builder()
-					.success(false)
-					.message("잘못된 요청입니다. 222")
-					.build());
-	}
-	*/
 
 	@PutMapping("update/{id}")
 	public ResponseEntity<SimpleResponse> boardupdate(@RequestBody BoardEntity board, @PathVariable("id") Long id) {
@@ -108,4 +103,16 @@ public class BoardController {
 					.message(r ? "글이 삭제되었습니다." : "삭제 에러.")
 					.build());
 	}
+	
+	/*
+	@ExceptionHandler(RuntimeException.class)
+	public ResponseEntity<SimpleResponse> exception2() {
+		return ResponseEntity
+					.badRequest()
+					.body(SimpleResponse.builder()
+					.success(false)
+					.message("잘못된 요청입니다. 222")
+					.build());
+	}
+	*/
 }

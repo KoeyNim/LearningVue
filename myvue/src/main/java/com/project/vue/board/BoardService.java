@@ -19,9 +19,7 @@ import com.project.vue.specification.SearchSpecification;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class BoardService {
@@ -31,34 +29,6 @@ public class BoardService {
 	private final FileRepository fileRepository;
 	
 	private final JPAQueryFactory queryFactory;
-
-	/*
-    public boolean save(BoardEntity board) {
-		try {
-			log.debug("## board: {}", board);
-			boardRepository.save(board);
-			return true;
-		} catch (ConstraintViolationException e) {
-			log.debug("## 1");
-			return false;
-		} catch (Exception e) {
-			log.debug("## 2");
-			return false;
-		}
-    	//return this.boardRepository.save(board) != null; // 변경해야됨
-    }*/
-
-//	@Transactional
-//    public void save(BoardEntity board, MultipartFile imgFile) throws Exception {
-//		log.debug("## board: {}", board);
-//		log.debug("## imgFile: {}", imgFile);
-//		if (imgFile != null) {
-//			FileEntity file = fileService.save(imgFile);
-//			board.setFileEntity(file);
-//			log.debug("## fileEntity: {}", board.getFileEntity());
-//		}
-//		boardRepository.save(board);
-//    }
 	
 	// 수정시간이 바뀌게되는 이슈로 인해 querydsl로 세부 조작
 	@Transactional
@@ -83,7 +53,6 @@ public class BoardService {
 				fileRepository.deleteById(findBoard.getFileEntity().getId()); // 조건에 모두 만족하는 파일 데이터를 삭제 (수정되어 필요없는 파일)
 			}
 		} else {
-			log.debug("Service id {}",SecurityContextHolder.getContext().getAuthentication().getName());
 			board.setUserId(SecurityContextHolder.getContext().getAuthentication().getName());
 		}
 		boardRepository.save(board);

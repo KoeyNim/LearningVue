@@ -1,18 +1,15 @@
 package com.project.vue.config.auth;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.stereotype.Component;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,11 +26,7 @@ public class WebAuthenticationFailureHandler implements AuthenticationFailureHan
 		log.debug("## AdminAuthenticationFailureHandler");
 		log.debug("## authentication exception: {}", exception.getMessage());
 
-		Map<String, Object> result = new HashMap<>();
-		result.put("success", false);
-		result.put("message", exception.getMessage());
-		response.getOutputStream().write(new ObjectMapper().writeValueAsBytes(result));
-		
+		response.sendError(HttpStatus.UNAUTHORIZED.value(), exception.getMessage());
 	}
 
 }
