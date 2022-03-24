@@ -27,7 +27,7 @@
 			<tr>
 				<th>No</th>
 				<th>제목</th>
-				<th>내용</th>
+				<!--<th>내용</th>-->
 				<th>작성자</th>
 				<th>작성일</th>
 				<th>조회수</th>
@@ -41,7 +41,7 @@
 				<tr v-for="(data, index) in result.content" @click="goRegOrDetail(data.id)">
 					<td class="efw500">{{result.totalElements - index - (result.pageable.pageNumber * result.pageable.pageSize)}}</td>
 					<td>{{data.title}}</td>
-					<td style="text-overflow: ellipsis; overflow: hidden">{{data.content}}</td>
+					<!--/**<td style="text-overflow: ellipsis; overflow: hidden">{{data.content.replace(/(<([^>]+)>)/ig,"")}}</td>**/-->
 					<td>{{data.userId}}</td>
 					<td>{{dayjs(data.registDate).format('YYYY.MM.DD HH:mm')}}</td>
 					<td class="efw500">{{data.count}}</td>

@@ -3,11 +3,15 @@ package com.project.vue.common;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import com.project.vue.board.BoardEntity;
+import com.project.vue.board.BoardService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +22,8 @@ import lombok.extern.slf4j.Slf4j;
 public class PathController {
 	
 	private final CookieCommon cookieCommon;
+	
+	private final BoardService boardService;
 
 	@GetMapping
 	public String home(Model model) {
@@ -48,8 +54,11 @@ public class PathController {
 	}
 	
 	@GetMapping("board/detail")
-	public String boardDetail(HttpServletResponse response, HttpServletRequest request, @RequestParam Long id) {
-		cookieCommon.readCountCookie(response, request, id);
+	public String boardDetail(HttpServletResponse response, HttpServletRequest request, Authentication authentication, @RequestParam Long id) {
+		BoardEntity board = boardService.findById(id);
+		if (!board.getUserId().equals(authentication.getPrincipal())) {
+			cookieCommon.readCountCookie(response, request, id);
+		}
 		return "board/board-detail";
 	}
 }

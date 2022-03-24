@@ -9,34 +9,45 @@ $().ready(() => {
         created() {
             this.fnLoad();
         },
+        mounted() {
+            const me = this;
+            $('#summernote').summernote({
+                height: 300,                  // 에디터 높이
+                minHeight: null,              // 최소 높이
+                maxHeight: null,              // 최대 높이
+                focus: true,                  // 에디터 로딩후 포커스를 맞출지 여부
+                lang: "ko-KR",                // 한글 설정
+                placeholder: '최대 2048자까지 쓸 수 있습니다',    //placeholder 설정
+                toolbar: [
+                    ['fontname', ['fontname']],
+                    ['fontsize', ['fontsize']],
+                    ['style', ['bold', 'italic', 'underline','strikethrough', 'clear']],
+                    ['color', ['forecolor']],
+                    ['table', ['table']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+                    ['height', ['height']],
+                    ['insert',['picture','link','video']],
+                ],
+                fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New','맑은 고딕','궁서','굴림체','굴림','돋움체','바탕체'],
+                fontSizes: ['8','9','10','11','12','14','16','18','20','22','24','28','30','36','50','72'],
+                
+                callbacks : {
+                onChange : function(contents) {
+                    me.result.content = contents
+                }
+            }
+            });
+            var markupStr = $('#summernote').summernote('code');
+            console.log(markupStr);
+            
+        },
         methods: {
             $fileSelect : function $fileSelect(){ 
                 this.imgFile = this.$refs.imgFile.files[0];
                 console.log(this.imgFile);
             },
             fnLoad() {
-                const me = this;
-                $('#summernote').summernote({
-                    height: 300,                  // 에디터 높이
-                    minHeight: null,              // 최소 높이
-                    maxHeight: null,              // 최대 높이
-                    focus: true,                  // 에디터 로딩후 포커스를 맞출지 여부
-                    lang: "ko-KR",                // 한글 설정
-                    placeholder: '최대 2048자까지 쓸 수 있습니다',    //placeholder 설정
-                    toolbar: [
-                        ['fontname', ['fontname']],
-                        ['fontsize', ['fontsize']],
-                        ['style', ['bold', 'italic', 'underline','strikethrough', 'clear']],
-                        ['color', ['forecolor']],
-                        ['table', ['table']],
-                        ['para', ['ul', 'ol', 'paragraph']],
-                        ['height', ['height']],
-                        ['insert',['picture','link','video']],
-                    ],
-                    fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New','맑은 고딕','궁서','굴림체','굴림','돋움체','바탕체'],
-                    fontSizes: ['8','9','10','11','12','14','16','18','20','22','24','28','30','36','50','72']
-                });
-                
+                const me = this; 
                 // insert or update
                 me.result.id = URLSearch.get('id');
                 if (!me.result.id) return;
@@ -57,6 +68,10 @@ $().ready(() => {
             fnSave() {
                 this.$validator.validateAll().then(success => {
                     if(success){
+                        if ($('#summernote').summernote('isEmpty')) {
+                            alert('내용을 입력해주세요.');
+                            return;
+                        }
                         const ex = !!this.result.id;
                         let result = Object.assign({}, this.result);
                         let fileData = '';
@@ -89,6 +104,7 @@ $().ready(() => {
                         if(fileData) {
                             result = Object.assign(this.result, {fileEntity : fileData});
                         }
+                        console.log(result);
                         $.ajax({
                             type: ex ? 'PUT' : 'POST',
                             url: API_VERSION + '/board' + (ex ? '/update/' + this.result.id : '/create'),

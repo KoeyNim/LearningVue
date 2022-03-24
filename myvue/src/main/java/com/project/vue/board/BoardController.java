@@ -62,9 +62,10 @@ public class BoardController {
 	@ResponseBody
 	@PostMapping("create")
 	public ResponseEntity<SimpleResponse> boardCreate(@RequestBody BoardEntity board) {
+		log.debug("##board {}",board);
 		boolean r = true;
 		try {
-			boardService.save(board);
+			boardService.save(board);;
 		} catch (Exception e) {
 			e.printStackTrace();
 			r = false;

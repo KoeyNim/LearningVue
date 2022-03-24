@@ -18,9 +18,8 @@
 		<span>{{ errors.first('title') }}</span>
 		<span class="form-label">내용​ *</span>
 		<div class="form-field">
-			<textarea class="form-txtarea lg" name="content" id="summernote" v-model="result.content" v-validate="'required'"></textarea>
+			<textarea name="content" id="summernote" v-model="result.content"></textarea>
 		</div>
-		<span>{{ errors.first('content') }}</span>
 		<div v-if="result.fileEntity">
 			<span class="form-label">파일</span>
 	        <div class="form-field">
