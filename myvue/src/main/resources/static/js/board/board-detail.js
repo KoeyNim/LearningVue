@@ -12,6 +12,7 @@ $(document).ready(function() {
         },
         methods: {
             fnLoad() {
+                console.log(location.origin);
                 const me = this;
                 me.result.id = URLSearch.get('id');
                 $.ajax(API_VERSION + '/board/find/' + me.result.id, {

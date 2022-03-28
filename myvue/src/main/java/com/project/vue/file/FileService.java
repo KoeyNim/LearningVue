@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.thymeleaf.util.StringUtils;
 
+import com.project.vue.common.Constants;
+
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -23,7 +25,7 @@ public class FileService {
 		String ext = "."+ StringUtils.substringAfter(imgFile.getOriginalFilename(), ".");
 		String fileNm = uuid + ext;
 		FileEntity file = new FileEntity();
-		String filePath = "D:/W/bin/temp/upload/";
+		String filePath = Constants.FILE_UPLOAD_PATH;
 		File fileUpload = new File(filePath + fileNm);
 		
 		file.setFileNm(fileNm);
