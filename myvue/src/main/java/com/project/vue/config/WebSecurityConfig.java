@@ -1,6 +1,5 @@
 package com.project.vue.config;
 
-import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -40,10 +39,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //    }
 
 	
-    // 정적 자원에 대해서는 Security 설정을 적용하지 않음.
+    // 정적 자원에 대해서는 Security 설정을 적용하지 않음. WebSecurity가 HttpSecurity 보다 우선순위 이다.
     @Override
-    public void configure(WebSecurity web) {
-        web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations());
+    public void configure(WebSecurity web) throws Exception {
+//    	web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations()); // 폴더명이 지정되어 있음.
+        web.ignoring().antMatchers("/static/**");
     }
 	
     @Override
@@ -60,18 +60,20 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //        	  .ignoringAntMatchers("/login", "/login/**", "/logout")
 //        	  .disable()
         .authorizeRequests()
-        	  .antMatchers(Constants.REQUEST_MAPPING_PREFIX+"/board/**").authenticated()
-	          .antMatchers("/board/**").authenticated() // board 요청에 대해서는 로그인을 요구
+//        	  .antMatchers(Constants.REQUEST_MAPPING_PREFIX+"/board/**").authenticated()
+//	          .antMatchers("/board/**").authenticated() // board 요청에 대해서는 로그인을 요구
 //	          .antMatchers("/admin/**").hasRole("ADMIN")
 //	          .antMatchers("/user/**").hasRole("USER")
-	          .anyRequest().permitAll() // 나머지 요청에 대해서는 로그인을 요구하지 않음.
+	          .antMatchers("/").permitAll() // 로그인을 요구하지 않음
+//	          .anyRequest().permitAll() // 나머지 요청에 대해서는 로그인을 요구하지 않음.
+	          .anyRequest().authenticated() // 모든 요청에 로그인을 요구
         
         // 로그인
 	    .and().formLogin()
 	          .loginPage("/login") // 로그인 페이지
 	          .loginProcessingUrl(Constants.REQUEST_MAPPING_PREFIX + "/login/security") // 로그인 검증 url
-              .usernameParameter("userId") // 검증시 가지고 갈 아이디
-              .passwordParameter("userPwd") // 검증시 가지고 갈 비밀번호
+              .usernameParameter("userId") // 검증시 가지고 갈 아이디 기본값 : username
+              .passwordParameter("userPwd") // 검증시 가지고 갈 비밀번호 기본값 : password
 	          .successHandler(authenticationSucessHandler) // 로그인 성공 핸들러
 	          .failureHandler(authenticationFailureHandler) // 로그인 실패 핸들러
 	          //.failureForwardUrl("/") failureHandler 보다 우선시 되므로 failureHandler를 사용하고 싶을 경우 사용하지 말것
@@ -90,7 +92,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         
         // 로그아웃
         http.logout()
-        	.logoutUrl("/logout")
+//        	.logoutUrl("/logout") // 로그아웃 url  기본값 : /logout
         	.logoutSuccessUrl("/login") // 로그아웃 성공 url
 //        	.logoutRequestMatcher(new AntPathRequestMatcher("/logout")) // 로그아웃 실행 주소
         	.clearAuthentication(true) // 로그아웃시 인증정보 삭제

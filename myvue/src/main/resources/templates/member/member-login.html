@@ -16,7 +16,7 @@
 			<div class="login-form-wrap">
 				<div class="login-form-row">
 					<label class="login-input id">
-						<input type="text" v-model="member.userId" name="userId" ref="userId" :maxlength="16" @keyup.enter="$refs.password.focus" autocomplete="off"
+						<input type="text" v-model="member.userId" name="userId" ref="userId" :maxlength="16" @keyup.enter="signIn" autocomplete="off"
 						:data-vv-as="$('#userId').text()" v-validate="'required|min:5|max:16'"/>
 						<span class="label on" id="userId">아이디</span>
 					</label>
@@ -32,7 +32,7 @@
 				</div>
 				<div class="pt30 login-form-row txt-rt">
 					<label class="form-check">
-						<input type="checkbox" /> <!--v-model="saveId"-->
+						<input type="checkbox" id="saveid" /> <!--v-model="saveId"-->
 						<span class="label">아이디 저장</span>
 					</label>
 				</div>

@@ -6,7 +6,19 @@ $().ready(() => {
             member:{}
         },        
         created() {
+            const me = this;
             this.fnLoad();
+            let saveid = localStorage.getItem("saveid");
+            if(saveid){
+                me.member.userId = saveid;
+            }
+        },
+        mounted() {
+            const me = this;
+            if(localStorage.getItem("saveid")){
+                $('#saveid').prop('checked', true);
+                $('.login-input.id>span').addClass('on');
+            }
         },
         methods: {
             fnLoad() {
@@ -16,8 +28,16 @@ $().ready(() => {
                 }
             },
             signIn() {
+                const me = this;
                 this.$validator.validateAll().then(success => {
                 if(success) {
+                    
+                if ($('#saveid').prop('checked')) {
+                    localStorage.setItem("saveid", me.member.userId);
+                } else {
+                    localStorage.removeItem('saveid');
+                }
+                
                 let form = new FormData();
                 form.append('userId', this.member.userId);
                 form.append('userPwd', this.member.userPwd);
