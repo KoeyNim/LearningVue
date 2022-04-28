@@ -10,13 +10,8 @@ DB : mysql 8.0.27
 
 spring starter project dependencies
 
-Spring boot DevTools
-Lombok
-Validation
-Spring Data JPA
-MyBatis Framework
-MySQL Driver
-Spring Security
-Spring Web
-thymeleaf
-commons-lang3
+Spring boot DevTools, Lombok
+Validation, Spring Data JPA
+MyBatis Framework, MySQL Driver
+Spring Security, Spring Web
+thymeleaf, commons-lang3
