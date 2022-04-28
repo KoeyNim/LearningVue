@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.project</groupId>
-	<artifactId>myvue</artifactId>
+	<artifactId>learn-vue</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>myvue</name>
+	<name>learn-vue</name>
 	<description>Vue Project</description>
 	<properties>
 		<java.version>11</java.version>
