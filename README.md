@@ -8,7 +8,7 @@ JAVA : JDK 11
 
 DB : mysql 8.0.27
 
-spring starter project dependencies
+# spring starter project dependencies
 
 Spring boot DevTools, Lombok
 
