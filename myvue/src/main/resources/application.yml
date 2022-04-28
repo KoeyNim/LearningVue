@@ -42,3 +42,6 @@ logging:
     org.hibernate.type.descriptor.sql.BasicBinder: trace # input bind
     # org.hibernate.type.descriptor.sql.BasicExtractor: trace # output bind
     com.project.vue: trace # 해당 패키지의 log 범위 (TRACE > DEBUG > INFO > WARN > ERROR > FATAL)
+site:
+  upload: D:/W/bin/temp/upload/
+  image: D:/W/bin/temp/image/

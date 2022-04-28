@@ -1,6 +1,5 @@
 package com.project.vue.file;
 
-import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -44,13 +43,12 @@ public class FileController {
 			String path = fileEntity.getFilePath() + fileEntity.getFileNm();
 			Path filePath = Paths.get(path); // 파일 Path 얻기
 			Resource resource = new InputStreamResource(Files.newInputStream(filePath)); // 파일 resource 얻기
-			
-			File file = new File(path);
+			String orgFileName = new String(fileEntity.getOrignFileNm().getBytes("UTF-8"), "ISO-8859-1");
 			String contentType = Files.probeContentType(filePath); // 타입 받아오기
 			
 			return ResponseEntity.ok()
 					// attachement = 로컬에 저장, filename 파일 이름
-					.header(HttpHeaders.CONTENT_DISPOSITION, "attachement; filename=\"" + file.getName() +"\"")
+					.header(HttpHeaders.CONTENT_DISPOSITION, "attachement; filename=\"" + orgFileName +"\"")
 					.header(HttpHeaders.CONTENT_TYPE, contentType) 
 					.body(resource);
 		} catch(Exception e) {

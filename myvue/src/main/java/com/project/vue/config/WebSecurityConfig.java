@@ -2,7 +2,7 @@ package com.project.vue.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -11,7 +11,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.project.vue.common.Constants;
 import com.project.vue.config.auth.WebAuthenticationFailureHandler;
-import com.project.vue.config.auth.WebAuthenticationProvider;
 import com.project.vue.config.auth.WebAuthenticationSucessHandler;
 
 import lombok.RequiredArgsConstructor;
@@ -27,7 +26,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	
 	private final WebAuthenticationFailureHandler authenticationFailureHandler;
 	
-	private final WebAuthenticationProvider authenticationProvider;
+//	private final WebAuthenticationProvider authenticationProvider;
 	
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
@@ -44,6 +43,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(WebSecurity web) throws Exception {
 //    	web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations()); // 폴더명이 지정되어 있음.
         web.ignoring().antMatchers("/static/**");
+        web.ignoring().antMatchers("/error"); // 작동하지 않음
     }
 	
     @Override
@@ -57,14 +57,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http
 //        .cors().disable() // cors 무력화
 //        .csrf() // csrf 무력화
-//        	  .ignoringAntMatchers("/login", "/login/**", "/logout")
-//        	  .disable()
+//        	  .ignoringAntMatchers("/login", "/login/**", "/logout") // csrf 예외처리
+//        	  .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()); //csrf 토큰자동생성
+//        	  .disable() //csrf 미적용
         .authorizeRequests()
 //        	  .antMatchers(Constants.REQUEST_MAPPING_PREFIX+"/board/**").authenticated()
 //	          .antMatchers("/board/**").authenticated() // board 요청에 대해서는 로그인을 요구
 //	          .antMatchers("/admin/**").hasRole("ADMIN")
 //	          .antMatchers("/user/**").hasRole("USER")
-	          .antMatchers("/").permitAll() // 로그인을 요구하지 않음
+	          .antMatchers(HttpMethod.GET,"/").permitAll() // 로그인을 요구하지 않음
+	          .antMatchers(HttpMethod.GET,"/signup").permitAll() 
+	          .antMatchers(Constants.REQUEST_MAPPING_PREFIX+"/member/signup").permitAll()
 //	          .anyRequest().permitAll() // 나머지 요청에 대해서는 로그인을 요구하지 않음.
 	          .anyRequest().authenticated() // 모든 요청에 로그인을 요구
         
@@ -99,10 +102,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         	.invalidateHttpSession(true).deleteCookies("JSESSIONID"); // 로그아웃 시 세션 삭제, 쿠키 제거
     }
     
-    // 사용자 정보 검증 Provider Method
-    @Override
-    public void configure(AuthenticationManagerBuilder auth) throws Exception {
-    	auth.authenticationProvider(authenticationProvider);
-    }
+    // 사용자 정보 검증 Provider Method 자동으로 잡아주므로 사용할 필요가 없는 것 같음.
+//    @Override
+//    public void configure(AuthenticationManagerBuilder auth) throws Exception {
+//    	auth.authenticationProvider(authenticationProvider);
+//    }
 
 }

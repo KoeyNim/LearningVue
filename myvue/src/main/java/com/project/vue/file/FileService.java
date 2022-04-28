@@ -5,11 +5,9 @@ import java.util.UUID;
 
 import javax.transaction.Transactional;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import org.thymeleaf.util.StringUtils;
-
-import com.project.vue.common.Constants;
 
 import lombok.RequiredArgsConstructor;
 
@@ -18,25 +16,28 @@ import lombok.RequiredArgsConstructor;
 public class FileService {
 	
 	private final FileRepository fileRepository;
+	
+	// apllication.yml 에서 경로 설정
+	@Value("${site.upload}")
+	private String FILE_UPLOAD_PATH;
 
 	@Transactional
     public FileEntity save(MultipartFile imgFile) throws Exception {
 		String uuid = UUID.randomUUID().toString().replaceAll("-", "");
-		String ext = "."+ StringUtils.substringAfter(imgFile.getOriginalFilename(), ".");
-		String fileNm = uuid + ext;
-		FileEntity file = new FileEntity();
-		String filePath = Constants.FILE_UPLOAD_PATH;
-		File fileUpload = new File(filePath + fileNm);
+//		String ext = "."+ StringUtils.substringAfter(imgFile.getOriginalFilename(), "."); // 파일 이름에서 확장자 추출
+		FileEntity fileEntity = new FileEntity();
+		String filePath = FILE_UPLOAD_PATH;
+		File fileUpload = new File(filePath + uuid);
 		
-		file.setFileNm(fileNm);
-		file.setFileSize(imgFile.getSize());
-		file.setFilePath(filePath);
-		file.setContentType(imgFile.getContentType());
-		file.setOrignFileNm(imgFile.getOriginalFilename());
+		fileEntity.setFileNm(uuid);
+		fileEntity.setFileSize(imgFile.getSize());
+		fileEntity.setFilePath(filePath);
+		fileEntity.setContentType(imgFile.getContentType());
+		fileEntity.setOrignFileNm(imgFile.getOriginalFilename());
 		
 		imgFile.transferTo(fileUpload);
-		fileRepository.save(file);
-		return file;
+		fileRepository.save(fileEntity);
+		return fileEntity;
     }
 	
 	public FileEntity findById(Long id) {
