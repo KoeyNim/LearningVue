@@ -1,4 +1,4 @@
-# LearningVue
+# learn-vue
 Vue, Spring Boot기반 CRUD 게시판
 
 # 환경설정
