@@ -71,6 +71,16 @@ html {
     background:#f8f8f8 url('../images/common/page_next.png') no-repeat center center;
     margin-left:7px;
 }
+
+.page_nation .block_prev {
+    background:#f8f8f8 url('../images/common/page_block_prev.png') no-repeat center center;
+    margin-right:7px;
+}
+.page_nation .block_next {
+    background:#f8f8f8 url('../images/common/page_block_next.png') no-repeat center center;
+    margin-left:7px;
+}
+
 .page_nation a.active {
     background-color:#42454c;
     color:#fff;

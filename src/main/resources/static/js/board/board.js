@@ -27,7 +27,21 @@ $(document).ready(function() {
             },
             fnGetList(idx) {
                 const me = this;
-                me.pageIndex = idx || 0;
+                
+                if (!!idx) {
+                    if (idx < 0) {
+                        me.pageIndex = 0;
+                    } else {
+                        me.pageIndex = idx;
+                    }
+                } else {
+                    me.pageIndex = 0;
+                }
+                
+                if (me.result.totalPages > 0 && me.pageIndex >= me.result.totalPages) {
+                    me.pageIndex = me.result.totalPages -1;
+                }
+                
                 $.ajax({
                     type: 'GET',
                     url: API_VERSION + '/board' + '?pageIndex=' + me.pageIndex + 
