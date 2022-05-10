@@ -44,6 +44,9 @@ $(document).ready(function() {
                     me.setPagination();
                 }).fail(() => alert('잘못된 요청입니다.') );
             },
+            downloadExcel() {
+                location.href= API_VERSION + '/board/excel';
+            },
             setPagination: function() {
                 const me = this;
                 let totalpages = me.result.totalPages;

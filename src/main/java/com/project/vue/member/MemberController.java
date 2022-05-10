@@ -10,9 +10,7 @@ import com.project.vue.common.Constants;
 import com.project.vue.common.SimpleResponse;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @Controller
 @RequiredArgsConstructor
 public class MemberController {

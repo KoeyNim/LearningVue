@@ -66,11 +66,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //	          .antMatchers("/admin/**").hasRole("ADMIN")
 //	          .antMatchers("/user/**").hasRole("USER")
 	          .antMatchers(HttpMethod.GET,"/").permitAll() // 로그인을 요구하지 않음
-	          .antMatchers(HttpMethod.GET,"/signup").permitAll() 
+	          .antMatchers(HttpMethod.GET,"/signup").permitAll()
 	          .antMatchers(Constants.REQUEST_MAPPING_PREFIX+"/member/signup").permitAll()
 //	          .anyRequest().permitAll() // 나머지 요청에 대해서는 로그인을 요구하지 않음.
 	          .anyRequest().authenticated() // 모든 요청에 로그인을 요구
-        
+
         // 로그인
 	    .and().formLogin()
 	          .loginPage("/login") // 로그인 페이지

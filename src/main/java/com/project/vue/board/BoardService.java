@@ -1,6 +1,7 @@
 package com.project.vue.board;
 
 import java.io.File;
+import java.util.List;
 
 import javax.transaction.Transactional;
 
@@ -64,6 +65,10 @@ public class BoardService {
     	
 		return boardRepository.findAll(
 				SearchSpecification.searchBoardSpecification(srchKey, srchVal), pageRequest);
+    }
+    
+    public List<BoardEntity> findAll() {
+		return boardRepository.findAll();
     }
     
     public BoardEntity findById(Long id) {
