@@ -121,7 +121,7 @@ public class BoardController {
 	public ResponseEntity<ByteArrayResource> excel() {
 		try {
 			String sheetName = "게시판";
-	        List<String> headerList = Arrays.asList("No", "제목", "내용", "작성자", "조회수", "FileNo");   
+	        List<String> headerList = Arrays.asList("No", "제목", "내용", "작성자", "조회수");   
 	        List<String> colList = Utils.getColList(BoardEntity.class);
 	        List<BoardEntity> dataList = boardService.findAll();
 	        

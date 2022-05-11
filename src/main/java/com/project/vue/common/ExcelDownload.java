@@ -5,6 +5,7 @@ import java.lang.reflect.Method;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.xssf.streaming.SXSSFCell;
 import org.apache.poi.xssf.streaming.SXSSFRow;
@@ -85,26 +86,27 @@ public class ExcelDownload {
 			log.debug("Type {}", method.getReturnType());
 			
 			// 값 삽입이 우선시 되어야 타입이 적용 됨.
-			if (String.class.equals(method.getReturnType())){
-				cell.setCellValue(methodValue.toString());
-//				cell.setCellType(CellType.STRING);
-			}
-			if (Long.class.equals(method.getReturnType())){
-				cell.setCellValue((Long)methodValue);
-//				cell.setCellType(CellType.NUMERIC);
-			}
-			if (Integer.class.equals(method.getReturnType())){
-				cell.setCellValue((Integer)methodValue);
-//				cell.setCellType(CellType.NUMERIC);
-			}
-			if (LocalDate.class.equals(method.getReturnType())){
-				cell.setCellValue((LocalDate)methodValue);
-//				cell.setCellType(CellType.NUMERIC);
-			}
-//			if (FileEntity.class.equals(method.getReturnType())){
-//				cell.setCellValue((String)methodValue);
-////				cell.setCellType(CellType.NUMERIC);
-//			}
+			if (ObjectUtils.isNotEmpty(methodValue)) {
+				if (String.class.equals(method.getReturnType())) {
+					cell.setCellValue(methodValue.toString());
+					return;
+	//				cell.setCellType(CellType.STRING);
+				}
+				if (Long.class.equals(method.getReturnType())) {
+					cell.setCellValue((Long)methodValue);
+					return;
+	//				cell.setCellType(CellType.NUMERIC);
+				}
+				if (Integer.class.equals(method.getReturnType())) {
+					cell.setCellValue((Integer)methodValue);
+					return;
+				}
+				if (LocalDate.class.equals(method.getReturnType())) {
+					cell.setCellValue((LocalDate)methodValue);
+					return;
+				}
+			return;
+		} 
 			
 		} catch (Exception e) {
 			e.printStackTrace();
