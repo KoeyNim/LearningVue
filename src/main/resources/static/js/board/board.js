@@ -12,7 +12,7 @@ $(document).ready(function() {
             srchOptions: [
                 {text: '전체', value: ''},
                 {text: '제목', value: 'title'},
-                {text: '내용', value: 'content'},
+                {text: '작성자', value: 'userId'},
             ],
             srchKey:'',
             srchVal:''
@@ -28,17 +28,17 @@ $(document).ready(function() {
             fnGetList(idx) {
                 const me = this;
                 
-                if (!!idx) {
-                    if (idx < 0) {
-                        me.pageIndex = 0;
-                    } else {
-                        me.pageIndex = idx;
-                    }
-                } else {
+                if (!idx) {
                     me.pageIndex = 0;
+                } else {
+                    me.pageIndex = idx;
                 }
                 
-                if (me.result.totalPages > 0 && me.pageIndex >= me.result.totalPages) {
+                if (!!idx && idx < 0) { // 요청 페이지 번호가 존재하며 최소값 보다 낮을 경우 0으로 초기화
+                    me.pageIndex = 0;
+                } 
+                
+                if (me.result.totalPages > 0 && me.pageIndex >= me.result.totalPages) { // 요청 페이지 번호가 total값 보다 높을 경우 total값으로 초기화
                     me.pageIndex = me.result.totalPages -1;
                 }
                 

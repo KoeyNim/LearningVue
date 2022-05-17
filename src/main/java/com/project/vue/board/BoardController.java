@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.project.vue.common.Constants;
 import com.project.vue.common.ExcelDownload;
@@ -45,7 +44,6 @@ public class BoardController {
 	
 	private final ExcelDownload excelDownload;
 	
-	@ResponseBody
 	@GetMapping
 	public ResponseEntity<Page<BoardEntity>> boardList(
 			@RequestParam int pageIndex, 
@@ -56,14 +54,13 @@ public class BoardController {
 	}
 	
 	@GetMapping("find/{id}")
-	public ResponseEntity<Map<String, Object>> boardFindById(@PathVariable("id") Long id, Authentication authentication) {
-		BoardEntity boardEntity = null;
+	public ResponseEntity<Map<String, Object>> boardFindById(@PathVariable("id") Long id, Authentication auth) {
 		Map<String, Object> result = new HashMap<>();
 		boolean r = true;
 		try {
-			boardEntity = boardService.findById(id);
+			BoardEntity boardEntity = boardService.findById(id);
 			result.put("data", boardEntity);
-			result.put("authUserId", authentication.getPrincipal());
+			result.put("authUserId", auth.getPrincipal());
 		} catch (Exception e) {
 			e.printStackTrace();
 			r = false;
@@ -71,7 +68,6 @@ public class BoardController {
 		return r ? ResponseEntity.ok().body(result) : ResponseEntity.notFound().build();
 	}
 
-	@ResponseBody
 	@PostMapping("create")
 	public ResponseEntity<SimpleResponse> boardCreate(@RequestBody BoardEntity board) {
 		log.debug("##board {}",board);

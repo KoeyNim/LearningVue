@@ -14,11 +14,11 @@ public class SearchSpecification {
 			if (StringUtils.isBlank(srchKey))
 				return builder.or(
 						builder.like(root.get("title") , "%" + srchVal + "%"),
-						builder.like(root.get("content")  , "%" + srchVal + "%"));
+						builder.like(root.get("userId")  , "%" + srchVal + "%"));
 			if ("title".equals(srchKey))
 				return builder.like(root.get("title"), "%" + srchVal + "%");
-			if ("content".equals(srchKey))
-				return builder.like(root.get("content"), "%" + srchVal + "%");
+			if ("userId".equals(srchKey))
+				return builder.like(root.get("userId"), "%" + srchVal + "%");
 			return builder.conjunction();
 		});
 	}

@@ -3,6 +3,7 @@ package com.project.vue.common;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -32,10 +33,8 @@ public class PathController {
 	}
 	
 	@GetMapping("login")
-	public String signIn() {
-		return SecurityContextHolder.getContext().getAuthentication().getName().equals("anonymousUser") 
-				? "member/member-login" 
-				: "redirect:board";
+	public String signIn(Authentication auth) {
+		return ObjectUtils.isEmpty(auth) ? "member/member-login" : "redirect:board";
 	}
 	
 	@GetMapping("signup")
