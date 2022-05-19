@@ -14,10 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.project.vue.common.Constants;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-
-@Slf4j
 @Controller
 @RequestMapping(Constants.REQUEST_MAPPING_PREFIX)
 @RequiredArgsConstructor
@@ -43,7 +40,6 @@ public class imageController {
 		try {
 			ImageEntity imageEntity = imageService.findById(id);
 			Resource resource = resourceLoader.getResource("file:" + imageEntity.getFilePath() + imageEntity.getFileNm());
-			log.debug("resource @@@@ {}",resource);
 			return ResponseEntity.ok().body(resource);
 		} catch (Exception e) {
 			e.printStackTrace();
