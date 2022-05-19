@@ -6,7 +6,9 @@ import lombok.Data;
 @Data
 @Builder
 public class SimpleResponse {
-    private boolean success;
-    private int statusCode;
+	@Builder.Default
+    private boolean success = true;
+    @Builder.Default
+    private int statusCode = 200;
     private String message;
 }

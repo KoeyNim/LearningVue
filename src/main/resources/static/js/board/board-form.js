@@ -115,12 +115,10 @@ $().ready(() => {
                                     xhr.setRequestHeader(header, token);
                                 }
                             }).done(function(response) {
-                                console.log(response);
                                 fileData = response;
                             }).fail((response) => {
-                                alert('xx', response.responseJSON);
-                                console.log(arguments);
-                                console.log(response);
+                                alert('파일 업로드 오류');
+                                console.log(response.responseJSON.message);
                             });
                         }
                         if(fileData) {
@@ -139,18 +137,17 @@ $().ready(() => {
                             }
                         }).done(function(response) {
                             alert(response.message);
-                            console.log(response);
                             location.href = '/board';
                         }).fail((response) => {
-                            alert('xx', response.responseJSON);
-                            console.log(arguments);
-                            console.log(response);
+                            alert(ex ? '게시글 수정 오류' : '게시글 작성 오류');
+                            console.log(response.responseJSON.message);
                         });
                     }
                 });
             },
-            fnCancel(id) {
-                id ? location.href = '/board/detail?id=' + id : location.href = '/board';
+            fnCancel() {
+                const ex = !!this.result.id;
+                ex ? location.href = '/board/detail?id=' + this.result.id : location.href = '/board';
             }
         }
     })

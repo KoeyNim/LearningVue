@@ -8,6 +8,7 @@ import javax.crypto.spec.SecretKeySpec;
 import javax.persistence.AttributeConverter;
 import javax.persistence.Convert;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.codec.Hex;
 
@@ -24,6 +25,9 @@ public class StringCryptoConverter implements AttributeConverter<String, String>
 
 	@Override
 	public String convertToDatabaseColumn(String attribute) {
+		if (StringUtils.isBlank(attribute)) {
+			throw new NullPointerException();
+		}
 		Key key = new SecretKeySpec(Secret_KEY.getBytes(), "AES");
 		try {
 			Cipher cipher = Cipher.getInstance(ALGORITHM);
@@ -32,7 +36,7 @@ public class StringCryptoConverter implements AttributeConverter<String, String>
 //			return new String(Base64Utils.encode(cipher.doFinal(attribute.getBytes("UTF-8"))));
 		} catch (Exception e) {
 			throw new RuntimeException(e);
-		}
+		} 
 	}
 
 	@Override

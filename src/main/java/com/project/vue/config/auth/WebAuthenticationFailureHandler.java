@@ -26,7 +26,7 @@ public class WebAuthenticationFailureHandler implements AuthenticationFailureHan
 		log.debug("## AdminAuthenticationFailureHandler");
 		log.debug("## authentication exception: {}", exception.getMessage());
 
-		response.sendError(HttpStatus.UNAUTHORIZED.value(), exception.getMessage());
+		response.sendError(HttpStatus.BAD_REQUEST.value(), exception.getMessage());
 	}
 
 }

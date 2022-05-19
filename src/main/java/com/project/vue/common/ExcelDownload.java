@@ -31,10 +31,10 @@ public class ExcelDownload {
 	protected SXSSFSheet sheet;
 	protected int rowNo;
 
-	public ByteArrayOutputStream buildExcelDocumentSXSSF(List<String> headerList, 
+	public ByteArrayOutputStream buildExcelDocumentSXSSF(String sheetName, 
+												 List<String> headerList, 
 										         List<String> colList, 
-										         List<?> dataList, 
-										         String sheetName) throws Exception {
+										         List<?> dataList) throws Exception {
 		rowNo = 0;
 		wb = new SXSSFWorkbook();
 		sheet = wb.createSheet(sheetName);
@@ -91,8 +91,8 @@ public class ExcelDownload {
 			Method method = data.getClass().getMethod("get" + colList);
 			// method 실행
 			Object methodValue = method.invoke(data);
-			String methodTypeStr = method.getReturnType().toString();
-			String methodType = methodTypeStr.substring(methodTypeStr.lastIndexOf(".") + 1);
+			String methodReturnTypeStr = method.getReturnType().toString();
+			String methodType = methodReturnTypeStr.substring(methodReturnTypeStr.lastIndexOf(".") + 1);
 			// 값 삽입이 우선시 되어야 타입이 적용 됨.
 			if (ObjectUtils.isNotEmpty(methodValue)) {
 				switch (methodType) {

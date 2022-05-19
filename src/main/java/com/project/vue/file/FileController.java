@@ -31,11 +31,10 @@ public class FileController {
 	
 	@PostMapping("fileupload")
 	public ResponseEntity<FileEntity> upload(MultipartFile imgFile) throws Exception {
-		log.debug("@@{}",imgFile);
+		log.debug("fileupload file : {}",imgFile);
 		return ResponseEntity.ok(fileService.save(imgFile));
-
 	}
-	
+
 	@GetMapping("download/{id}")
 	public ResponseEntity<Resource> download(@PathVariable Long id) {
 		try {
@@ -55,5 +54,4 @@ public class FileController {
 			return new ResponseEntity<Resource>(HttpStatus.CONFLICT);
 		}
 	}
-	
 }

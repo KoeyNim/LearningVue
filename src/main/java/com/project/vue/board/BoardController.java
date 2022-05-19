@@ -15,7 +15,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,7 +34,6 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Controller
-@ControllerAdvice
 @RequestMapping(Constants.REQUEST_MAPPING_PREFIX+"/board")
 @RequiredArgsConstructor
 public class BoardController {
@@ -56,61 +54,31 @@ public class BoardController {
 	@GetMapping("find/{id}")
 	public ResponseEntity<Map<String, Object>> boardFindById(@PathVariable("id") Long id, Authentication auth) {
 		Map<String, Object> result = new HashMap<>();
-		boolean r = true;
-		try {
-			BoardEntity boardEntity = boardService.findById(id);
-			result.put("data", boardEntity);
-			result.put("authUserId", auth.getPrincipal());
-		} catch (Exception e) {
-			e.printStackTrace();
-			r = false;
-		}
-		return r ? ResponseEntity.ok().body(result) : ResponseEntity.notFound().build();
+		BoardEntity boardEntity = boardService.findById(id);
+		result.put("data", boardEntity);
+		result.put("authUserId", auth.getPrincipal());
+		return ResponseEntity.ok().body(result);
 	}
 
 	@PostMapping("create")
 	public ResponseEntity<SimpleResponse> boardCreate(@RequestBody BoardEntity board) {
-		log.debug("##board {}",board);
-		boolean r = true;
-		try {
-			boardService.save(board);;
-		} catch (Exception e) {
-			e.printStackTrace();
-			r = false;
-		}
-		return ResponseEntity.ok(SimpleResponse.builder()
-					.success(r)
-					.message(r ? "글이 등록되었습니다." : "등록 에러.")
-					.build());
+		log.debug("create board : {}",board);
+		boardService.save(board);
+		return ResponseEntity.ok(SimpleResponse.builder().message("글이 등록되었습니다.").build());
 	}
 
 	@PutMapping("update/{id}")
-	public ResponseEntity<SimpleResponse> boardupdate(@RequestBody BoardEntity board, @PathVariable("id") Long id) {
-		boolean r = true;
-		try {
-			boardService.save(board);
-		} catch (Exception e) {
-			e.printStackTrace();
-			r = false;
-		}
-		return ResponseEntity.ok(SimpleResponse.builder()
-					.success(r)
-					.message(r ? "글이 수정되었습니다." : "수정 에러.")
-					.build());
+	public ResponseEntity<SimpleResponse> boardupdate(@RequestBody BoardEntity board) {
+		log.debug("update board : {}",board);
+		boardService.save(board);
+		return ResponseEntity.ok(SimpleResponse.builder().message("글이 수정되었습니다.").build());
 	}
 	
 	@DeleteMapping("delete/{id}")
 	public ResponseEntity<SimpleResponse> boardDelete(@PathVariable("id") Long id) {
-		boolean r = true;
-		try {
-			boardService.deleteById(id);
-		} catch (Exception e) {
-			r = false;
-		}
-		return ResponseEntity.ok(SimpleResponse.builder()
-					.success(r)
-					.message(r ? "글이 삭제되었습니다." : "삭제 에러.")
-					.build());
+		log.debug("delete board id : {}",id);
+		boardService.deleteById(id);
+		return ResponseEntity.ok(SimpleResponse.builder().message("글이 삭제되었습니다.").build());
 	}
 	
 	@GetMapping("excel")
@@ -121,7 +89,7 @@ public class BoardController {
 	        List<String> colList = Utils.getColList(BoardEntity.class);
 	        List<BoardEntity> dataList = boardService.findAll();
 	        
-	        ByteArrayOutputStream stream = excelDownload.buildExcelDocumentSXSSF(headerList, colList, dataList, sheetName);
+	        ByteArrayOutputStream stream = excelDownload.buildExcelDocumentSXSSF(sheetName, headerList, colList, dataList);
  
         	String fileName = sheetName+"_"+LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy.MM.dd"))+".xlsx";
 			String orgFileName = new String(fileName.getBytes("UTF-8"), "ISO-8859-1");
@@ -135,16 +103,4 @@ public class BoardController {
 			return new ResponseEntity<ByteArrayResource>(HttpStatus.CONFLICT);
 		}
 	}
-	
-	/*
-	@ExceptionHandler(RuntimeException.class)
-	public ResponseEntity<SimpleResponse> exception2() {
-		return ResponseEntity
-					.badRequest()
-					.body(SimpleResponse.builder()
-					.success(false)
-					.message("잘못된 요청입니다. 222")
-					.build());
-	}
-	*/
 }

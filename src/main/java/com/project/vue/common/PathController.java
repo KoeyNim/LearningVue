@@ -15,9 +15,7 @@ import com.project.vue.board.BoardEntity;
 import com.project.vue.board.BoardService;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @Controller
 @RequiredArgsConstructor
 public class PathController {
@@ -38,8 +36,8 @@ public class PathController {
 	}
 	
 	@GetMapping("signup")
-	public String signUp() {
-		return "member/member-signup";
+	public String signUp(Authentication auth) {
+		return ObjectUtils.isEmpty(auth) ? "member/member-signup" : "redirect:board";
 	}
 
 	@GetMapping("board")

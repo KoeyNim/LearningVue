@@ -47,12 +47,10 @@ $(document).ready(function() {
                     }
                 }).done(function(response) {
                     alert(response.message);
-                    console.log(response);
                     location.href = '/board';
                 }).fail((response) => {
-                    alert('xx', response.responseJSON);
-                    console.log(arguments);
-                    console.log(response);
+                    alert('게시글 삭제 오류');
+                    console.log(response.responseJSON.message);
                 });
             },
             fnList() {

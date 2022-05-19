@@ -20,16 +20,7 @@ public class MemberController {
 	@ResponseBody
 	@PostMapping(Constants.REQUEST_MAPPING_PREFIX+"/member/signup")
 	public ResponseEntity<SimpleResponse> signUp(@RequestBody MemberEntity member) {
-		boolean r = true;
-		try {
-			memberService.save(member);
-		} catch (Exception e) {
-			e.printStackTrace();
-			r = false;
-		}
-		return ResponseEntity.ok(SimpleResponse.builder()
-					.success(r)
-					.message(r ? "회원가입이 완료되었습니다." : "회원가입에 실패하였습니다.")
-					.build());
+		memberService.save(member);
+		return ResponseEntity.ok(SimpleResponse.builder().message("회원가입이 완료되었습니다.").build());
 	}
 }

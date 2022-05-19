@@ -13,7 +13,6 @@ $(document).ready(function() {
                         var header = $("meta[name='_csrf_header']").attr("content");
                         axios.post(API_VERSION + '/member/signup', this.member, {headers: {[header]: token}})
                         .then(response => {
-                            console.log(response.data);
                             alert(response.data.message);
                             location.href = '/';
                         })
