@@ -46,7 +46,5 @@ public class Scheduler {
 		} else {
 			log.info("Garbage file is not exists.");
 		}
-				
 	}
-
 }

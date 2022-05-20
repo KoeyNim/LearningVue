@@ -9,6 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 
@@ -46,5 +47,8 @@ public class BoardEntity extends TimeEntity {
 	@OneToOne(cascade = CascadeType.REMOVE) // 게시글 삭제 시 파일 데이터도 같이 삭제
 	@JoinColumn (name = "fileId")
 	private FileEntity fileEntity;
+	
+	@Transient
+	private Object authUserId;
 
 }

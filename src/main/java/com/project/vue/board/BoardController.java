@@ -4,9 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.data.domain.Page;
@@ -52,12 +50,8 @@ public class BoardController {
 	}
 	
 	@GetMapping("find/{id}")
-	public ResponseEntity<Map<String, Object>> boardFindById(@PathVariable("id") Long id, Authentication auth) {
-		Map<String, Object> result = new HashMap<>();
-		BoardEntity boardEntity = boardService.findById(id);
-		result.put("data", boardEntity);
-		result.put("authUserId", auth.getPrincipal());
-		return ResponseEntity.ok().body(result);
+	public ResponseEntity<BoardEntity> boardFindById(@PathVariable("id") Long id, Authentication auth) {
+		return ResponseEntity.ok(boardService.findById(id, auth));
 	}
 
 	@PostMapping("create")
@@ -68,7 +62,7 @@ public class BoardController {
 	}
 
 	@PutMapping("update/{id}")
-	public ResponseEntity<SimpleResponse> boardupdate(@RequestBody BoardEntity board) {
+	public ResponseEntity<SimpleResponse> boardUpdate(@RequestBody BoardEntity board) {
 		log.debug("update board : {}",board);
 		boardService.save(board);
 		return ResponseEntity.ok(SimpleResponse.builder().message("글이 수정되었습니다.").build());
