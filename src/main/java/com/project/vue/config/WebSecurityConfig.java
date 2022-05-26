@@ -8,6 +8,9 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.project.vue.common.Constants;
 import com.project.vue.config.auth.WebAuthenticationFailureHandler;
@@ -36,6 +39,20 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //    @Bean public ServletListenerRegistrationBean<HttpSessionEventPublisher> httpSessionEventPublisher() { 
 //    	return new ServletListenerRegistrationBean<HttpSessionEventPublisher>(new HttpSessionEventPublisher()); 
 //    }
+    
+    // CORS 허용 적용 (응답 서버에서만 설정)
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
+        config.addAllowedOrigin("http://localhost:3000"); // CORS 허용 요청 url
+        config.addAllowedMethod("*"); // 허용 Method
+        config.addAllowedHeader("*"); // 헤더
+        config.setAllowCredentials(true);
+        config.setMaxAge(3600L); // CORS 허용 후 유지시간
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return source;
+    }
 
 	
     // 정적 자원에 대해서는 Security 설정을 적용하지 않음. WebSecurity가 HttpSecurity 보다 우선순위 이다.
@@ -52,7 +69,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //    	http.headers(headers -> headers.cacheControl(cache -> cache.disable()));
     	
     	// 기본 Login Form 제거
-    	http.httpBasic().disable();
+    	http.httpBasic().disable()
+    	.cors().configurationSource(corsConfigurationSource()); // CORS 설정
     	// 접근 권한
         http
 //        .cors().disable() // cors 무력화
@@ -66,6 +84,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //	          .antMatchers("/admin/**").hasRole("ADMIN")
 //	          .antMatchers("/user/**").hasRole("USER")
 	          .antMatchers(HttpMethod.GET,"/").permitAll() // 로그인을 요구하지 않음
+        	  .antMatchers(HttpMethod.GET,"/api/**").permitAll()
 	          .antMatchers(HttpMethod.GET,"/signup").permitAll()
 	          .antMatchers(Constants.REQUEST_MAPPING_PREFIX+"/member/signup").permitAll()
 //	          .anyRequest().permitAll() // 나머지 요청에 대해서는 로그인을 요구하지 않음.
@@ -107,5 +126,4 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //    public void configure(AuthenticationManagerBuilder auth) throws Exception {
 //    	auth.authenticationProvider(authenticationProvider);
 //    }
-
 }

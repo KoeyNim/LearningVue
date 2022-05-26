@@ -27,13 +27,13 @@ public class imageController {
 	@PostMapping("imageupload")
 	public ResponseEntity<String> upload(@RequestParam("image") MultipartFile image) throws Exception {
 		ImageEntity imageEntity = imageService.save(image);
-		return ResponseEntity.ok().body(Constants.REQUEST_MAPPING_PREFIX + "/image/" + imageEntity.getId());
+		return ResponseEntity.ok(Constants.REQUEST_MAPPING_PREFIX + "/image/" + imageEntity.getId());
 	}
 	
 	@GetMapping("image/{id}")
 	public ResponseEntity<Resource> findImage(@PathVariable Long id) throws Exception {
 		ImageEntity imageEntity = imageService.findById(id);
 		Resource resource = resourceLoader.getResource("file:" + imageEntity.getFilePath() + imageEntity.getFileNm());
-		return ResponseEntity.ok().body(resource);
+		return ResponseEntity.ok(resource);
 	}
 }
