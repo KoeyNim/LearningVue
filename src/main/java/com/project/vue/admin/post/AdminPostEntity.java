@@ -1,4 +1,4 @@
-package com.project.vue.admin.board;
+package com.project.vue.admin.post;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -23,7 +23,7 @@ import lombok.EqualsAndHashCode;
 @Entity
 @EqualsAndHashCode(callSuper=true)
 @Table(name = "board")
-public class AdminBoardEntity extends TimeEntity {
+public class AdminPostEntity extends TimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

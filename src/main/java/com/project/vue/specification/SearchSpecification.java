@@ -3,7 +3,7 @@ package com.project.vue.specification;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.jpa.domain.Specification;
 
-import com.project.vue.admin.board.AdminBoardEntity;
+import com.project.vue.admin.post.AdminPostEntity;
 import com.project.vue.board.BoardEntity;
 
 public class SearchSpecification {
@@ -24,8 +24,8 @@ public class SearchSpecification {
 		});
 	}
 	
-	public static Specification<AdminBoardEntity> searchAdminBoardSpecification(String srchKey, String srchVal) {
-		return Specification.<AdminBoardEntity>where((root, query, builder) -> {
+	public static Specification<AdminPostEntity> searchAdminPostSpecification(String srchKey, String srchVal) {
+		return Specification.<AdminPostEntity>where((root, query, builder) -> {
 			if (StringUtils.isBlank(srchVal))
 				return builder.conjunction();
 			if (StringUtils.isBlank(srchKey))

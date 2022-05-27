@@ -1,4 +1,4 @@
-package com.project.vue.admin.board;
+package com.project.vue.admin.post;
 
 import java.io.ByteArrayOutputStream;
 import java.time.LocalDate;
@@ -30,48 +30,56 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Controller
-@RequestMapping("api")
+@RequestMapping("api/posts")
 @RequiredArgsConstructor
-public class AdminBoardController {
+public class AdminPostController {
 	
-	private final AdminBoardService boardService;
+	private final AdminPostService adminPostService;
 	
 	private final ExcelDownload excelDownload;
 	
-	@GetMapping("posts")
-	public ResponseEntity<Page<AdminBoardEntity>> boardList(
+	@GetMapping("")
+	public ResponseEntity<Page<AdminPostEntity>> postList(
 			@RequestParam int pageIndex, 
 			@RequestParam int pageSize,
 			@RequestParam(required = false) String sortKey,
 			@RequestParam(required = false) String order,
 			@RequestParam(required = false) String srchKey,
 			@RequestParam(required = false) String srchVal) {
-		return ResponseEntity.ok(boardService.findAll(pageIndex, pageSize, sortKey, order, srchKey, srchVal));
+		return ResponseEntity.ok(adminPostService.findAll(pageIndex, pageSize, sortKey, order, srchKey, srchVal));
 	}
 	
-	@GetMapping("posts/{id}")
-	public ResponseEntity<AdminBoardEntity> boardFindById(@PathVariable("id") Long id) {
-		return ResponseEntity.ok(boardService.findById(id));
+	@GetMapping("{id}")
+	public ResponseEntity<AdminPostEntity> postFindById(@PathVariable("id") Long id) {
+		return ResponseEntity.ok(adminPostService.findById(id));
 	}
 
 	@PostMapping("create")
-	public ResponseEntity<SimpleResponse> boardCreate(@RequestBody AdminBoardEntity board) {
-		log.debug("create board : {}",board);
-		boardService.save(board);
+	public ResponseEntity<SimpleResponse> postCreate(@RequestBody AdminPostEntity post) {
+		log.debug("create post : {}",post);
+		adminPostService.save(post);
 		return ResponseEntity.ok(SimpleResponse.builder().message("글이 등록되었습니다.").build());
 	}
 
 	@PutMapping("update/{id}")
-	public ResponseEntity<SimpleResponse> boardUpdate(@RequestBody AdminBoardEntity board) {
-		log.debug("update board : {}",board);
-		boardService.save(board);
+	public ResponseEntity<SimpleResponse> postUpdate(@RequestBody AdminPostEntity post) {
+		log.debug("update post : {}",post);
+		adminPostService.save(post);
 		return ResponseEntity.ok(SimpleResponse.builder().message("글이 수정되었습니다.").build());
 	}
 	
 	@DeleteMapping("delete/{id}")
-	public ResponseEntity<SimpleResponse> boardDelete(@PathVariable("id") Long id) {
-		log.debug("delete board id : {}",id);
-		boardService.deleteById(id);
+	public ResponseEntity<SimpleResponse> postDelete(@PathVariable("id") Long id) {
+		log.debug("delete post id : {}",id);
+		adminPostService.deleteById(id);
+		return ResponseEntity.ok(SimpleResponse.builder().message("글이 삭제되었습니다.").build());
+	}
+	
+	@DeleteMapping("deletemany")
+	public ResponseEntity<SimpleResponse> postDeleteMany(@RequestBody List<Long> ids) {
+		log.debug("delete many post ids : {}",ids);
+//		List<Long> longCasting = ids.stream().map(Long::parseLong).collect(Collectors.toList());
+		adminPostService.deleteAllByIdInBatch(ids);
 		return ResponseEntity.ok(SimpleResponse.builder().message("글이 삭제되었습니다.").build());
 	}
 	
@@ -80,8 +88,8 @@ public class AdminBoardController {
 		try {
 			String sheetName = "게시판";
 	        List<String> headerList = Arrays.asList("No", "제목", "내용", "작성자", "조회수");   
-	        List<String> colList = Utils.getColList(AdminBoardEntity.class);
-	        List<AdminBoardEntity> dataList = boardService.findAll();
+	        List<String> colList = Utils.getColList(AdminPostEntity.class);
+	        List<AdminPostEntity> dataList = adminPostService.findAll();
 	        
 	        ByteArrayOutputStream stream = excelDownload.buildExcelDocumentSXSSF(sheetName, headerList, colList, dataList);
  

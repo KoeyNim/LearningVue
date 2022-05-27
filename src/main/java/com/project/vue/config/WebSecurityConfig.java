@@ -1,5 +1,7 @@
 package com.project.vue.config;
 
+import java.util.Arrays;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -45,9 +47,21 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         config.addAllowedOrigin("http://localhost:3000"); // CORS 허용 요청 url
-        config.addAllowedMethod("*"); // 허용 Method
-        config.addAllowedHeader("*"); // 헤더
-        config.setAllowCredentials(true);
+        config.setAllowedMethods(Arrays.asList("HEAD", "GET", "POST", "PUT", "DELETE", "PATCH")); // 허용 Method
+        config.setAllowedHeaders(Arrays.asList( // 허용 Header
+                "Authorization",
+                "Accept",
+                "Cache-Control",
+                "Content-Type",
+                "Origin",
+                "ajax",   // $.ajaxSetup({ // front 에서 ajax 세팅 시 설정
+			              // crossDomain: true,
+			              // xhrFields: {withCredentials: true}});
+                "x-csrf-token",
+                "x-requested-with",
+                "Content-Type"
+        ));
+        config.setAllowCredentials(true); // 요청 자격증명 'Access-Control-Allow-Origin' 의 옵션이 와일드카드 '*' 가 아니여야 함
         config.setMaxAge(3600L); // CORS 허용 후 유지시간
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
@@ -68,10 +82,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     	
 //    	http.headers(headers -> headers.cacheControl(cache -> cache.disable()));
     	
-    	// 기본 Login Form 제거
-    	http.httpBasic().disable()
+    	
+    	http.httpBasic().disable() // 기본 Login Form 제거
     	.cors().configurationSource(corsConfigurationSource()); // CORS 설정
     	// 접근 권한
+    	http.csrf().disable();
         http
 //        .cors().disable() // cors 무력화
 //        .csrf() // csrf 무력화
@@ -84,7 +99,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //	          .antMatchers("/admin/**").hasRole("ADMIN")
 //	          .antMatchers("/user/**").hasRole("USER")
 	          .antMatchers(HttpMethod.GET,"/").permitAll() // 로그인을 요구하지 않음
-        	  .antMatchers(HttpMethod.GET,"/api/**").permitAll()
+        	  .antMatchers("/api/**").permitAll()
 	          .antMatchers(HttpMethod.GET,"/signup").permitAll()
 	          .antMatchers(Constants.REQUEST_MAPPING_PREFIX+"/member/signup").permitAll()
 //	          .anyRequest().permitAll() // 나머지 요청에 대해서는 로그인을 요구하지 않음.
