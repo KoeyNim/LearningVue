@@ -38,7 +38,7 @@ public class AdminPostController {
 	
 	private final ExcelDownload excelDownload;
 	
-	@GetMapping("")
+	@GetMapping
 	public ResponseEntity<Page<AdminPostEntity>> postList(
 			@RequestParam int pageIndex, 
 			@RequestParam int pageSize,

@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -33,6 +34,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	
 //	private final WebAuthenticationProvider authenticationProvider;
 	
+	//비밀번호 암호화를 위한 Encoder 설정
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
@@ -47,7 +49,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         config.addAllowedOrigin("http://localhost:3000"); // CORS 허용 요청 url
-        config.setAllowedMethods(Arrays.asList("HEAD", "GET", "POST", "PUT", "DELETE", "PATCH")); // 허용 Method
+        config.setAllowedMethods(Arrays.asList("HEAD", "GET", "POST", "PUT", "DELETE")); // 허용 Method
         config.setAllowedHeaders(Arrays.asList( // 허용 Header
                 "Authorization",
                 "Accept",
@@ -85,15 +87,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     	
     	http.httpBasic().disable() // 기본 Login Form 제거
     	.cors().configurationSource(corsConfigurationSource()); // CORS 설정
-    	// 접근 권한
-    	http.csrf().disable();
-        http
-//        .cors().disable() // cors 무력화
-//        .csrf() // csrf 무력화
-//        	  .ignoringAntMatchers("/login", "/login/**", "/logout") // csrf 예외처리
-//        	  .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()); //csrf 토큰자동생성
-//        	  .disable() //csrf 미적용
-        .authorizeRequests()
+//        .cors().disable() // CORS 무력화
+        http.csrf() // CSRF 설정 security, ajax, form 중에 적용해야 하는 곳과 GET Method 제외 나머지 Method 에만 적용해야하는 이유 등 추가 설명 필요 
+        	  .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()); // CSRF 토큰자동생성
+//  	  	  .ignoringAntMatchers("/login", "/login/**", "/logout") // CSRF 예외처리
+//        	  .disable() // CSRF 미적용
+        http.authorizeRequests()
 //        	  .antMatchers(Constants.REQUEST_MAPPING_PREFIX+"/board/**").authenticated()
 //	          .antMatchers("/board/**").authenticated() // board 요청에 대해서는 로그인을 요구
 //	          .antMatchers("/admin/**").hasRole("ADMIN")

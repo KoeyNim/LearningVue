@@ -85,6 +85,11 @@ html {
     background-color:#42454c;
     color:#fff;
     border:1px solid #42454c;
+
+}
+
+.page_nation a.cursor_default {
+	cursor:default;
 }
 
 .form-field input[type='radio'] {

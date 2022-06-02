@@ -69,18 +69,12 @@ $().ready(() => {
             },
             fnLoad() {
                 const me = this; 
-                // insert or update
+                // create or update
                 me.result.id = URLSearch.get('id');
                 if (!me.result.id) return;
-                $.ajax(API_VERSION + '/board/find/' + me.result.id, {
-                    async: false,
-                    beforeSend(xhr) {
-                        var header = $("meta[name='_csrf_header']").attr("content");
-                        var token = $("meta[name='_csrf']").attr("content");
-                        xhr.setRequestHeader(header, token);
-                    }
-                }).done(response => {
-                    me.result = response.data;
+                ajaxAPI('GET', API_VERSION + '/board/find/' + me.result.id, undefined, {async: false}
+                ).done((response) => {
+                    me.result = response;
                 }).fail(() => {
                     alert('잘못된 요청입니다.');
                     location.href = '/board';
@@ -99,22 +93,16 @@ $().ready(() => {
                         let fileData = '';
                         if(this.imgFile instanceof File) {
                             const formData = new FormData();
-                            formData.append('imgFile', this.imgFile);
-                            $.ajax({
-                                type: 'POST',
-                                url: API_VERSION + '/fileupload',
+                            const options = {
                                 enctype: 'multipart/form-data',
                                 processData: false,
                                 contentType: false,
                                 cache: false,
                                 async: false,
-                                data: formData,
-                                beforeSend(xhr) {
-                                    var header = $("meta[name='_csrf_header']").attr("content");
-                                    var token = $("meta[name='_csrf']").attr("content");
-                                    xhr.setRequestHeader(header, token);
-                                }
-                            }).done(function(response) {
+                            };
+                            formData.append('imgFile', this.imgFile);
+                            ajaxAPI('POST', API_VERSION + '/fileupload', formData, options
+                            ).done((response) => {
                                 fileData = response;
                             }).fail((response) => {
                                 alert('파일 업로드 오류');
@@ -124,18 +112,11 @@ $().ready(() => {
                         if(fileData) {
                             result = Object.assign(this.result, {fileEntity : fileData});
                         }
-                        $.ajax({
-                            type: ex ? 'PUT' : 'POST',
-                            url: API_VERSION + '/board' + (ex ? '/update/' + this.result.id : '/create'),
-                            contentType: 'application/json; charset=UTF-8',
-                            cache: false,
-                            data: JSON.stringify(result),
-                            beforeSend(xhr) {
-                                var header = $("meta[name='_csrf_header']").attr("content");
-                                var token = $("meta[name='_csrf']").attr("content");
-                                xhr.setRequestHeader(header, token);
-                            }
-                        }).done(function(response) {
+                        ajaxAPI(ex ? 'PUT' : 'POST', 
+                                API_VERSION + '/board' + (ex ? '/update/' + this.result.id : '/create'), 
+                                JSON.stringify(result),
+                                {contentType: 'application/json; charset=UTF-8', cache: false}
+                        ).done((response) => {
                             alert(response.message);
                             location.href = '/board';
                         }).fail((response) => {

@@ -61,11 +61,11 @@
 }
 
 .login-input.id {
-  background-image: url('../images/sub/login/login-id-ico.png');
+/*   background-image: url('../images/sub/login/login-id-ico.png'); */
 }
 
 .login-input.pw {
-  background-image: url('../images/sub/login/login-pw-ico.png');
+/*   background-image: url('../images/sub/login/login-pw-ico.png'); */
 }
 
 .login-input .label {
@@ -2159,7 +2159,7 @@ fieldset {
 .form-select {
   background-repeat: no-repeat;
   background-position: center right 0.5rem;
-  background-image: url('../images/common/form-select-arw.png');
+/*   background-image: url('../images/common/form-select-arw.png'); */
   background-size: 8px;
 }
 .form-check input,

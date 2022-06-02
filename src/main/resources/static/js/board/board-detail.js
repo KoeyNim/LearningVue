@@ -11,17 +11,10 @@ $(document).ready(function() {
         },
         methods: {
             fnLoad() {
-                console.log(location.origin);
                 const me = this;
                 me.result.id = URLSearch.get('id');
-                $.ajax(API_VERSION + '/board/find/' + me.result.id, {
-                    async: false,
-                    beforeSend(xhr) {
-                        var header = $("meta[name='_csrf_header']").attr("content");
-                        var token = $("meta[name='_csrf']").attr("content");
-                        xhr.setRequestHeader(header, token);
-                    }
-                }).done(response => {
+                ajaxAPI('GET', API_VERSION + '/board/find/' + me.result.id, undefined, {async: false}
+                ).done(response => {
                     me.result = response;
                     me.filePath = me.result.fileEntity ? API_VERSION + '/download/' + me.result.fileEntity.id : '';
                     console.log(response);
@@ -35,15 +28,8 @@ $(document).ready(function() {
             },
             fnDelete() {
                 if(!confirm('이 게시글을 삭제하시겠습니까?')) return;
-                $.ajax({
-                    type: 'DELETE',
-                    url: API_VERSION + '/board/delete/' + this.result.id,
-                    beforeSend(xhr) {
-                        var header = $("meta[name='_csrf_header']").attr("content");
-                        var token = $("meta[name='_csrf']").attr("content");
-                        xhr.setRequestHeader(header, token);
-                    }
-                }).done(function(response) {
+                ajaxAPI('DELETE', API_VERSION + '/board/delete/' + this.result.id
+                ).done((response) => {
                     alert(response.message);
                     location.href = '/board';
                 }).fail((response) => {
