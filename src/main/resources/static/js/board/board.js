@@ -50,7 +50,7 @@ $(document).ready(function() {
                 ).done((response) => {
                     me.result = response;
                     me.pagingList = setPagination(me.result.totalPages, me.pageIndex+1, me.pagingSize)
-                }).fail(() => alert('잘못된 요청입니다.') );
+                }).fail(() => alert('잘못된 요청입니다.'));
             },
             downloadExcel() {
                 location.href= API_VERSION + '/board/excel';

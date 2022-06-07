@@ -56,21 +56,21 @@ public class BoardController {
 
 	@PostMapping("create")
 	public ResponseEntity<SimpleResponse> boardCreate(@RequestBody BoardEntity board) {
-		log.debug("create board : {}",board);
+		log.debug("create board : {}", board);
 		boardService.save(board);
 		return ResponseEntity.ok(SimpleResponse.builder().message("글이 등록되었습니다.").build());
 	}
 
 	@PutMapping("update/{id}")
 	public ResponseEntity<SimpleResponse> boardUpdate(@RequestBody BoardEntity board) {
-		log.debug("update board : {}",board);
+		log.debug("update board : {}", board);
 		boardService.save(board);
 		return ResponseEntity.ok(SimpleResponse.builder().message("글이 수정되었습니다.").build());
 	}
 	
 	@DeleteMapping("delete/{id}")
 	public ResponseEntity<SimpleResponse> boardDelete(@PathVariable("id") Long id) {
-		log.debug("delete board id : {}",id);
+		log.debug("delete board id : {}", id);
 		boardService.deleteById(id);
 		return ResponseEntity.ok(SimpleResponse.builder().message("글이 삭제되었습니다.").build());
 	}

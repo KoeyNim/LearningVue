@@ -1,18 +1,19 @@
 function ajaxAPI(type, url, data, options) {
 
-    let ajaxObj = {
+    let ajaxParam = {
         type: type,
         url: url,
     };
 
     if (data) {
-        Object.assign(ajaxObj, {data: data});
+        Object.assign(ajaxParam, {data: data});
     };
 
     if (options) {
-        Object.assign(ajaxObj, options);
+        Object.assign(ajaxParam, options);
     };
-
+    
+    // GET 방식에서는 csrf를 적용할 필요가 없음.   
     if (type !== 'GET') {
         let csrf = {
             beforeSend(xhr) {
@@ -20,10 +21,11 @@ function ajaxAPI(type, url, data, options) {
                 var token = $("meta[name='_csrf']").attr("content");
                 xhr.setRequestHeader(header, token);
             }};
-        Object.assign(ajaxObj, csrf);
+        Object.assign(ajaxParam, csrf);
     };
+    console.log("type : ", type, ", ", "url : ", url);
 
-    return $.ajax(ajaxObj);
+    return $.ajax(ajaxParam);
 }
 
 function setPagination(totalPage, currentPage, pageSize) {
