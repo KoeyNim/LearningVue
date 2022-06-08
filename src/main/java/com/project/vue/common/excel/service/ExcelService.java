@@ -1,4 +1,4 @@
-package com.project.vue.common;
+package com.project.vue.common.excel.service;
 
 import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Method;
@@ -19,22 +19,28 @@ import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.springframework.stereotype.Component;
 
-import lombok.RequiredArgsConstructor;
+import com.project.vue.common.Utils;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
-@RequiredArgsConstructor
-public class ExcelDownload {
+public class ExcelService<T> {
 
 	protected SXSSFWorkbook wb;
 	protected SXSSFSheet sheet;
+	protected List<T> dataList;
+	protected List<String> colList;
 	protected int rowNo;
+	
+	public ExcelService(List<T> dataList, Class<T> type) {
+		this.wb = new SXSSFWorkbook();
+		this.sheet = wb.createSheet();
+		this.colList = Utils.getColList(type);
+		this.dataList = dataList;
+	}
 
-	public ByteArrayOutputStream buildExcelDocumentSXSSF(String sheetName, 
-												 List<String> headerList, 
-										         List<String> colList, 
-										         List<?> dataList) throws Exception {
+	public ByteArrayOutputStream downloadExcel() throws Exception {
 		rowNo = 0;
 		wb = new SXSSFWorkbook();
 		sheet = wb.createSheet(sheetName);

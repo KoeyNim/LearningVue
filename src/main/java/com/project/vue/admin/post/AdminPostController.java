@@ -21,9 +21,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.project.vue.common.ExcelDownload;
 import com.project.vue.common.SimpleResponse;
 import com.project.vue.common.Utils;
+import com.project.vue.common.excel.ExcelDownload;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
