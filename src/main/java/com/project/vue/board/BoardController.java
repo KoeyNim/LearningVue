@@ -1,8 +1,7 @@
 package com.project.vue.board;
 
-import java.io.ByteArrayOutputStream;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+import static org.junit.jupiter.api.DynamicTest.stream;
+
 import java.util.List;
 
 import org.springframework.core.io.ByteArrayResource;
@@ -23,8 +22,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.project.vue.common.Constants;
 import com.project.vue.common.SimpleResponse;
-import com.project.vue.common.Utils;
-import com.project.vue.common.excel.ExcelDownload;
 import com.project.vue.common.excel.service.ExcelService;
 
 import lombok.RequiredArgsConstructor;
@@ -37,8 +34,6 @@ import lombok.extern.slf4j.Slf4j;
 public class BoardController {
 	
 	private final BoardService boardService;
-	
-	private final ExcelDownload excelDownload;
 	
 	@GetMapping
 	public ResponseEntity<Page<BoardEntity>> boardList(
@@ -78,15 +73,11 @@ public class BoardController {
 	@GetMapping("excel")
 	public ResponseEntity<ByteArrayResource> excel() {
 		try {
-	        List<String> colList = Utils.getColList(BoardEntity.class);
 	        List<BoardEntity> dataList = boardService.findAll();
 	        
 	        ExcelService<BoardEntity> excelService = new ExcelService(dataList, BoardEntity.class);
 	        
-	        ByteArrayOutputStream stream = excelService.downloadExcel();
- 
-        	String fileName = sheetName+"_"+LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy.MM.dd"))+".xlsx";
-			String orgFileName = new String(fileName.getBytes("UTF-8"), "ISO-8859-1");
+	        excelService.downloadExcel();
 			
 			return ResponseEntity.ok()
 					 //attachement = 로컬에 저장, filename = 다운로드시 파일 이름 지정 

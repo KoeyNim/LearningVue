@@ -3,8 +3,10 @@ package com.project.vue.common.excel.service;
 import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Method;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.poi.ss.usermodel.BorderStyle;
@@ -17,6 +19,8 @@ import org.apache.poi.xssf.streaming.SXSSFCell;
 import org.apache.poi.xssf.streaming.SXSSFRow;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import com.project.vue.common.Utils;
@@ -30,17 +34,17 @@ public class ExcelService<T> {
 	protected SXSSFWorkbook wb;
 	protected SXSSFSheet sheet;
 	protected List<T> dataList;
-	protected List<String> colList;
+	protected Map<String, Object> resource;
 	protected int rowNo;
 	
 	public ExcelService(List<T> dataList, Class<T> type) {
 		this.wb = new SXSSFWorkbook();
 		this.sheet = wb.createSheet();
-		this.colList = Utils.getColList(type);
+		this.resource = Utils.getResource(type);
 		this.dataList = dataList;
 	}
 
-	public ByteArrayOutputStream downloadExcel() throws Exception {
+	public ResponseEntity<ByteArrayResource> downloadExcel() throws Exception {
 		rowNo = 0;
 		wb = new SXSSFWorkbook();
 		sheet = wb.createSheet(sheetName);
@@ -53,6 +57,9 @@ public class ExcelService<T> {
 		wb.setCompressTempFiles (true); // .csv 임시 파일 압축
 		wb.write(stream);
 		wb.close();
+		
+    	String fileName = sheetName+"_"+LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy.MM.dd"))+".xlsx";
+		String orgFileName = new String(fileName.getBytes("UTF-8"), "ISO-8859-1");
 
 		return stream;
 	}
