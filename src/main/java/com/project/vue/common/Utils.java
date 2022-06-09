@@ -1,5 +1,8 @@
 package com.project.vue.common;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -33,11 +36,17 @@ public class Utils {
 	
 	public static Map<String, Object> getResource(Class<?> Entity) {
 		
-		Map<String, Object> resource = new HashedMap<String, Object>();
-		
 		String fileName = Entity.getAnnotation(ExcelFileName.class).fileName();
+		Map<String, Object> resource = new HashedMap<String, Object>();
+		List <String> headerList = new ArrayList<>();
 		
-		String headerList = Entity.getAnnotation(ExcelColumnName.class).headerName();
+		Field field = null;
+		Annotation[] annotations = field.getDeclaredAnnotations();
+		
+		for (Annotation annotation : annotations) {
+			ExcelColumnName columnName = (ExcelColumnName) annotation;
+			headerList.add(columnName.headerName());
+		}
 		
 		List<String> colList = Arrays
 				.stream(Entity.getDeclaredFields())

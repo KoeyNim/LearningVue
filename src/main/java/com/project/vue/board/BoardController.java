@@ -1,12 +1,9 @@
 package com.project.vue.board;
 
-import static org.junit.jupiter.api.DynamicTest.stream;
-
 import java.util.List;
 
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -75,15 +72,9 @@ public class BoardController {
 		try {
 	        List<BoardEntity> dataList = boardService.findAll();
 	        
-	        ExcelService<BoardEntity> excelService = new ExcelService(dataList, BoardEntity.class);
+	        ExcelService<BoardEntity> excelService = new ExcelService<>(dataList, BoardEntity.class);
 	        
-	        excelService.downloadExcel();
-			
-			return ResponseEntity.ok()
-					 //attachement = 로컬에 저장, filename = 다운로드시 파일 이름 지정 
-					.header(HttpHeaders.CONTENT_DISPOSITION, "attachement; filename=" + orgFileName +";")
-					.header(HttpHeaders.CONTENT_TYPE, "ms-vnd/excel") 
-					.body(new ByteArrayResource(stream.toByteArray()));
+			return excelService.downloadExcel();
 		} catch(Exception e) {
 			return new ResponseEntity<ByteArrayResource>(HttpStatus.CONFLICT);
 		}

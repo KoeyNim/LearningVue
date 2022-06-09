@@ -20,6 +20,8 @@ import org.apache.poi.xssf.streaming.SXSSFRow;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
@@ -45,6 +47,11 @@ public class ExcelService<T> {
 	}
 
 	public ResponseEntity<ByteArrayResource> downloadExcel() throws Exception {
+	try {	
+		String sheetName = (String)resource.get("fileName");
+		List<String> headerList = (List<String>)resource.get("headerList");
+		List<String> colList = (List<String>)resource.get("colList");
+		
 		rowNo = 0;
 		wb = new SXSSFWorkbook();
 		sheet = wb.createSheet(sheetName);
@@ -61,7 +68,14 @@ public class ExcelService<T> {
     	String fileName = sheetName+"_"+LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy.MM.dd"))+".xlsx";
 		String orgFileName = new String(fileName.getBytes("UTF-8"), "ISO-8859-1");
 
-		return stream;
+		return ResponseEntity.ok()
+				 //attachement = 로컬에 저장, filename = 다운로드시 파일 이름 지정 
+				.header(HttpHeaders.CONTENT_DISPOSITION, "attachement; filename=" + orgFileName +";")
+				.header(HttpHeaders.CONTENT_TYPE, "ms-vnd/excel") 
+				.body(new ByteArrayResource(stream.toByteArray()));
+		} catch(Exception e) {
+			return new ResponseEntity<ByteArrayResource>(HttpStatus.CONFLICT);
+		}
 	}
 
 	/**
