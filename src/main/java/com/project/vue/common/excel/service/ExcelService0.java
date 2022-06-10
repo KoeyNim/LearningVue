@@ -1,4 +1,4 @@
-package com.project.vue.common.excel;
+package com.project.vue.common.excel.service;
 
 import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Method;
@@ -25,7 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class ExcelDownload {
+public class ExcelService0 {
 
 	protected SXSSFWorkbook wb;
 	protected SXSSFSheet sheet;

@@ -48,34 +48,35 @@ public class ExcelService<T> {
 	}
 
 	public ResponseEntity<ByteArrayResource> downloadExcel() throws Exception {
-	try {
-		String sheetName = (String)resource.get("fileName");
-		@SuppressWarnings("unchecked")
-		List<String> headerList = (List<String>)resource.get("headerList");
-		@SuppressWarnings("unchecked")
-		List<String> colList = (List<String>)resource.get("colList");
-		rowNo = 0;
-		sheet = wb.createSheet(sheetName);
-		
-		log.debug("dataList : {} ", dataList);
-		
-		renderHeaderRow(headerList);
-		renderDataRow(colList, dataList);
-		autoSizeColumns();
-		
-		ByteArrayOutputStream stream = new ByteArrayOutputStream();
-		wb.setCompressTempFiles (true); // .csv 임시 파일 압축
-		wb.write(stream);
-		wb.close();
-		
-    	String fileName = sheetName+"_"+LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy.MM.dd"))+".xlsx";
-		String orgFileName = new String(fileName.getBytes("UTF-8"), "ISO-8859-1");
-
-		return ResponseEntity.ok()
-				 //attachement = 로컬에 저장, filename = 다운로드시 파일 이름 지정 
-				.header(HttpHeaders.CONTENT_DISPOSITION, "attachement; filename=" + orgFileName +";")
-				.header(HttpHeaders.CONTENT_TYPE, "ms-vnd/excel") 
-				.body(new ByteArrayResource(stream.toByteArray()));
+		try {
+			rowNo = 0;
+			String sheetName = (String)resource.get("fileName");
+			
+			@SuppressWarnings("unchecked")
+			List<String> headerList = (List<String>)resource.get("headerList");
+			
+			@SuppressWarnings("unchecked")
+			List<String> colList = (List<String>)resource.get("colList");
+			
+			sheet = wb.createSheet(sheetName);
+			
+			renderHeaderRow(headerList);
+			renderDataRow(colList, dataList);
+			autoSizeColumns();
+			
+			ByteArrayOutputStream stream = new ByteArrayOutputStream();
+			wb.setCompressTempFiles (true); // .csv 임시 파일 압축
+			wb.write(stream);
+			wb.close();
+			
+	    	String fileName = sheetName+"_"+LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy.MM.dd"))+".xlsx";
+			String orgFileName = new String(fileName.getBytes("UTF-8"), "ISO-8859-1");
+	
+			return ResponseEntity.ok()
+					 //attachement = 로컬에 저장, filename = 다운로드시 파일 이름 지정 
+					.header(HttpHeaders.CONTENT_DISPOSITION, "attachement; filename=" + orgFileName +";")
+					.header(HttpHeaders.CONTENT_TYPE, "ms-vnd/excel") 
+					.body(new ByteArrayResource(stream.toByteArray()));
 		} catch(Exception e) {
 			return new ResponseEntity<ByteArrayResource>(HttpStatus.CONFLICT);
 		}

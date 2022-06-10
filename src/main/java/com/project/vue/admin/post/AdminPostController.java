@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.project.vue.common.SimpleResponse;
-import com.project.vue.common.excel.ExcelDownload;
 import com.project.vue.common.excel.service.ExcelService;
 
 import lombok.RequiredArgsConstructor;
@@ -30,8 +29,6 @@ import lombok.extern.slf4j.Slf4j;
 public class AdminPostController {
 	
 	private final AdminPostService adminPostService;
-	
-	private final ExcelDownload excelDownload;
 	
 	@GetMapping
 	public ResponseEntity<Page<AdminPostEntity>> postList(
