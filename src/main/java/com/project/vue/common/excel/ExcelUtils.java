@@ -13,6 +13,9 @@ import org.springframework.stereotype.Component;
 import com.project.vue.common.excel.annotation.ExcelColumnName;
 import com.project.vue.common.excel.annotation.ExcelFileName;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Component
 public class ExcelUtils {
 
@@ -35,8 +38,13 @@ public class ExcelUtils {
 		List<String> colList = Arrays
 				.stream(Entity.getDeclaredFields())
 				.parallel() // 병렬처리
+				.filter(entity -> entity.getName() != "fileEntity") // fileEntity 제외
                 .map(entity -> entity.getName().substring(0,1).toUpperCase() + entity.getName().substring(1))
                 .collect(Collectors.toList());
+		
+		log.debug("fileName : {}", fileName);
+		log.debug("headerList : {}", headerList);
+		log.debug("colList : {}", colList);
 		
 		resource.put("fileName", fileName);
 		resource.put("headerList", headerList);
