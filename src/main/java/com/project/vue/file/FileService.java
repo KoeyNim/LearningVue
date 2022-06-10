@@ -22,27 +22,36 @@ public class FileService {
 	private String FILE_UPLOAD_PATH;
 
 	@Transactional
-    public FileEntity save(MultipartFile imgFile) throws Exception {
-		String uuid = UUID.randomUUID().toString().replaceAll("-", "");
-//		String ext = "."+ StringUtils.substringAfter(imgFile.getOriginalFilename(), "."); // 파일 이름에서 확장자 추출
-		FileEntity fileEntity = new FileEntity();
-		String filePath = FILE_UPLOAD_PATH;
-		File fileUpload = new File(filePath + uuid);
-		
-		fileEntity.setFileNm(uuid);
-		fileEntity.setFileSize(imgFile.getSize());
-		fileEntity.setFilePath(filePath);
-		fileEntity.setContentType(imgFile.getContentType());
-		fileEntity.setOrignFileNm(imgFile.getOriginalFilename());
-		
-		imgFile.transferTo(fileUpload);
-		fileRepository.save(fileEntity);
+    public FileEntity save(MultipartFile file) throws Exception {
+		try {
+			if(file.isEmpty()) {
+				throw new Exception("Failed to store empty image " + file.getOriginalFilename());
+			}
+			String uuid = UUID.randomUUID().toString().replaceAll("-", "");
+			File uploadDir = new File(FILE_UPLOAD_PATH + uuid);
+			
+			if (!uploadDir.exists()) {
+				uploadDir.mkdirs();
+			}
+			
+	//		String ext = "."+ StringUtils.substringAfter(imgFile.getOriginalFilename(), "."); // 파일 이름에서 확장자 추출
+			FileEntity fileEntity = new FileEntity();
+			
+			fileEntity.setFileNm(uuid);
+			fileEntity.setFileSize(file.getSize());
+			fileEntity.setFilePath(FILE_UPLOAD_PATH);
+			fileEntity.setContentType(file.getContentType());
+			fileEntity.setOrignFileNm(file.getOriginalFilename());
+			
+			file.transferTo(uploadDir);
+			fileRepository.save(fileEntity);
 		return fileEntity;
+		} catch (Exception e) {
+			throw new Exception("Failed to store file " + file.getOriginalFilename(), e);
+		}
     }
 	
 	public FileEntity findById(Long id) {
 		return fileRepository.findById(id).orElseThrow();
 	}
-
-	
 }

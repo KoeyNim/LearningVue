@@ -25,36 +25,39 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
-import com.project.vue.common.Utils;
+import com.project.vue.common.excel.ExcelUtils;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class ExcelService<T> {
 
-	protected SXSSFWorkbook wb;
-	protected SXSSFSheet sheet;
-	protected List<T> dataList;
-	protected Map<String, Object> resource;
-	protected int rowNo;
+	private SXSSFWorkbook wb;
+	private Map<String, Object> resource;
+	private SXSSFSheet sheet;
+	private List<T> dataList;
+	private int rowNo;
 	
 	public ExcelService(List<T> dataList, Class<T> type) {
 		this.wb = new SXSSFWorkbook();
-		this.sheet = wb.createSheet();
-		this.resource = Utils.getResource(type);
+		this.resource = ExcelUtils.getResource(type);
 		this.dataList = dataList;
 	}
 
 	public ResponseEntity<ByteArrayResource> downloadExcel() throws Exception {
-	try {	
+	try {
 		String sheetName = (String)resource.get("fileName");
+		@SuppressWarnings("unchecked")
 		List<String> headerList = (List<String>)resource.get("headerList");
+		@SuppressWarnings("unchecked")
 		List<String> colList = (List<String>)resource.get("colList");
-		
 		rowNo = 0;
-		wb = new SXSSFWorkbook();
 		sheet = wb.createSheet(sheetName);
+		
+		log.debug("dataList : {} ", dataList);
 		
 		renderHeaderRow(headerList);
 		renderDataRow(colList, dataList);
@@ -81,7 +84,7 @@ public class ExcelService<T> {
 	/**
 	 *  헤더 Row 생성
 	 */
-	protected void renderHeaderRow(List<String> headerList) {
+	private void renderHeaderRow(List<String> headerList) {
 		SXSSFRow headerRow = sheet.createRow(rowNo++);
 		CellStyle headerCellStyle = makeHeaderCellStyle();
 		int cellIdx = 0;
@@ -95,7 +98,7 @@ public class ExcelService<T> {
 	/**
 	 * 데이터 Row 생성
 	 */
-	protected void renderDataRow(List<String> colList, List<?> dataList) {
+	private void renderDataRow(List<String> colList, List<?> dataList) {
 		int cellIdx = 0;
 		for ( Object data : dataList ) {
 			SXSSFRow dataRow = sheet.createRow(rowNo++);
@@ -110,7 +113,7 @@ public class ExcelService<T> {
 	/**
 	 * 데이터 Cell 매핑
 	 */
-	protected void renderDataCell(SXSSFRow dataRow, int cellIdx, Object data, String colList)
+	private void renderDataCell(SXSSFRow dataRow, int cellIdx, Object data, String colList)
 	{
 		try {
 			// 해당하는 method를 찾음
@@ -178,7 +181,7 @@ public class ExcelService<T> {
 	/**
 	 * 헤더 Cell 스타일
 	 */
-	protected CellStyle makeHeaderCellStyle()
+	private CellStyle makeHeaderCellStyle()
 	{
 		CellStyle headerCellStyle = wb.createCellStyle();
 		
@@ -200,7 +203,7 @@ public class ExcelService<T> {
 	/**
 	 * 데이터 Cell 스타일
 	 */
-	protected CellStyle makeDataCellStyle()
+	private CellStyle makeDataCellStyle()
 	{
 		return makeDataCellStyle(null);
 	}
@@ -208,7 +211,7 @@ public class ExcelService<T> {
 	/**
 	 * 데이터 Cell 스타일
 	 */
-	protected CellStyle makeDataCellStyle(HorizontalAlignment halign)
+	private CellStyle makeDataCellStyle(HorizontalAlignment halign)
 	{
 		CellStyle dataCellStyle = wb.createCellStyle();
 		if ( ObjectUtils.isNotEmpty(halign) )
@@ -226,7 +229,7 @@ public class ExcelService<T> {
 		return dataCellStyle;
 	}
 	
-	protected void autoSizeColumns() {
+	private void autoSizeColumns() {
 		if (sheet.getPhysicalNumberOfRows() > 0) {
 			SXSSFRow row = sheet.getRow(sheet.getFirstRowNum());
 			Iterator<Cell> cellIterator = row.cellIterator();

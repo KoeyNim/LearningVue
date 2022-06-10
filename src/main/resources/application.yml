@@ -13,7 +13,8 @@ spring:
       use_sql_comments: true # 추가적인 주석 표시
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://127.0.0.1:3306/myvue?serverTimezone=Asia/Seoul
+#    url: jdbc:mysql://127.0.0.1:3306/myvue?serverTimezone=Asia/Seoul
+    url: jdbc:mysql://127.0.0.1:3307/myvue?serverTimezone=Asia/Seoul
     username: my_vue
     password: myvue
   devtools:

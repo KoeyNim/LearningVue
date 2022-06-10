@@ -1,6 +1,5 @@
-package com.project.vue.common;
+package com.project.vue.common.excel;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,39 +14,24 @@ import com.project.vue.common.excel.annotation.ExcelColumnName;
 import com.project.vue.common.excel.annotation.ExcelFileName;
 
 @Component
-public class Utils {
+public class ExcelUtils {
 
-	/**
-	 *  Class 안에 있는 변수명을 받음.
-	 */
-	public static List<String> getColList(Class<?> Entity) {
-		List<String> list = Arrays
-								.stream(Entity.getDeclaredFields())
-								.parallel() // 병렬처리
-				                .map(entity -> entity.getName().substring(0,1).toUpperCase() + entity.getName().substring(1))
-				                .collect(Collectors.toList());
-//		ArrayList<String> list = new ArrayList<>();
-//		for (Field lists : Entity.getDeclaredFields()) {
-//			String firstUpper = lists.getName().substring(0,1).toUpperCase() + lists.getName().substring(1);
-//			list.add(firstUpper);
-//		}
-		return list;
-	}
-	
+	// Entity Class 안에 있는 정보를 추출
 	public static Map<String, Object> getResource(Class<?> Entity) {
 		
+		// @ExcelFileName의 fileName 값 추출
 		String fileName = Entity.getAnnotation(ExcelFileName.class).fileName();
 		Map<String, Object> resource = new HashedMap<String, Object>();
-		List <String> headerList = new ArrayList<>();
+		List<String> headerList = new ArrayList<>();
 		
-		Field field = null;
-		Annotation[] annotations = field.getDeclaredAnnotations();
-		
-		for (Annotation annotation : annotations) {
-			ExcelColumnName columnName = (ExcelColumnName) annotation;
-			headerList.add(columnName.headerName());
+		// @ExcelColumnName의 headerName 값 추출 (다수)
+		for (Field field : Entity.getDeclaredFields()) {
+            if (field.isAnnotationPresent(ExcelColumnName.class)) {
+            	headerList.add(field.getAnnotation(ExcelColumnName.class).headerName());
+            }
 		}
 		
+		// Entity의 Fields명 추출 후 특정 문자열 대문자로 변환
 		List<String> colList = Arrays
 				.stream(Entity.getDeclaredFields())
 				.parallel() // 병렬처리

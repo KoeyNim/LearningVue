@@ -1,14 +1,9 @@
 package com.project.vue.admin.post;
 
-import java.io.ByteArrayOutputStream;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -22,8 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.project.vue.common.SimpleResponse;
-import com.project.vue.common.Utils;
 import com.project.vue.common.excel.ExcelDownload;
+import com.project.vue.common.excel.service.ExcelService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -86,21 +81,11 @@ public class AdminPostController {
 	@GetMapping("excel")
 	public ResponseEntity<ByteArrayResource> excel() {
 		try {
-			String sheetName = "게시판";
-	        List<String> headerList = Arrays.asList("No", "제목", "내용", "작성자", "조회수");   
-	        List<String> colList = Utils.getColList(AdminPostEntity.class);
 	        List<AdminPostEntity> dataList = adminPostService.findAll();
 	        
-	        ByteArrayOutputStream stream = excelDownload.buildExcelDocumentSXSSF(sheetName, headerList, colList, dataList);
- 
-        	String fileName = sheetName+"_"+LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy.MM.dd"))+".xlsx";
-			String orgFileName = new String(fileName.getBytes("UTF-8"), "ISO-8859-1");
+	        ExcelService<AdminPostEntity> excelService = new ExcelService<>(dataList, AdminPostEntity.class);
 			
-			return ResponseEntity.ok()
-					 //attachement = 로컬에 저장, filename = 다운로드시 파일 이름 지정 
-					.header(HttpHeaders.CONTENT_DISPOSITION, "attachement; filename=" + orgFileName +";")
-					.header(HttpHeaders.CONTENT_TYPE, "ms-vnd/excel") 
-					.body(new ByteArrayResource(stream.toByteArray()));
+			return excelService.downloadExcel();
 		} catch(Exception e) {
 			return new ResponseEntity<ByteArrayResource>(HttpStatus.CONFLICT);
 		}

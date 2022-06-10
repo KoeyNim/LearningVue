@@ -30,7 +30,7 @@ public class ImageService {
 				throw new Exception("Failed to store empty image " + image.getOriginalFilename());
 			}
 			
-			String fileNm = image(image);
+			String fileNm = createImage(image);
 			ImageEntity imageEntity = new ImageEntity();
 			
 			imageEntity.setOrignFileNm(image.getOriginalFilename());
@@ -52,7 +52,7 @@ public class ImageService {
 	}
 	
 	// 이미지 체크 후 이름 생성
-	public String image(MultipartFile image) throws IOException {
+	public String createImage(MultipartFile image) throws IOException {
 		File uploadDir = new File(IMAGE_UPLOAD_PATH);
 		
 		if (!uploadDir.exists()) {
