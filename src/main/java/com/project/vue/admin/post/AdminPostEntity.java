@@ -41,7 +41,7 @@ public class AdminPostEntity extends TimeEntity {
 	@Column(columnDefinition = "varchar(32)")
 	private String userId;
 
-	@Column(columnDefinition = "BIGINT")
+	@Column(columnDefinition = "BIGINT default 0")
 	private Integer count = 0;
 
 	@OneToOne(cascade = CascadeType.REMOVE) // 게시글 삭제 시 파일 데이터도 같이 삭제

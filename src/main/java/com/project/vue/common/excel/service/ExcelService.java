@@ -42,7 +42,7 @@ public class ExcelService<T> {
 	private int rowNo;
 	
 	public ExcelService(List<T> dataList, Class<T> type) {
-		this.wb = new SXSSFWorkbook();
+		this.wb = new SXSSFWorkbook(-1); // 허용 row 지정 (-1 일 경우 제한 없음)
 		this.resource = ExcelUtils.getResource(type);
 		this.dataList = dataList;
 	}
@@ -50,6 +50,7 @@ public class ExcelService<T> {
 	public ResponseEntity<ByteArrayResource> downloadExcel() throws Exception {
 		try {
 			rowNo = 0;
+			
 			String sheetName = (String)resource.get("fileName");
 			
 			@SuppressWarnings("unchecked")
@@ -78,6 +79,7 @@ public class ExcelService<T> {
 					.header(HttpHeaders.CONTENT_TYPE, "ms-vnd/excel") 
 					.body(new ByteArrayResource(stream.toByteArray()));
 		} catch(Exception e) {
+			e.printStackTrace();
 			return new ResponseEntity<ByteArrayResource>(HttpStatus.CONFLICT);
 		}
 	}
@@ -148,32 +150,6 @@ public class ExcelService<T> {
 					break;
 				}
 			}
-			
-//			if (ObjectUtils.isNotEmpty(methodValue)) {
-//				if (String.class.equals(method.getReturnType())) {
-//					cell.setCellValue(methodValue.toString());
-//					cell.setCellStyle(makeDataCellStyle());
-//					return;
-//				}
-//				if (Long.class.equals(method.getReturnType())) {
-//					cell.setCellValue((Long)methodValue);
-//					cell.setCellStyle(makeDataCellStyle());
-//					return;
-//				}
-//				if (Integer.class.equals(method.getReturnType())) {
-//					cell.setCellValue((Integer)methodValue);
-//					cell.setCellStyle(makeDataCellStyle());
-//					return;
-//				}
-//				if (LocalDate.class.equals(method.getReturnType())) {
-//					cell.setCellValue((LocalDate)methodValue);
-//					cell.setCellStyle(makeDataCellStyle());
-//					return;
-//				}
-//				log.info("사용할 수 없는 클래스 타입 : {}",method.getReturnType());
-//			return;
-//		} 
-			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

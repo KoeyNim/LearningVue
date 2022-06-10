@@ -38,7 +38,7 @@ public class ExcelUtils {
 		List<String> colList = Arrays
 				.stream(Entity.getDeclaredFields())
 				.parallel() // 병렬처리
-				.filter(entity -> entity.getName() != "fileEntity") // fileEntity 제외
+				.filter(entity -> entity.isAnnotationPresent(ExcelColumnName.class)) // @ExcelColumnName가 있는 필드만 필터링
                 .map(entity -> entity.getName().substring(0,1).toUpperCase() + entity.getName().substring(1))
                 .collect(Collectors.toList());
 		

@@ -48,7 +48,7 @@ public class BoardEntity extends TimeEntity {
 	@ExcelColumnName(headerName = "작성자")
 	private String userId;
 
-	@Column(columnDefinition = "BIGINT")
+	@Column(columnDefinition = "BIGINT default 0")
 	@ExcelColumnName(headerName = "조회수")
 	private Integer count = 0;
 
