@@ -101,11 +101,10 @@ public class ExcelService<T> {
 	/**
 	 * 데이터 Row 생성
 	 */
-	private void renderDataRow(List<String> colList, List<?> dataList) {
+	private void renderDataRow(List<String> colList, List<T> dataList) {
 		int cellIdx = 0;
-		for ( Object data : dataList ) {
+		for ( T data : dataList ) {
 			SXSSFRow dataRow = sheet.createRow(rowNo++);
-			
 			for (String colLists : colList ) {
 				renderDataCell(dataRow, cellIdx++, data, colLists);
 			}
@@ -116,7 +115,7 @@ public class ExcelService<T> {
 	/**
 	 * 데이터 Cell 매핑
 	 */
-	private void renderDataCell(SXSSFRow dataRow, int cellIdx, Object data, String colList)
+	private void renderDataCell(SXSSFRow dataRow, int cellIdx, T data, String colList)
 	{
 		try {
 			// 해당하는 method를 찾음
@@ -126,29 +125,28 @@ public class ExcelService<T> {
 			Object methodValue = method.invoke(data);
 			String methodReturnTypeStr = method.getReturnType().toString();
 			String methodType = methodReturnTypeStr.substring(methodReturnTypeStr.lastIndexOf(".") + 1);
+			
 			// 값 삽입이 우선시 되어야 타입이 적용 됨.
-			if (ObjectUtils.isNotEmpty(methodValue)) {
-				switch (methodType) {
-				case "String":
-					cell.setCellValue(methodValue.toString());
-					cell.setCellStyle(makeDataCellStyle());
-					break;
-				case "Long":
-					cell.setCellValue((Long)methodValue);
-					cell.setCellStyle(makeDataCellStyle());
-					break;
-				case "Integer":
-					cell.setCellValue((Integer)methodValue);
-					cell.setCellStyle(makeDataCellStyle());
-					break;
-				case "LocalDate":
-					cell.setCellValue((LocalDate)methodValue);
-					cell.setCellStyle(makeDataCellStyle());
-					break;
-				default:
-					log.info("사용할 수 없는 클래스 타입 : {}",method.getReturnType());
-					break;
-				}
+			switch (methodType) {
+			case "String":
+				cell.setCellValue(methodValue.toString());
+				cell.setCellStyle(makeDataCellStyle());
+				break;
+			case "Long":
+				cell.setCellValue((Long)methodValue);
+				cell.setCellStyle(makeDataCellStyle());
+				break;
+			case "Integer":
+				cell.setCellValue((Integer)methodValue);
+				cell.setCellStyle(makeDataCellStyle());
+				break;
+			case "LocalDate":
+				cell.setCellValue((LocalDate)methodValue);
+				cell.setCellStyle(makeDataCellStyle());
+				break;
+			default:
+				log.info("사용할 수 없는 클래스 타입 : {}",method.getReturnType());
+				break;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
