@@ -35,16 +35,18 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class ExcelService<T> {
 
-	private SXSSFWorkbook wb;
+	private SXSSFWorkbook wb; // 쓰기전용이며 읽기 불가능
 	private Map<String, Object> resource;
 	private SXSSFSheet sheet;
 	private List<T> dataList;
 	private int rowNo;
+	private CellStyle dataCellStyle;
 	
 	public ExcelService(List<T> dataList, Class<T> type) {
-		this.wb = new SXSSFWorkbook(-1); // 허용 row 지정 (-1 일 경우 제한 없음)
+		this.wb = new SXSSFWorkbook(100); // flush 범위 (기본값 100, -1 일 경우 제한 없음)
 		this.resource = ExcelUtils.getResource(type);
 		this.dataList = dataList;
+		this.dataCellStyle = wb.createCellStyle();
 	}
 
 	public ResponseEntity<ByteArrayResource> downloadExcel() throws Exception {
@@ -63,13 +65,11 @@ public class ExcelService<T> {
 			
 			renderHeaderRow(headerList);
 			renderDataRow(colList, dataList);
-			autoSizeColumns();
-			
+//			autoSizeColumns();
 			ByteArrayOutputStream stream = new ByteArrayOutputStream();
-			wb.setCompressTempFiles (true); // .csv 임시 파일 압축
 			wb.write(stream);
+			wb.dispose();
 			wb.close();
-			
 	    	String fileName = sheetName+"_"+LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy.MM.dd"))+".xlsx";
 			String orgFileName = new String(fileName.getBytes("UTF-8"), "ISO-8859-1");
 	
@@ -89,12 +89,11 @@ public class ExcelService<T> {
 	 */
 	private void renderHeaderRow(List<String> headerList) {
 		SXSSFRow headerRow = sheet.createRow(rowNo++);
-		CellStyle headerCellStyle = makeHeaderCellStyle();
 		int cellIdx = 0;
 		for ( String header : headerList ) {
 			SXSSFCell cell = headerRow.createCell(cellIdx++, CellType.STRING);
 			cell.setCellValue(header);
-			cell.setCellStyle(headerCellStyle);
+			cell.setCellStyle(makeHeaderCellStyle());
 		}
 	}
 
@@ -114,6 +113,7 @@ public class ExcelService<T> {
 
 	/**
 	 * 데이터 Cell 매핑
+	 * CellStyle 복제 (excel 2007 기준 64000개가 넘어갈 경우 에러 발생)
 	 */
 	private void renderDataCell(SXSSFRow dataRow, int cellIdx, T data, String colList)
 	{
@@ -123,31 +123,25 @@ public class ExcelService<T> {
 			Method method = data.getClass().getMethod("get" + colList);
 			// method 실행
 			Object methodValue = method.invoke(data);
-			String methodReturnTypeStr = method.getReturnType().toString();
-			String methodType = methodReturnTypeStr.substring(methodReturnTypeStr.lastIndexOf(".") + 1);
 			
-			// 값 삽입이 우선시 되어야 타입이 적용 됨.
-			switch (methodType) {
-			case "String":
-				cell.setCellValue(methodValue.toString());
-				cell.setCellStyle(makeDataCellStyle());
-				break;
-			case "Long":
-				cell.setCellValue((Long)methodValue);
-				cell.setCellStyle(makeDataCellStyle());
-				break;
-			case "Integer":
+			if (java.lang.Integer.class.isInstance(methodValue)) {
 				cell.setCellValue((Integer)methodValue);
 				cell.setCellStyle(makeDataCellStyle());
-				break;
-			case "LocalDate":
+				return;
+			}
+			if (java.lang.Long.class.isInstance(methodValue)) {
+				cell.setCellValue((Long)methodValue);
+				cell.setCellStyle(makeDataCellStyle());
+				return;
+			}
+			if (java.time.LocalDate.class.isInstance(methodValue)) {
 				cell.setCellValue((LocalDate)methodValue);
 				cell.setCellStyle(makeDataCellStyle());
-				break;
-			default:
-				log.info("사용할 수 없는 클래스 타입 : {}",method.getReturnType());
-				break;
+				return;
 			}
+			cell.setCellValue(ObjectUtils.isEmpty(methodValue) ? "" : methodValue.toString());
+			cell.setCellStyle(makeDataCellStyle());
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -188,8 +182,7 @@ public class ExcelService<T> {
 	 */
 	private CellStyle makeDataCellStyle(HorizontalAlignment halign)
 	{
-		CellStyle dataCellStyle = wb.createCellStyle();
-		if ( ObjectUtils.isNotEmpty(halign) )
+		if (ObjectUtils.isNotEmpty(halign))
 			dataCellStyle.setAlignment(halign);
 		
 		dataCellStyle.setBorderLeft(BorderStyle.THIN);
@@ -204,11 +197,15 @@ public class ExcelService<T> {
 		return dataCellStyle;
 	}
 	
+	
+	// flush 제한을 걸 경우 SXSSFRow는 쓰기 전용이라 getRow 메소드를 사용할 수 없으므로 null값이 나옴.
+	// Column 사이즈 조절 솔루션 : 커스텀 어노테이션으로 각 entity 에 default와 
+	// 전체 default 그리고 커스텀이 가능한 인터페이스를 만든다.
 	private void autoSizeColumns() {
 		if (sheet.getPhysicalNumberOfRows() > 0) {
 			SXSSFRow row = sheet.getRow(sheet.getFirstRowNum());
 			Iterator<Cell> cellIterator = row.cellIterator();
-			sheet.trackAllColumnsForAutoSizing(); // 모든 컬럼을 찾은 후 자동 사이즈 조절
+//			sheet.trackAllColumnsForAutoSizing(); // 모든 컬럼을 찾은 후 자동 사이즈 조절 (속도저하)
 			while (cellIterator.hasNext()) {
 				int columnIndex = cellIterator.next().getColumnIndex();
 				int currentColumnWidth = sheet.getColumnWidth(columnIndex);
