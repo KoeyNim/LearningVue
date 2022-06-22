@@ -6,7 +6,6 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.poi.ss.usermodel.BorderStyle;
@@ -26,6 +25,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import com.project.vue.common.excel.ExcelUtils;
+import com.project.vue.common.excel.DTO.ExcelDTO;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,7 +36,7 @@ import lombok.extern.slf4j.Slf4j;
 public class ExcelService<T> {
 
 	private SXSSFWorkbook wb; // 쓰기전용이며 읽기 불가능
-	private Map<String, Object> resource;
+	private ExcelDTO resource;
 	private SXSSFSheet sheet;
 	private List<T> dataList;
 	private int rowNo;
@@ -52,27 +52,19 @@ public class ExcelService<T> {
 	public ResponseEntity<ByteArrayResource> downloadExcel() throws Exception {
 		try {
 			rowNo = 0;
-			
-			String sheetName = (String)resource.get("fileName");
-			
-			@SuppressWarnings("unchecked")
-			List<String> headerList = (List<String>)resource.get("headerList");
-			
-			@SuppressWarnings("unchecked")
-			List<String> colList = (List<String>)resource.get("colList");
-			
-			sheet = wb.createSheet(sheetName);
-			
-			renderHeaderRow(headerList);
-			renderDataRow(colList, dataList);
+
+			sheet = wb.createSheet(resource.getFileName());
+
+			renderHeaderRow(resource.getHeaderList());
+			renderDataRow(resource.getColList(), dataList);
 //			autoSizeColumns();
 			ByteArrayOutputStream stream = new ByteArrayOutputStream();
 			wb.write(stream);
 			wb.dispose();
 			wb.close();
-	    	String fileName = sheetName+"_"+LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy.MM.dd"))+".xlsx";
+	    	String fileName = resource.getFileName()+"_"+LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy.MM.dd"))+".xlsx";
 			String orgFileName = new String(fileName.getBytes("UTF-8"), "ISO-8859-1");
-	
+
 			return ResponseEntity.ok()
 					 //attachement = 로컬에 저장, filename = 다운로드시 파일 이름 지정 
 					.header(HttpHeaders.CONTENT_DISPOSITION, "attachement; filename=" + orgFileName +";")
@@ -104,7 +96,7 @@ public class ExcelService<T> {
 		int cellIdx = 0;
 		for ( T data : dataList ) {
 			SXSSFRow dataRow = sheet.createRow(rowNo++);
-			for (String colLists : colList ) {
+			for ( String colLists : colList ) {
 				renderDataCell(dataRow, cellIdx++, data, colLists);
 			}
 			cellIdx = 0;

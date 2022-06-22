@@ -13,6 +13,8 @@ import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 
+import org.apache.poi.ss.usermodel.BorderStyle;
+
 import com.project.vue.common.TimeEntity;
 import com.project.vue.common.excel.annotation.ExcelColumnName;
 import com.project.vue.common.excel.annotation.ExcelFileName;
@@ -30,22 +32,22 @@ public class BoardEntity extends TimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@ExcelColumnName(headerName = "No")
+	@ExcelColumnName(headerName = "No", ColumnStyle = BorderStyle.THIN)
 	private Long id;
 
 	@NotEmpty
 	@NotBlank
-	@ExcelColumnName(headerName = "제목")
+	@ExcelColumnName(headerName = "제목", ColumnStyle = BorderStyle.DASHED)
 	private String title;
 
 	@NotEmpty
 	@NotBlank
 	@Column(columnDefinition = "LONGTEXT")
-	@ExcelColumnName(headerName = "내용")
+	@ExcelColumnName(headerName = "내용", ColumnStyle = BorderStyle.DASH_DOT)
 	private String content;
 
 	@Column(columnDefinition = "varchar(32)")
-	@ExcelColumnName(headerName = "작성자")
+	@ExcelColumnName(headerName = "작성자", ColumnStyle = BorderStyle.HAIR)
 	private String userId;
 
 	@Column(columnDefinition = "BIGINT default 0")
