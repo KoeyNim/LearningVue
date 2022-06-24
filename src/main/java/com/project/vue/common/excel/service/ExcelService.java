@@ -103,7 +103,7 @@ public class ExcelService<T> {
 				}
 			}
 			for ( int columnIdx = 0 ; columnIdx < colList.size() ; columnIdx++ ) {
-				renderDataCell(dataRow, columnIdx, dataList.get(dataIdx), colList.get(columnIdx), cellStyleList);
+				renderDataCell(dataRow, columnIdx, dataList.get(dataIdx), colList.get(columnIdx), cellStyleList.get(columnIdx));
 			}
 		}
 	}
@@ -112,7 +112,7 @@ public class ExcelService<T> {
 	 * 데이터 Cell 매핑
 	 * CellStyle 복제 (excel 2007 기준 64000개가 넘어갈 경우 에러 발생)
 	 */
-	private void renderDataCell(SXSSFRow dataRow, int cellIdx, T data, String colList, List<CellStyle> cellStyleList)
+	private void renderDataCell(SXSSFRow dataRow, int cellIdx, T data, String colList, CellStyle style)
 	{
 		try {
 			// 해당하는 method를 찾음
@@ -123,21 +123,21 @@ public class ExcelService<T> {
 			
 			if (java.lang.Integer.class.isInstance(methodValue)) {
 				cell.setCellValue((Integer)methodValue);
-				cell.setCellStyle(cellStyleList.get(cellIdx));
+				cell.setCellStyle(style);
 				return;
 			}
 			if (java.lang.Long.class.isInstance(methodValue)) {
 				cell.setCellValue((Long)methodValue);
-				cell.setCellStyle(cellStyleList.get(cellIdx));
+				cell.setCellStyle(style);
 				return;
 			}
 			if (java.time.LocalDate.class.isInstance(methodValue)) {
 				cell.setCellValue((LocalDate)methodValue);
-				cell.setCellStyle(cellStyleList.get(cellIdx));
+				cell.setCellStyle(style);
 				return;
 			}
 			cell.setCellValue(ObjectUtils.isEmpty(methodValue) ? "" : methodValue.toString());
-			cell.setCellStyle(cellStyleList.get(cellIdx));
+			cell.setCellStyle(style);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
