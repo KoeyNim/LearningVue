@@ -9,8 +9,7 @@ import org.apache.poi.ss.usermodel.BorderStyle;
 
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ExcelColumnName {
+public @interface ExcelColumnOptions {
 	String headerName() default "";
 	BorderStyle ColumnStyle() default BorderStyle.THIN;
-//	Font ColumnFont() default ;
 }

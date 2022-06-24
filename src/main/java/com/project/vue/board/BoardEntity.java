@@ -16,7 +16,7 @@ import javax.validation.constraints.NotEmpty;
 import org.apache.poi.ss.usermodel.BorderStyle;
 
 import com.project.vue.common.TimeEntity;
-import com.project.vue.common.excel.annotation.ExcelColumnName;
+import com.project.vue.common.excel.annotation.ExcelColumnOptions;
 import com.project.vue.common.excel.annotation.ExcelFileName;
 import com.project.vue.file.FileEntity;
 
@@ -32,26 +32,26 @@ public class BoardEntity extends TimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@ExcelColumnName(headerName = "No", ColumnStyle = BorderStyle.THIN)
+	@ExcelColumnOptions(headerName = "No", ColumnStyle = BorderStyle.DASH_DOT)
 	private Long id;
 
 	@NotEmpty
 	@NotBlank
-	@ExcelColumnName(headerName = "제목", ColumnStyle = BorderStyle.DASHED)
+	@ExcelColumnOptions(headerName = "제목", ColumnStyle = BorderStyle.DOUBLE)
 	private String title;
 
 	@NotEmpty
 	@NotBlank
 	@Column(columnDefinition = "LONGTEXT")
-	@ExcelColumnName(headerName = "내용", ColumnStyle = BorderStyle.DASH_DOT)
+	@ExcelColumnOptions(headerName = "내용", ColumnStyle = BorderStyle.MEDIUM_DASHED)
 	private String content;
 
 	@Column(columnDefinition = "varchar(32)")
-	@ExcelColumnName(headerName = "작성자", ColumnStyle = BorderStyle.HAIR)
+	@ExcelColumnOptions(headerName = "작성자", ColumnStyle = BorderStyle.THICK)
 	private String userId;
 
 	@Column(columnDefinition = "BIGINT default 0")
-	@ExcelColumnName(headerName = "조회수")
+	@ExcelColumnOptions(headerName = "조회수", ColumnStyle = BorderStyle.DOTTED)
 	private Integer count = 0;
 
 	@OneToOne(cascade = CascadeType.REMOVE) // 게시글 삭제 시 파일 데이터도 같이 삭제

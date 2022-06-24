@@ -4,12 +4,11 @@ import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Method;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Iterator;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.poi.ss.usermodel.BorderStyle;
-import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Font;
@@ -40,13 +39,13 @@ public class ExcelService<T> {
 	private SXSSFSheet sheet;
 	private List<T> dataList;
 	private int rowNo;
-	private CellStyle dataCellStyle;
-	
+	/**
+	 *  생성자
+	 */
 	public ExcelService(List<T> dataList, Class<T> type) {
 		this.wb = new SXSSFWorkbook(100); // flush 범위 (기본값 100, -1 일 경우 제한 없음)
 		this.resource = ExcelUtils.getResource(type);
 		this.dataList = dataList;
-		this.dataCellStyle = wb.createCellStyle();
 	}
 
 	public ResponseEntity<ByteArrayResource> downloadExcel() throws Exception {
@@ -56,8 +55,9 @@ public class ExcelService<T> {
 			sheet = wb.createSheet(resource.getFileName());
 
 			renderHeaderRow(resource.getHeaderList());
-			renderDataRow(resource.getColList(), dataList);
-//			autoSizeColumns();
+			renderDataRow(dataList, resource.getColList(), resource.getColStyle());
+			renderColimnSize(resource.getColList().size());
+			
 			ByteArrayOutputStream stream = new ByteArrayOutputStream();
 			wb.write(stream);
 			wb.dispose();
@@ -92,14 +92,19 @@ public class ExcelService<T> {
 	/**
 	 * 데이터 Row 생성
 	 */
-	private void renderDataRow(List<String> colList, List<T> dataList) {
-		int cellIdx = 0;
-		for ( T data : dataList ) {
+	private void renderDataRow(List<T> dataList, List<String> colList, List<BorderStyle> colStyle) {
+		List<CellStyle> cellStyleList = new ArrayList<>();
+		
+		for ( int dataIdx = 0 ; dataIdx < dataList.size() ; dataIdx++ ) {
 			SXSSFRow dataRow = sheet.createRow(rowNo++);
-			for ( String colLists : colList ) {
-				renderDataCell(dataRow, cellIdx++, data, colLists);
+			if (dataIdx == 0) { // CellStyle 최초 한번만 생성
+				for ( int columnStyleIdx = 0 ; columnStyleIdx < colList.size() ; columnStyleIdx++ ) {
+					cellStyleList.add(makeDataCellStyle(colStyle.get(columnStyleIdx)));
+				}
 			}
-			cellIdx = 0;
+			for ( int columnIdx = 0 ; columnIdx < colList.size() ; columnIdx++ ) {
+				renderDataCell(dataRow, columnIdx, dataList.get(dataIdx), colList.get(columnIdx), cellStyleList);
+			}
 		}
 	}
 
@@ -107,7 +112,7 @@ public class ExcelService<T> {
 	 * 데이터 Cell 매핑
 	 * CellStyle 복제 (excel 2007 기준 64000개가 넘어갈 경우 에러 발생)
 	 */
-	private void renderDataCell(SXSSFRow dataRow, int cellIdx, T data, String colList)
+	private void renderDataCell(SXSSFRow dataRow, int cellIdx, T data, String colList, List<CellStyle> cellStyleList)
 	{
 		try {
 			// 해당하는 method를 찾음
@@ -118,21 +123,21 @@ public class ExcelService<T> {
 			
 			if (java.lang.Integer.class.isInstance(methodValue)) {
 				cell.setCellValue((Integer)methodValue);
-				cell.setCellStyle(makeDataCellStyle());
+				cell.setCellStyle(cellStyleList.get(cellIdx));
 				return;
 			}
 			if (java.lang.Long.class.isInstance(methodValue)) {
 				cell.setCellValue((Long)methodValue);
-				cell.setCellStyle(makeDataCellStyle());
+				cell.setCellStyle(cellStyleList.get(cellIdx));
 				return;
 			}
 			if (java.time.LocalDate.class.isInstance(methodValue)) {
 				cell.setCellValue((LocalDate)methodValue);
-				cell.setCellStyle(makeDataCellStyle());
+				cell.setCellStyle(cellStyleList.get(cellIdx));
 				return;
 			}
 			cell.setCellValue(ObjectUtils.isEmpty(methodValue) ? "" : methodValue.toString());
-			cell.setCellStyle(makeDataCellStyle());
+			cell.setCellStyle(cellStyleList.get(cellIdx));
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -164,45 +169,45 @@ public class ExcelService<T> {
 	/**
 	 * 데이터 Cell 스타일
 	 */
-	private CellStyle makeDataCellStyle()
+	private CellStyle makeDataCellStyle(BorderStyle style)
 	{
-		return makeDataCellStyle(null);
-	}
-	
-	/**
-	 * 데이터 Cell 스타일
-	 */
-	private CellStyle makeDataCellStyle(HorizontalAlignment halign)
-	{
-		if (ObjectUtils.isNotEmpty(halign))
-			dataCellStyle.setAlignment(halign);
+		CellStyle dataCellStyle = wb.createCellStyle();
 		
-		dataCellStyle.setBorderLeft(BorderStyle.THIN);
-		dataCellStyle.setBorderRight(BorderStyle.THIN);
-		dataCellStyle.setBorderTop(BorderStyle.THIN);
-		dataCellStyle.setBorderBottom(BorderStyle.THIN);
-		
+		dataCellStyle.setBorderLeft(style);
+		dataCellStyle.setBorderRight(style);
+		dataCellStyle.setBorderTop(style);
+		dataCellStyle.setBorderBottom(style);
+
 		Font font = wb.createFont();
-		
+
 		dataCellStyle.setFont(font);
-		
+
 		return dataCellStyle;
 	}
 	
-	
-	// flush 제한을 걸 경우 SXSSFRow는 쓰기 전용이라 getRow 메소드를 사용할 수 없으므로 null값이 나옴.
-	// Column 사이즈 조절 솔루션 : 커스텀 어노테이션으로 각 entity 에 default와 
-	// 전체 default 그리고 커스텀이 가능한 인터페이스를 만든다.
-	private void autoSizeColumns() {
+	/**
+	 * Column 사이즈 조절
+	 */
+	private void renderColimnSize(int colLength) {
 		if (sheet.getPhysicalNumberOfRows() > 0) {
-			SXSSFRow row = sheet.getRow(sheet.getFirstRowNum());
-			Iterator<Cell> cellIterator = row.cellIterator();
-//			sheet.trackAllColumnsForAutoSizing(); // 모든 컬럼을 찾은 후 자동 사이즈 조절 (속도저하)
-			while (cellIterator.hasNext()) {
-				int columnIndex = cellIterator.next().getColumnIndex();
-				int currentColumnWidth = sheet.getColumnWidth(columnIndex);
-				sheet.setColumnWidth(columnIndex, (currentColumnWidth + 2500));
+			for (int i = 0 ; i <= colLength ; i++) {
+				int currentColumnWidth = sheet.getColumnWidth(i);
+				sheet.setColumnWidth(i, (currentColumnWidth + 2500));
 			}
 		}
 	}
+	
+	// flush 제한을 걸 경우 SXSSFRow는 쓰기 전용이라 getRow 메소드를 사용할 수 없으므로 null값이 나옴.
+//	private void autoSizeColumns() {
+//		if (sheet.getPhysicalNumberOfRows() > 0) {
+//			SXSSFRow row = sheet.getRow(sheet.getFirstRowNum());
+//			Iterator<Cell> cellIterator = row.cellIterator();
+//			sheet.trackAllColumnsForAutoSizing(); // 모든 컬럼을 찾은 후 자동 사이즈 조절 (속도저하)
+//			while (cellIterator.hasNext()) {
+//				int columnIndex = cellIterator.next().getColumnIndex();
+//				int currentColumnWidth = sheet.getColumnWidth(columnIndex);
+//				sheet.setColumnWidth(columnIndex, (currentColumnWidth + 2500));
+//			}
+//		}
+//	}
 }
