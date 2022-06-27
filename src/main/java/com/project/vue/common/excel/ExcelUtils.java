@@ -36,7 +36,9 @@ public class ExcelUtils {
 		}
 
 		// @ExcelColumnOptions의 fileName 데이터 추출
-		resource.setFileName(Entity.getAnnotation(ExcelFileName.class).fileName());
+		resource.setFileName(Entity.isAnnotationPresent(ExcelFileName.class) 
+								? Entity.getAnnotation(ExcelFileName.class).fileName() 
+								: "미지정");
 		resource.setHeaderList(headerList);
 		resource.setColList(colList);
 		resource.setColStyle(colStyle);
