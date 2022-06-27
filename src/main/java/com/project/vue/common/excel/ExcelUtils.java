@@ -2,9 +2,7 @@ package com.project.vue.common.excel;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.springframework.stereotype.Component;
@@ -19,40 +17,30 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class ExcelUtils {
 
-	// Entity Class 안에 있는 정보를 추출
+	// Entity Class 데이터를 추출 및 재 가공
 	public static ExcelDTO getResource(Class<?> Entity) {
 
 		ExcelDTO resource = new ExcelDTO();
 		List<String> headerList = new ArrayList<>();
+		List<String> colList = new ArrayList<>();
+		List<BorderStyle> colStyle = new ArrayList<>();
 
-		// @ExcelColumnOptions의 headerName 값 추출 (다수)
+		// @ExcelColumnOptions의 데이터 추출
 		for (Field field : Entity.getDeclaredFields()) {
-            if (field.isAnnotationPresent(ExcelColumnOptions.class)) {
-            	headerList.add(field.getAnnotation(ExcelColumnOptions.class).headerName());
-            }
+			// @ExcelColumnOptions를 가지고 있는 필드만 로직 실행
+			if (field.isAnnotationPresent(ExcelColumnOptions.class)) {
+	            headerList.add(field.getAnnotation(ExcelColumnOptions.class).headerName());
+	            colList.add(field.getName().substring(0,1).toUpperCase() + field.getName().substring(1));
+	            colStyle.add(field.getAnnotation(ExcelColumnOptions.class).ColumnStyle());
+			}
 		}
 
-		// Entity의 Fields명 추출 후 특정 문자열 대문자로 변환
-		List<String> colList = Arrays
-				.stream(Entity.getDeclaredFields())
-				.parallel() // 병렬처리
-				.filter(entity -> entity.isAnnotationPresent(ExcelColumnOptions.class)) // @ExcelColumnOptions가 있는 필드만 필터링
-                .map(entity -> entity.getName().substring(0,1).toUpperCase() + entity.getName().substring(1)) // 재 가공
-                .collect(Collectors.toList()); // 리스트 생성
-
-		List<BorderStyle> colStyle = Arrays
-				.stream(Entity.getDeclaredFields())
-				.parallel() // 병렬처리
-				.filter(entity -> entity.isAnnotationPresent(ExcelColumnOptions.class)) // @ExcelColumnOptions가 있는 필드만 필터링
-				.map(entity -> entity.getAnnotation(ExcelColumnOptions.class).ColumnStyle()) // 재 가공
-                .collect(Collectors.toList()); // 리스트 생성
-
-		// @ExcelColumnOptions의 fileName 값 추출
+		// @ExcelColumnOptions의 fileName 데이터 추출
 		resource.setFileName(Entity.getAnnotation(ExcelFileName.class).fileName());
 		resource.setHeaderList(headerList);
 		resource.setColList(colList);
 		resource.setColStyle(colStyle);
-
+		
 		log.debug("resource : {}", resource);
 		log.debug("fileName : {}", resource.getFileName());
 		log.debug("headerList : {}", resource.getHeaderList());

@@ -27,9 +27,7 @@ import com.project.vue.common.excel.ExcelUtils;
 import com.project.vue.common.excel.DTO.ExcelDTO;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @Component
 @RequiredArgsConstructor
 public class ExcelService<T> {
@@ -57,7 +55,7 @@ public class ExcelService<T> {
 			renderHeaderRow(resource.getHeaderList());
 			renderDataRow(dataList, resource.getColList(), resource.getColStyle());
 			renderColimnSize(resource.getColList().size());
-			
+
 			ByteArrayOutputStream stream = new ByteArrayOutputStream();
 			wb.write(stream);
 			wb.dispose();
@@ -66,7 +64,7 @@ public class ExcelService<T> {
 			String orgFileName = new String(fileName.getBytes("UTF-8"), "ISO-8859-1");
 
 			return ResponseEntity.ok()
-					 //attachement = 로컬에 저장, filename = 다운로드시 파일 이름 지정 
+					 //attachement = 로컬에 저장, filename = 다운로드시 파일 이름 지정
 					.header(HttpHeaders.CONTENT_DISPOSITION, "attachement; filename=" + orgFileName +";")
 					.header(HttpHeaders.CONTENT_TYPE, "ms-vnd/excel") 
 					.body(new ByteArrayResource(stream.toByteArray()));
@@ -94,7 +92,7 @@ public class ExcelService<T> {
 	 */
 	private void renderDataRow(List<T> dataList, List<String> colList, List<BorderStyle> colStyle) {
 		List<CellStyle> cellStyleList = new ArrayList<>();
-		
+
 		for ( int dataIdx = 0 ; dataIdx < dataList.size() ; dataIdx++ ) {
 			SXSSFRow dataRow = sheet.createRow(rowNo++);
 			if (dataIdx == 0) { // CellStyle 최초 한번만 생성
@@ -120,7 +118,7 @@ public class ExcelService<T> {
 			Method method = data.getClass().getMethod("get" + colList);
 			// method 실행
 			Object methodValue = method.invoke(data);
-			
+
 			if (java.lang.Integer.class.isInstance(methodValue)) {
 				cell.setCellValue((Integer)methodValue);
 				cell.setCellStyle(style);
@@ -138,41 +136,41 @@ public class ExcelService<T> {
 			}
 			cell.setCellValue(ObjectUtils.isEmpty(methodValue) ? "" : methodValue.toString());
 			cell.setCellStyle(style);
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * 헤더 Cell 스타일
 	 */
 	private CellStyle makeHeaderCellStyle()
 	{
 		CellStyle headerCellStyle = wb.createCellStyle();
-		
+
 		headerCellStyle.setAlignment(HorizontalAlignment.CENTER);
-		
+
 		headerCellStyle.setBorderLeft(BorderStyle.MEDIUM);
 		headerCellStyle.setBorderRight(BorderStyle.MEDIUM);
 		headerCellStyle.setBorderTop(BorderStyle.MEDIUM);
 		headerCellStyle.setBorderBottom(BorderStyle.MEDIUM);
-		
+
 		Font font = wb.createFont();
 		font.setBold(true);
-		
+
 		headerCellStyle.setFont(font);
-		
+
 		return headerCellStyle;
 	}
-	
+
 	/**
 	 * 데이터 Cell 스타일
 	 */
 	private CellStyle makeDataCellStyle(BorderStyle style)
 	{
 		CellStyle dataCellStyle = wb.createCellStyle();
-		
+
 		dataCellStyle.setBorderLeft(style);
 		dataCellStyle.setBorderRight(style);
 		dataCellStyle.setBorderTop(style);
@@ -184,7 +182,7 @@ public class ExcelService<T> {
 
 		return dataCellStyle;
 	}
-	
+
 	/**
 	 * Column 사이즈 조절
 	 */
@@ -196,7 +194,7 @@ public class ExcelService<T> {
 			}
 		}
 	}
-	
+
 	// flush 제한을 걸 경우 SXSSFRow는 쓰기 전용이라 getRow 메소드를 사용할 수 없으므로 null값이 나옴.
 //	private void autoSizeColumns() {
 //		if (sheet.getPhysicalNumberOfRows() > 0) {
