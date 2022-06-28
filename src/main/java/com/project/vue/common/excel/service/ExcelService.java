@@ -37,6 +37,7 @@ public class ExcelService<T> {
 	private SXSSFSheet sheet;
 	private List<T> dataList;
 	private int rowNo;
+
 	/**
 	 *  생성자
 	 */
@@ -46,6 +47,9 @@ public class ExcelService<T> {
 		this.dataList = dataList;
 	}
 
+	/**
+	 *  다운로드
+	 */
 	public ResponseEntity<ByteArrayResource> downloadExcel() throws Exception {
 		try {
 			rowNo = 0;
@@ -92,16 +96,18 @@ public class ExcelService<T> {
 	 */
 	private void renderDataRow(List<T> dataList, List<String> colList, List<BorderStyle> colStyle) {
 		List<CellStyle> cellStyleList = new ArrayList<>();
+		boolean flag = true;
 
-		for ( int dataIdx = 0 ; dataIdx < dataList.size() ; dataIdx++ ) {
+		for ( T data : dataList ) {
 			SXSSFRow dataRow = sheet.createRow(rowNo++);
-			if (dataIdx == 0) { // CellStyle 최초 한번만 생성
-				for ( int columnStyleIdx = 0 ; columnStyleIdx < colList.size() ; columnStyleIdx++ ) {
-					cellStyleList.add(makeDataCellStyle(colStyle.get(columnStyleIdx)));
+			if (flag) { // CellStyle 최초 한번만 생성
+				for (BorderStyle cellstyle : colStyle ) {
+					cellStyleList.add(makeDataCellStyle(cellstyle));
 				}
+			flag = false;
 			}
-			for ( int columnIdx = 0 ; columnIdx < colList.size() ; columnIdx++ ) {
-				renderDataCell(dataRow, columnIdx, dataList.get(dataIdx), colList.get(columnIdx), cellStyleList.get(columnIdx));
+			for ( int columnIdx = 0 ; columnIdx < colList.size(); columnIdx++) {
+				renderDataCell(dataRow, columnIdx, data, colList.get(columnIdx), cellStyleList.get(columnIdx));
 			}
 		}
 	}
@@ -110,32 +116,32 @@ public class ExcelService<T> {
 	 * 데이터 Cell 매핑
 	 * CellStyle 복제 (excel 2007 기준 64000개가 넘어갈 경우 에러 발생)
 	 */
-	private void renderDataCell(SXSSFRow dataRow, int cellIdx, T data, String colList, CellStyle style)
+	private void renderDataCell(SXSSFRow dataRow, int cellIdx, T data, String colName, CellStyle cellStyle)
 	{
 		try {
 			// 해당하는 method를 찾음
 			SXSSFCell cell = dataRow.createCell(cellIdx);
-			Method method = data.getClass().getMethod("get" + colList);
+			Method method = data.getClass().getMethod("get" + colName);
 			// method 실행
 			Object methodValue = method.invoke(data);
 
 			if (java.lang.Integer.class.isInstance(methodValue)) {
 				cell.setCellValue((Integer)methodValue);
-				cell.setCellStyle(style);
+				cell.setCellStyle(cellStyle);
 				return;
 			}
 			if (java.lang.Long.class.isInstance(methodValue)) {
 				cell.setCellValue((Long)methodValue);
-				cell.setCellStyle(style);
+				cell.setCellStyle(cellStyle);
 				return;
 			}
 			if (java.time.LocalDate.class.isInstance(methodValue)) {
 				cell.setCellValue((LocalDate)methodValue);
-				cell.setCellStyle(style);
+				cell.setCellStyle(cellStyle);
 				return;
 			}
 			cell.setCellValue(ObjectUtils.isEmpty(methodValue) ? "" : methodValue.toString());
-			cell.setCellStyle(style);
+			cell.setCellStyle(cellStyle);
 
 		} catch (Exception e) {
 			e.printStackTrace();

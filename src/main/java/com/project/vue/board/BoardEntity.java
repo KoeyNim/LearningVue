@@ -15,6 +15,7 @@ import javax.validation.constraints.NotEmpty;
 
 import org.apache.poi.ss.usermodel.BorderStyle;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.vue.common.TimeEntity;
 import com.project.vue.common.excel.annotation.ExcelColumnOptions;
 import com.project.vue.common.excel.annotation.ExcelFileName;
@@ -56,6 +57,8 @@ public class BoardEntity extends TimeEntity {
 
 	@OneToOne(cascade = CascadeType.REMOVE) // 게시글 삭제 시 파일 데이터도 같이 삭제
 	@JoinColumn (name = "fileId")
+	@JsonIgnore // Cannot call sendError() after the response has been committed 에러 방지
+	            // 직렬화 역직렬화에 사용되는 논리적 프로퍼티 값을 무시
 	private FileEntity fileEntity;
 	
 	@Transient
