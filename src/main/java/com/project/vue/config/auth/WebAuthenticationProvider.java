@@ -1,7 +1,5 @@
 package com.project.vue.config.auth;
 
-import java.util.Collections;
-
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -36,6 +34,16 @@ public class WebAuthenticationProvider implements AuthenticationProvider {
 		log.trace("## userPwd: {}", userPwd);
 		
 		MemberEntity findMember = memberRepository.findByUserId(userId);
+		log.debug("## findMember: {}", findMember);
+		
+		if(userId.isEmpty()) {
+			throw new UsernameNotFoundException("아이디를 입력해주세요.");
+		}
+		
+		if(userPwd.isEmpty()) {
+			throw new BadCredentialsException("비밀번호를 입력해주세요.");    		
+		}
+		
 		if(ObjectUtils.isEmpty(findMember)) {
 			throw new UsernameNotFoundException("찾을 수 없는 아이디 입니다.");
 		}
@@ -46,7 +54,7 @@ public class WebAuthenticationProvider implements AuthenticationProvider {
 		}
 		
 		// Role을 넣지 않으면 Tomcat Thread를 전부 실행함
-		return new UsernamePasswordAuthenticationToken(userId, userPwd, Collections.emptyList());
+		return new UsernamePasswordAuthenticationToken(userId, userPwd, findMember.getAuthorities());
 	}
 	
 	// authenticate Method 진입 전 정상적인 토큰 인지 확인

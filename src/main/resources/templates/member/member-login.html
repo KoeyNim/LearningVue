@@ -38,8 +38,8 @@
 				</div>
 			</div>
 			<div class="login-btn-wrap">
-				<a @click.prevent="signIn" title="로그인하기" class="btn solidbtn loginbtn lg-h pink">로그인</a>
-				<a th:href="@{/signup}" title="회원가입하기" class="btn solidbtn loginbtn lg-h pink">회원가입</a>
+				<a title="로그인하기" class="btn solidbtn loginbtn lg-h pink" @click.prevent="signIn" >로그인</a>
+				<a title="회원가입하기" class="btn solidbtn loginbtn lg-h pink" @click.prevent="signUp" >회원가입</a>
 			</div>
 		</div>
 	</div>

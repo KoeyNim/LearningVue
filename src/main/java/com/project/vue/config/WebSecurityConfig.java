@@ -5,11 +5,13 @@ import java.util.Arrays;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -33,6 +35,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	private final WebAuthenticationFailureHandler authenticationFailureHandler;
 	
 //	private final WebAuthenticationProvider authenticationProvider;
+	
+	private String[] permitAllResources = {"/","/login", "/user/login/**"};
 	
 	//비밀번호 암호화를 위한 Encoder 설정
     @Bean
@@ -78,8 +82,22 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         web.ignoring().antMatchers("/static/**");
         web.ignoring().antMatchers("/error"); // 작동하지 않음
     }
-	
-    @Override
+    
+    // 권한 계층 설정 Bean
+    @Bean
+    public DefaultWebSecurityExpressionHandler expressionHandler() {
+    	RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
+    	// 상위 권한 설정
+    	roleHierarchy.setHierarchy("ROLE_ADMIN > ROLE_MANAGER > ROLE_USER");
+    	
+    	DefaultWebSecurityExpressionHandler securityExpressionHandler = new DefaultWebSecurityExpressionHandler();
+    	
+    	// 커스터마이징
+    	securityExpressionHandler.setRoleHierarchy(roleHierarchy);
+    	return securityExpressionHandler;
+    }
+
+	@Override
     protected void configure(HttpSecurity http) throws Exception {
     	
 //    	http.headers(headers -> headers.cacheControl(cache -> cache.disable()));
@@ -92,19 +110,22 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         	  .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()); // CSRF 토큰자동생성
 //  	  	  .ignoringAntMatchers("/login", "/login/**", "/logout") // CSRF 예외처리
 //        	  .disable() // CSRF 미적용
+
         http.authorizeRequests()
 //        	  .antMatchers(Constants.REQUEST_MAPPING_PREFIX+"/board/**").authenticated()
 //	          .antMatchers("/board/**").authenticated() // board 요청에 대해서는 로그인을 요구
 //	          .antMatchers("/admin/**").hasRole("ADMIN")
 //	          .antMatchers("/user/**").hasRole("USER")
 	          .antMatchers(HttpMethod.GET,"/").permitAll() // 로그인을 요구하지 않음
+        	  .antMatchers(Constants.REQUEST_MAPPING_PREFIX+"/board/**").hasRole("USER")
         	  .antMatchers("/api/**").permitAll()
 	          .antMatchers(HttpMethod.GET,"/signup").permitAll()
 	          .antMatchers(Constants.REQUEST_MAPPING_PREFIX+"/member/signup").permitAll()
 //	          .anyRequest().permitAll() // 나머지 요청에 대해서는 로그인을 요구하지 않음.
+	          .expressionHandler(expressionHandler()) // 권한 계층 커스텀 Method
 	          .anyRequest().authenticated() // 모든 요청에 로그인을 요구
 
-        // 로그인
+        // 로그인 인증
 	    .and().formLogin()
 	          .loginPage("/login") // 로그인 페이지
 	          .loginProcessingUrl(Constants.REQUEST_MAPPING_PREFIX + "/login/security") // 로그인 검증 url
@@ -114,6 +135,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	          .failureHandler(authenticationFailureHandler) // 로그인 실패 핸들러
 	          //.failureForwardUrl("/") failureHandler 보다 우선시 되므로 failureHandler를 사용하고 싶을 경우 사용하지 말것
         	  .permitAll();
+        
+        // 인가 필터
+//        http.addFilterBefore(customFilterSecurityInterceptor(), FilterSecurityInterceptor.class);
         
 //        http.securityContext().securityContextRepository(new NullSecurityContextRepository()); // 로그인된 사용자 삭제시 에러 표시
        

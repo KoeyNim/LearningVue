@@ -22,8 +22,10 @@
 							<div class="form-row">
 								<span class="pt0 form-label" id="userId">* 로그인 ID​</span>
 								<div class="form-field">
-									<input type="text" class="form-input" name="userId" v-model="member.userId" :maxlength="16" placeholder="아이디 입력" 
-									:data-vv-as="$('#userId').text()" v-validate="'required|alpha_num|min:5|max:16'"/>
+									<input type="text" class="form-input" name="userId" v-model="member.userId" :maxlength="16" placeholder="아이디" 
+									:data-vv-as="$('#userId').text()" v-validate="'required|alpha_num|min:5|max:16'" @change="check = true"/>
+									<a v-if="check" class="btn solidbtn md md-h pink" @click.self.prevent="checkId">중복 확인</a>
+									<a v-else class="btn solidbtn md md-h grey" style="cursor:default;">중복 확인</a>
 								</div>
 							</div>
 							<span>{{ errors.first('userId') }}</span>
@@ -31,7 +33,7 @@
 							<div class="form-row">
 								<span class="pt0 form-label" id="userPwd1">* 비밀번호</span>
 								<div class="form-field">
-								    <input type="password" class="form-input" name="userPwd1" v-model="member.userPwd" :maxlength="20" placeholder="비밀번호 입력" 
+								    <input type="password" class="form-input" name="userPwd1" v-model="member.userPwd" :maxlength="20" placeholder="비밀번호" 
 								    :data-vv-as="$('#userPwd1').text()" ref="password" data-vv-as="password" v-validate="{ required:true, is_not:member.userId, min:5, max:20 }"/>
 								</div>
 								<span>* 5~20자리 사이의 영문,숫자만 입력</span>
@@ -51,7 +53,7 @@
 							<div class="form-row">
 								<span class="pt0 form-label" id="userName">* 이름​​</span>
 								<div class="form-field">
-									<input type="text" class="form-input" name="userName" v-model="member.userName" placeholder="이름 입력" 
+									<input type="text" class="form-input" name="userName" v-model="member.userName" placeholder="이름" 
 									:data-vv-as="$('#userName').text()" v-validate="{ required:true, regex:/^[가-힣]+$/, min:3, max:4}"/>
 								</div>
 							</div>
@@ -73,7 +75,7 @@
                             <div class="form-row">
                                 <span class="form-label" id="age">* 나이​</span>
                                 <div class="form-field">
-                                    <input type="text" class="form-input" name="age" v-model="member.age" :maxlength="3" placeholder="나이 입력" 
+                                    <input type="text" class="form-input" name="age" v-model="member.age" :maxlength="3" placeholder="나이" 
                                     :data-vv-as="$('#age').text()" v-validate="'required|numeric|between:1,100'"/>
                                 </div>
                             </div>
@@ -82,7 +84,7 @@
                             <div class="form-row">
                                 <span class="form-label" id="email">* 이메일​</span>
                                 <div class="form-field">
-                                    <input type="text" class="form-input" name="email" v-model="member.email" placeholder="이메일 입력" 
+                                    <input type="text" class="form-input" name="email" v-model="member.email" placeholder="이메일" 
                                     :data-vv-as="$('#email').text()" v-validate="'required|email'"/>
                                 </div>
                             </div>
@@ -91,7 +93,7 @@
                             <div class="form-row">
                                 <span class="pt0 form-label" id="phone">* 휴대폰번호​</span>
                                 <div class="form-field">
-                                    <input type="text" class="form-input" name="phone" v-model="member.phone" :maxlength="11" placeholder="휴대폰번호 입력" 
+                                    <input type="text" class="form-input" name="phone" v-model="member.phone" :maxlength="11" placeholder="휴대폰번호" 
                                     :data-vv-as="$('#phone').text()" v-validate="'required|numeric|min:10|max:11'"/>
                                 </div>
                             </div>
@@ -103,8 +105,8 @@
 				<div class="card-btn-box noline flex-box flex-wrap flex-spc-btw">
 					<div class="lt"></div>
 					<div class="rt">
-						<a href="javascript:history.back();" class="btn solidbtn md md-h black" >취소</a>
-						<a href="javascript:void(0);" class="btn solidbtn md md-h pink" @click="signUp">가입</a>
+						<a class="btn solidbtn md md-h black" @click.self.prevent="history.back();" >취소</a>
+						<a class="btn solidbtn md md-h pink" @click.self.prevent="signUp">가입</a>
 					</div>
 				</div>
 			</div>

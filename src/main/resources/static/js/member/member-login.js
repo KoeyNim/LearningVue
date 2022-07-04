@@ -7,14 +7,13 @@ $().ready(() => {
         },        
         created() {
             const me = this;
-            this.fnLoad();
+            me.fnLoad();
             let saveid = localStorage.getItem("saveid");
             if(saveid){
                 me.member.userId = saveid;
             }
         },
         mounted() {
-            const me = this;
             if(localStorage.getItem("saveid")){
                 $('#saveid').prop('checked', true);
                 $('.login-input.id>span').addClass('on');
@@ -62,6 +61,9 @@ $().ready(() => {
                             alert("입력 정보가 맞지 않습니다. 아이디와 비밀번호를 다시 입력해주세요.");
                     }
                 });
+            },
+            signUp() {
+                location.href = "/signup"
             }
         }
     });

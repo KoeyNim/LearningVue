@@ -3,7 +3,8 @@ $(document).ready(function() {
     vu = new Vue({
         el: '#page',
         data: {
-            member:{}
+            member:{},
+            check:true,
         },
         methods: {
             signUp() {
@@ -30,6 +31,23 @@ $(document).ready(function() {
                         alert("입력 정보가 맞지 않습니다. 필수 항목을 다시 확인해주세요.");
                     }
                 });
+            },
+            checkId() {
+                const me = this;
+                me.$validator.validate('userId').then(success => {
+                    if(success) {
+                        ajaxAPI('POST', API_VERSION + '/member/checkid', me.member.userId,
+                                {contentType: 'application/json; charset=UTF-8'}
+                        ).done((response) => {
+                            alert(response.message);
+                            me.check = false;
+                        }).fail((response) => {
+                            alert(response.responseJSON.message);
+                        });
+                    } else {
+                        alert("입력 정보가 맞지 않습니다. 필수 항목을 다시 확인해주세요.");
+                    }
+                })
             }
         }
     });

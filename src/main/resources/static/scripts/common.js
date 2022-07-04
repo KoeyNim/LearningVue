@@ -23,7 +23,7 @@ function ajaxAPI(type, url, data, options) {
             }};
         Object.assign(ajaxParam, csrf);
     };
-    console.log("type : ", type, ", ", "url : ", url);
+    console.log("type : ", type, ", ", "url : ", url, ", ", "data : ", data);
 
     return $.ajax(ajaxParam);
 }
