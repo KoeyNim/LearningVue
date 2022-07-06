@@ -17,41 +17,41 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import com.project.vue.Role.RoleHierarchyService;
 import com.project.vue.common.Constants;
 import com.project.vue.config.auth.WebAuthenticationFailureHandler;
 import com.project.vue.config.auth.WebAuthenticationSucessHandler;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	private final WebAuthenticationSucessHandler authenticationSucessHandler;
-	
+
 	private final WebAuthenticationFailureHandler authenticationFailureHandler;
-	
+
+	private final RoleHierarchyService roleHierarchyService;
+
 //	private final WebAuthenticationProvider authenticationProvider;
-	
-	private String[] permitAllResources = {"/","/login", "/user/login/**"};
-	
+
 	//비밀번호 암호화를 위한 Encoder 설정
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
     }
-    
+
 //    @Bean public ServletListenerRegistrationBean<HttpSessionEventPublisher> httpSessionEventPublisher() { 
 //    	return new ServletListenerRegistrationBean<HttpSessionEventPublisher>(new HttpSessionEventPublisher()); 
 //    }
-    
+
     // CORS 허용 적용 (응답 서버에서만 설정)
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
+
         config.addAllowedOrigin("http://localhost:3000"); // CORS 허용 요청 url
         config.setAllowedMethods(Arrays.asList("HEAD", "GET", "POST", "PUT", "DELETE")); // 허용 Method
         config.setAllowedHeaders(Arrays.asList( // 허용 Header
@@ -74,7 +74,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return source;
     }
 
-	
     // 정적 자원에 대해서는 Security 설정을 적용하지 않음. WebSecurity가 HttpSecurity 보다 우선순위 이다.
     @Override
     public void configure(WebSecurity web) throws Exception {
@@ -82,27 +81,23 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         web.ignoring().antMatchers("/static/**");
         web.ignoring().antMatchers("/error"); // 작동하지 않음
     }
-    
+
     // 권한 계층 설정 Bean
     @Bean
     public DefaultWebSecurityExpressionHandler expressionHandler() {
     	RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
-    	// 상위 권한 설정
-    	roleHierarchy.setHierarchy("ROLE_ADMIN > ROLE_MANAGER > ROLE_USER");
-    	
     	DefaultWebSecurityExpressionHandler securityExpressionHandler = new DefaultWebSecurityExpressionHandler();
-    	
-    	// 커스터마이징
+
+    	// 상위 권한 설정
+    	roleHierarchy.setHierarchy(roleHierarchyService.findAllHierarchy());
+    	// 권한 계층 커스터마이징
     	securityExpressionHandler.setRoleHierarchy(roleHierarchy);
     	return securityExpressionHandler;
     }
 
 	@Override
     protected void configure(HttpSecurity http) throws Exception {
-    	
 //    	http.headers(headers -> headers.cacheControl(cache -> cache.disable()));
-    	
-    	
     	http.httpBasic().disable() // 기본 Login Form 제거
     	.cors().configurationSource(corsConfigurationSource()); // CORS 설정
 //        .cors().disable() // CORS 무력화
@@ -135,21 +130,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	          .failureHandler(authenticationFailureHandler) // 로그인 실패 핸들러
 	          //.failureForwardUrl("/") failureHandler 보다 우선시 되므로 failureHandler를 사용하고 싶을 경우 사용하지 말것
         	  .permitAll();
-        
         // 인가 필터
 //        http.addFilterBefore(customFilterSecurityInterceptor(), FilterSecurityInterceptor.class);
-        
 //        http.securityContext().securityContextRepository(new NullSecurityContextRepository()); // 로그인된 사용자 삭제시 에러 표시
-       
         // 인증 필터
 //        .and().addFilterBefore(new WebAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
-        
         http.sessionManagement()
     	    .maximumSessions(1) // 허용 session 갯수, -1인 경우 무제한 세션
     	    .expiredUrl("/login?expire=true") // session 만료 시 이동 url
     	    .maxSessionsPreventsLogin(false); // true일 경우 동시로그인 차단, false일 경우 기존 세션 만료
 //        .and().sessionFixation().changeSessionId(); // 세션 고정 보호
-        
         // 로그아웃
         http.logout()
 //        	.logoutUrl("/logout") // 로그아웃 url  기본값 : /logout
@@ -158,7 +148,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         	.clearAuthentication(true) // 로그아웃시 인증정보 삭제
         	.invalidateHttpSession(true).deleteCookies("JSESSIONID"); // 로그아웃 시 세션 삭제, 쿠키 제거
     }
-    
     // 사용자 정보 검증 Provider Method 자동으로 잡아주므로 사용할 필요가 없는 것 같음.
 //    @Override
 //    public void configure(AuthenticationManagerBuilder auth) throws Exception {

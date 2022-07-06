@@ -18,8 +18,7 @@ import lombok.Data;
 @Table(name = "member")
 public class AdminMemberEntity {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "memberId")
 	private Long id;
 

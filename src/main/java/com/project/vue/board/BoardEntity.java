@@ -31,8 +31,7 @@ import lombok.EqualsAndHashCode;
 @ExcelFileName(fileName = "게시판") // excel/annotation/ExcelFileName.java
 public class BoardEntity extends TimeEntity {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	@ExcelColumnOptions(headerName = "No", ColumnStyle = BorderStyle.DASH_DOT)
 	private Long id;
 

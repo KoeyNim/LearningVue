@@ -6,6 +6,8 @@ import java.util.Collection;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -26,8 +28,7 @@ import lombok.Data;
 @Table(name = "member")
 public class MemberEntity implements UserDetails {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long memberId;
 
 	@NotNull
@@ -61,6 +62,8 @@ public class MemberEntity implements UserDetails {
 	@Convert(converter = StringCryptoConverter.class)
 	private String phone;
 	
+	@NotNull
+	@Enumerated(EnumType.STRING) // 상수가 아닌 String으로 저장
 	private Role role;
 
 	@Override

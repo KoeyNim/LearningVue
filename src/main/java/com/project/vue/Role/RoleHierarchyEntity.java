@@ -25,18 +25,17 @@ public class RoleHierarchyEntity implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-    @Column(name = "child_name")
-    private String childName;
+    @Column(name = "role_name")
+    private String roleName;
 
     @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
-    @JoinColumn(name = "parents_name", referencedColumnName = "child_name")
-    private RoleHierarchyEntity parentName;
+    @JoinColumn(name = "parent", referencedColumnName = "role_name")
+    private RoleHierarchyEntity parent;
 
-    @OneToMany(mappedBy = "parentName", cascade = {CascadeType.ALL})
+    @OneToMany(mappedBy = "parent", cascade = {CascadeType.ALL})
     private Set<RoleHierarchyEntity> roleHierarchy = new HashSet<RoleHierarchyEntity>();
 
 }

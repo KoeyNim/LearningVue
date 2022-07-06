@@ -1,4 +1,3 @@
-
 server:
   port: 8801 # port 번호
 spring:
@@ -7,10 +6,14 @@ spring:
       max-file-size: 50MB
       max-request-size: 50MB
   jpa:
-    hibernate.ddl-auto: update # create : drop-create
-    properties.hibernate: # hibernate query console 에 출력
-      format_sql: true # 보기 좋게 바꿔줌
-      use_sql_comments: true # 추가적인 주석 표시
+    hibernate:
+      # 초기 실행시 create를 한번 해 주어야 import.sql이 적용됨. sql 수정시 ddl을 create로 다시 바꿔주어야 함 (통째로 db 날아감.)
+      ddl-auto: update # create : drop-create
+    properties:
+      # hibernate query console 에 출력
+      hibernate.format_sql: true # 보기 좋게 바꿔줌
+      hibernate.use_sql_comments: true # 추가적인 주석 표시
+    defer-datasource-initialization: true # Hibernate에 의해 생성된 스키마에 초기값을 넣어주겠다는 설정
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://127.0.0.1:3306/myvue?serverTimezone=Asia/Seoul

@@ -25,8 +25,7 @@ import lombok.EqualsAndHashCode;
 @Table(name = "board")
 public class AdminPostEntity extends TimeEntity {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@NotEmpty

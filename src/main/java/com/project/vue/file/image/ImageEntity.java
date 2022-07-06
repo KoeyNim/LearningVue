@@ -18,8 +18,7 @@ import lombok.EqualsAndHashCode;
 @Table(name = "image")
 public class ImageEntity extends TimeEntity {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
 	@Column(columnDefinition = "varchar(100)")
