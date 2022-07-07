@@ -7,6 +7,8 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -29,7 +31,8 @@ public class RoleHierarchyEntity implements Serializable {
 	private Long id;
 	
     @Column(name = "role_name")
-    private String roleName;
+    @Enumerated(EnumType.STRING) // 상수가 아닌 String으로 저장
+    private Role roleName;
 
     @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
     @JoinColumn(name = "parent", referencedColumnName = "role_name")

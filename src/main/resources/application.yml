@@ -7,7 +7,7 @@ spring:
       max-request-size: 50MB
   jpa:
     hibernate:
-      # 초기 실행시 create를 한번 해 주어야 import.sql이 적용됨. sql 수정시 ddl을 create로 다시 바꿔주어야 함 (통째로 db 날아감.)
+      # import.sql을 이용하여 초기 데이터 값을 받으려면 create로 변경하여야 함.
       ddl-auto: update # create : drop-create
     properties:
       # hibernate query console 에 출력
