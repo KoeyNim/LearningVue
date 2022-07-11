@@ -3,7 +3,7 @@ package com.project.vue.member;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.project.vue.Role.Role;
+import com.project.vue.role.RoleEnum;
 
 import lombok.RequiredArgsConstructor;
 
@@ -17,7 +17,7 @@ public class MemberService {
     
     public MemberEntity save(MemberEntity member) {
     	member.setUserPwd(passwordEncoder.encode(member.getUserPwd()));
-    	member.setRole(Role.ROLE_USER);
+    	member.setRole(RoleEnum.ROLE_USER);
     	return memberRepository.save(member);
     }
     

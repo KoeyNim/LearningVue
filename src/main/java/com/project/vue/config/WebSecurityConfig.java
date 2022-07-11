@@ -17,10 +17,10 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import com.project.vue.Role.RoleHierarchyService;
 import com.project.vue.common.Constants;
 import com.project.vue.config.auth.WebAuthenticationFailureHandler;
 import com.project.vue.config.auth.WebAuthenticationSucessHandler;
+import com.project.vue.role.RoleService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -33,7 +33,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	private final WebAuthenticationFailureHandler authenticationFailureHandler;
 
-	private final RoleHierarchyService roleHierarchyService;
+	private final RoleService roleHierarchyService;
 
 //	private final WebAuthenticationProvider authenticationProvider;
 
@@ -89,7 +89,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     	DefaultWebSecurityExpressionHandler securityExpressionHandler = new DefaultWebSecurityExpressionHandler();
 
     	// 상위 권한 설정
-    	roleHierarchy.setHierarchy(roleHierarchyService.findAllHierarchy());
+    	roleHierarchy.setHierarchy(roleHierarchyService.BuildAllHierarchy());
     	// 권한 계층 커스터마이징
     	securityExpressionHandler.setRoleHierarchy(roleHierarchy);
     	return securityExpressionHandler;

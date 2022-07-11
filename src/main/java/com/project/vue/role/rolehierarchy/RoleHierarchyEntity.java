@@ -1,4 +1,4 @@
-package com.project.vue.Role;
+package com.project.vue.role.rolehierarchy;
 
 import java.io.Serializable;
 import java.util.HashSet;
@@ -18,6 +18,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.project.vue.role.RoleEnum;
+
 import lombok.Data;
 
 @Entity
@@ -32,7 +34,7 @@ public class RoleHierarchyEntity implements Serializable {
 	
     @Column(name = "role_name")
     @Enumerated(EnumType.STRING) // 상수가 아닌 String으로 저장
-    private Role roleName;
+    private RoleEnum roleName;
 
     @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
     @JoinColumn(name = "parent", referencedColumnName = "role_name")

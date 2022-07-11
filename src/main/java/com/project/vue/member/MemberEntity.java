@@ -17,8 +17,8 @@ import javax.validation.constraints.NotNull;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.project.vue.Role.Role;
 import com.project.vue.common.StringCryptoConverter;
+import com.project.vue.role.RoleEnum;
 
 import lombok.Data;
 
@@ -64,7 +64,7 @@ public class MemberEntity implements UserDetails {
 	
 	@NotNull
 	@Enumerated(EnumType.STRING) // 상수가 아닌 String으로 저장
-	private Role role;
+	private RoleEnum role;
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {

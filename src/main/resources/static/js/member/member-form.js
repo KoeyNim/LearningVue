@@ -4,7 +4,7 @@ $(document).ready(function() {
         el: '#page',
         data: {
             member:{},
-            check:true,
+            change:true,
         },
         methods: {
             signUp() {
@@ -40,7 +40,7 @@ $(document).ready(function() {
                                 {contentType: 'application/json; charset=UTF-8'}
                         ).done((response) => {
                             alert(response.message);
-                            me.check = false;
+                            me.change = false;
                         }).fail((response) => {
                             alert(response.responseJSON.message);
                         });

@@ -1,6 +1,6 @@
-package com.project.vue.Role;
+package com.project.vue.role;
 
-public enum Role {
+public enum RoleEnum {
 
 	ROLE_ADMIN,
 

@@ -1,4 +1,4 @@
-package com.project.vue.Role;
+package com.project.vue.role;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -10,42 +10,56 @@ import javax.transaction.Transactional;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Service;
 
+import com.project.vue.role.rolehierarchy.RoleHierarchyEntity;
+import com.project.vue.role.rolehierarchy.RoleHierarchyRepository;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class RoleHierarchyService {
+public class RoleService {
 	
+	private final RoleRepository roleRepository;
 	private final RoleHierarchyRepository roleHierarchyRepository;
 	
-	@Transactional @PostConstruct // 의존성(Bean)이 초기화 된 직후에 한번만 실행 (서버 시작시 한번만 실행)
+	@Transactional @PostConstruct // @PostConstruct : 의존성(Bean)이 초기화 된 직후에 한번만 실행 (서버 시작시 한번만 실행)
 	public void initRoleData() {
-		List<RoleHierarchyEntity> list = new ArrayList<>();
-		
-		for (Role role : Role.values()) {
-			// 중복 데이터 확인 (select를 너무 자주사용함, 보완 가능하면 수정)
-			if (!roleHierarchyRepository.existsByRoleName(role)) {
+
+		// 권한 초기 데이터 삽입
+		if(roleRepository.count() == 0) {
+			List<RoleEntity> roleLists = new ArrayList<>();
+			for (RoleEnum roleEnum : RoleEnum.values()) {
+				RoleEntity roleEntity = new RoleEntity();
+				roleEntity.setRoleName(roleEnum);
+				roleLists.add(roleEntity);
+			}
+			roleRepository.saveAll(roleLists);
+		}
+
+		// 권한 계층 초기 데이터 삽입
+		if(roleHierarchyRepository.count() == 0) {
+			List<RoleHierarchyEntity> list = new ArrayList<>();
+			List<RoleEntity> roleLists = roleRepository.findAll();
+			for (RoleEntity role : roleLists) {
 				RoleHierarchyEntity roleHierarchy = new RoleHierarchyEntity();
 				// ADMIN 권한 체크 후 list에 추가
-				if (role.equals(Role.ROLE_ADMIN)) {
-					roleHierarchy.setRoleName(role);
+				if (role.getRoleName().equals(RoleEnum.ROLE_ADMIN)) {
+					roleHierarchy.setRoleName(role.getRoleName());
 					list.add(roleHierarchy);
-					log.debug("roleHierarchy_admin : {}", roleHierarchy);
 					continue;
 				}
-				roleHierarchy.setRoleName(role);
-				// 권한 추가시 중복 값 체크 후 중복된 데이터는 list에서 빠지므로 사용할 수 없는 코드임. 에러 발생
-				roleHierarchy.setParent(list.get(role.ordinal()-1));
+				roleHierarchy.setRoleName(role.getRoleName());
+				roleHierarchy.setParent(list.get(role.getRoleName().ordinal()-1));
 				list.add(roleHierarchy);
-				log.debug("roleHierarchy_another : {}", roleHierarchy);
 			}
+			roleHierarchyRepository.saveAll(list);
 		}
-		roleHierarchyRepository.saveAll(list);
 	}
 
-	public String findAllHierarchy() {
+	// 계층권한 String Build
+	public String BuildAllHierarchy() {
         List<RoleHierarchyEntity> roleHierarchies = roleHierarchyRepository.findAll();
 
         Iterator<RoleHierarchyEntity> iterator = roleHierarchies.iterator();
