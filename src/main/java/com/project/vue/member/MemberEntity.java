@@ -33,33 +33,33 @@ public class MemberEntity implements UserDetails {
 	@Column(columnDefinition = "varchar(255)")
 	@Convert(converter = StringCryptoConverter.class)
 	private String userId;
-	
+
 	@NotNull
 	@Column(columnDefinition = "varchar(255)")
 	@Convert(converter = StringCryptoConverter.class)
 	private String userName;
-	
+
 	@NotNull
 	@Column(columnDefinition = "varchar(255)")
 	private String userPwd;
-	
+
 	@NotNull
 	private Integer age;
-	
+
 	@NotNull
 	@Column(columnDefinition = "varchar(255)")
 	@Convert(converter = StringCryptoConverter.class)
 	private String email;
-	
+
 	@NotNull
 	@Column(columnDefinition = "varchar(4)")
 	private String gender;
-	
+
 	@NotNull
 	@Column(columnDefinition = "varchar(255)")
 	@Convert(converter = StringCryptoConverter.class)
 	private String phone;
-	
+
 	@NotNull
 	private String role;
 
@@ -115,7 +115,6 @@ public class MemberEntity implements UserDetails {
 		return true;
 	}
 
-	
     /**
      * 계정 활성화 여부
      *  true : 활성화됨

@@ -22,12 +22,12 @@ import lombok.Data;
 @Table(name = "ROLE_HIERARCHY")
 @Data
 public class RoleHierarchyEntity implements Serializable {
-	
+
 	private static final long serialVersionUID = 1L;
 
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
+
     @Column(name = "role_key")
     private String roleKey;
 
