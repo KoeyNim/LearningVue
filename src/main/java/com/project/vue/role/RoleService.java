@@ -32,7 +32,8 @@ public class RoleService {
 			List<RoleEntity> roleLists = new ArrayList<>();
 			for (RoleEnum roleEnum : RoleEnum.values()) {
 				RoleEntity roleEntity = new RoleEntity();
-				roleEntity.setRoleName(roleEnum);
+				roleEntity.setRoleKey(roleEnum.getRoleKey());
+				roleEntity.setRoleName(roleEnum.getRoleName());
 				roleLists.add(roleEntity);
 			}
 			roleRepository.saveAll(roleLists);
@@ -45,13 +46,13 @@ public class RoleService {
 			for (RoleEntity role : roleLists) {
 				RoleHierarchyEntity roleHierarchy = new RoleHierarchyEntity();
 				// ADMIN 권한 체크 후 list에 추가
-				if (role.getRoleName().equals(RoleEnum.ROLE_ADMIN)) {
-					roleHierarchy.setRoleName(role.getRoleName());
+				if (role.getRoleKey().equals(RoleEnum.ADMIN.getRoleKey())) {
+					roleHierarchy.setRoleKey(role.getRoleKey());
 					list.add(roleHierarchy);
 					continue;
 				}
-				roleHierarchy.setRoleName(role.getRoleName());
-				roleHierarchy.setParent(list.get(role.getRoleName().ordinal()-1));
+				roleHierarchy.setRoleKey(role.getRoleKey());
+				roleHierarchy.setParent(list.get(list.size()-1));
 				list.add(roleHierarchy);
 			}
 			roleHierarchyRepository.saveAll(list);
@@ -67,9 +68,9 @@ public class RoleService {
         while (iterator.hasNext()) {
         	RoleHierarchyEntity roleHierarchy = iterator.next();
             if (ObjectUtils.isNotEmpty(roleHierarchy.getParent())) {
-                concatRoles.append(roleHierarchy.getParent().getRoleName());
+                concatRoles.append(roleHierarchy.getParent().getRoleKey());
                 concatRoles.append(" > ");
-                concatRoles.append(roleHierarchy.getRoleName());
+                concatRoles.append(roleHierarchy.getRoleKey());
                 concatRoles.append("\n");
             }
         }

@@ -8,6 +8,11 @@ $(document).ready(function() {
         },
         methods: {
             signUp() {
+                if(this.change) {
+                    alert("ID 중복 확인은 필수입니다.");
+                    return;
+                }
+                
                 this.$validator.validateAll().then(success => {
                     if(success) {
                         var token = $("meta[name='_csrf']").attr("content");

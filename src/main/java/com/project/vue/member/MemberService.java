@@ -17,7 +17,7 @@ public class MemberService {
     
     public MemberEntity save(MemberEntity member) {
     	member.setUserPwd(passwordEncoder.encode(member.getUserPwd()));
-    	member.setRole(RoleEnum.ROLE_USER);
+    	member.setRole(RoleEnum.USER.getRoleName());
     	return memberRepository.save(member);
     }
     

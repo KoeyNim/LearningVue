@@ -6,8 +6,6 @@ import java.util.Collection;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -63,8 +61,7 @@ public class MemberEntity implements UserDetails {
 	private String phone;
 	
 	@NotNull
-	@Enumerated(EnumType.STRING) // 상수가 아닌 String으로 저장
-	private RoleEnum role;
+	private String role;
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -72,7 +69,7 @@ public class MemberEntity implements UserDetails {
         collect.add(new GrantedAuthority() {
             @Override
             public String getAuthority() {
-                return role.toString();
+                return RoleEnum.findByRoleKey(role);
             }
         });
         return collect;
