@@ -11,14 +11,15 @@ public enum RoleEnum {
 	private String roleKey;
 	private String roleName;
 
-	public static String findByRoleKey(String roleName) {
-		for(RoleEnum role : RoleEnum.values()) {
-			if (role.roleName.equals(roleName)) {
-				return role.roleKey;
-			}
-		}
-		return null;
-	}
+	// 초기값은 검색이 가능하나 추가되는 Role은 찾을 수 없음.
+//	public static String findByRoleKey(String roleName) {
+//		for(RoleEnum role : RoleEnum.values()) {
+//			if (role.roleName.equals(roleName)) {
+//				return role.roleKey;
+//			}
+//		}
+//		return null;
+//	}
 
 	RoleEnum(String roleKey, String roleName) {
 		this.roleKey = roleKey;

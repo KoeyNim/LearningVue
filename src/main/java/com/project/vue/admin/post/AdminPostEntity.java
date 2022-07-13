@@ -44,7 +44,7 @@ public class AdminPostEntity extends TimeEntity {
 	private Integer count = 0;
 
 	@OneToOne(cascade = CascadeType.REMOVE) // 게시글 삭제 시 파일 데이터도 같이 삭제
-	@JoinColumn (name = "fileId")
+	@JoinColumn (name = "fileEntity") // referencedColumnName 미지정시 기본값 id
 	private FileEntity fileEntity;
 	
 	@Transient

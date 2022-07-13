@@ -9,6 +9,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
@@ -16,7 +18,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.project.vue.common.StringCryptoConverter;
-import com.project.vue.role.RoleEnum;
+import com.project.vue.role.RoleEntity;
 
 import lombok.Data;
 
@@ -60,8 +62,9 @@ public class MemberEntity implements UserDetails {
 	@Convert(converter = StringCryptoConverter.class)
 	private String phone;
 
-	@NotNull
-	private String role;
+	@OneToOne
+	@JoinColumn(name="role", referencedColumnName = "role_Key")
+	private RoleEntity role;
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -69,7 +72,7 @@ public class MemberEntity implements UserDetails {
         collect.add(new GrantedAuthority() {
             @Override
             public String getAuthority() {
-                return RoleEnum.findByRoleKey(role);
+                return role.getRoleKey();
             }
         });
         return collect;
