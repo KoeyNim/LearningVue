@@ -41,6 +41,7 @@ public class BoardController {
 		return ResponseEntity.ok(boardService.findAll(pageIndex, pageSize, srchKey, srchVal));
 	}
 	
+	// detail 접근시 쿼리 2번 실행 하는 원인 파악 후 수정할 것
 	@GetMapping("find/{id}")
 	public ResponseEntity<BoardEntity> boardFindById(@PathVariable("id") Long id, Authentication auth) {
 		return ResponseEntity.ok(boardService.findById(id, auth));

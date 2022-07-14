@@ -11,7 +11,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 
 import org.apache.poi.ss.usermodel.BorderStyle;
 
@@ -34,17 +33,16 @@ public class BoardEntity extends TimeEntity {
 	@ExcelColumnOptions(headerName = "No", ColumnStyle = BorderStyle.DASH_DOT)
 	private Long id;
 
-	@NotEmpty
 	@NotBlank
 	@ExcelColumnOptions(headerName = "제목", ColumnStyle = BorderStyle.DOUBLE)
 	private String title;
 
-	@NotEmpty
 	@NotBlank
 	@Column(columnDefinition = "LONGTEXT")
 	@ExcelColumnOptions(headerName = "내용", ColumnStyle = BorderStyle.MEDIUM_DASHED)
 	private String content;
-
+	
+	@NotBlank
 	@Column(columnDefinition = "varchar(32)")
 	@ExcelColumnOptions(headerName = "작성자", ColumnStyle = BorderStyle.THICK)
 	private String userId;
@@ -53,10 +51,8 @@ public class BoardEntity extends TimeEntity {
 	@ExcelColumnOptions(headerName = "조회수", ColumnStyle = BorderStyle.DOTTED)
 	private Integer count = 0;
 
-//	@JsonIgnore // Cannot call sendError() after the response has been committed 에러 방지
-	            // 직렬화 역직렬화에 사용되는 논리적 프로퍼티 값을 무시
 	@OneToOne(cascade = CascadeType.REMOVE) // 게시글 삭제 시 파일 데이터도 같이 삭제
-	@JoinColumn (name = "fileEntity") // referencedColumnName 미지정시 기본값 id
+	@JoinColumn(name = "fileEntity") // referencedColumnName 미지정시 기본값 id
 	private FileEntity fileEntity;
 
 	@Transient

@@ -12,7 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -31,37 +31,38 @@ public class MemberEntity implements UserDetails {
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long memberId;
 
-	@NotNull
+	@NotBlank
 	@Column(columnDefinition = "varchar(255)")
 	@Convert(converter = StringCryptoConverter.class)
 	private String userId;
 
-	@NotNull
+	@NotBlank
 	@Column(columnDefinition = "varchar(255)")
 	@Convert(converter = StringCryptoConverter.class)
 	private String userName;
 
-	@NotNull
+	@NotBlank
 	@Column(columnDefinition = "varchar(255)")
 	private String userPwd;
 
-	@NotNull
+	@NotBlank
 	private Integer age;
 
-	@NotNull
+	@NotBlank
 	@Column(columnDefinition = "varchar(255)")
 	@Convert(converter = StringCryptoConverter.class)
 	private String email;
 
-	@NotNull
+	@NotBlank
 	@Column(columnDefinition = "varchar(4)")
 	private String gender;
 
-	@NotNull
+	@NotBlank
 	@Column(columnDefinition = "varchar(255)")
 	@Convert(converter = StringCryptoConverter.class)
 	private String phone;
 
+	@NotBlank
 	@OneToOne
 	@JoinColumn(name="role", referencedColumnName = "role_Key")
 	private RoleEntity role;

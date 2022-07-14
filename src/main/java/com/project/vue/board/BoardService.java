@@ -22,13 +22,13 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class BoardService {
-	
+
 	private final BoardRepository boardRepository;
-	
+
 	private final FileRepository fileRepository;
-	
+
 	private final JPAQueryFactory queryFactory;
-	
+
 	// 수정시간이 바뀌게되는 이슈로 인해 querydsl로 세부 조작
 	@Transactional
 	public void saveCount(Long id) {
@@ -38,7 +38,7 @@ public class BoardService {
 					.where(qBoardEntity.id.eq(id))
 					.execute();
 	}
-	
+
 	@Transactional
 	public void save(BoardEntity board) {
 		if (ObjectUtils.isNotEmpty(board.getId())) { // board.id 값이 비어있지 않은지 확인 (비어있으면 등록상황이다.)
@@ -53,31 +53,31 @@ public class BoardService {
 		}
 		boardRepository.save(board);
 	}
-	
+
     public Page<BoardEntity> findAll(int pageIndex, int pageSize, String srchKey, String srchVal) {
     	PageRequest pageRequest = PageRequest.of(pageIndex, pageSize, Sort.by("registDate").descending());
 		return boardRepository.findAll(
 				SearchSpecification.searchBoardSpecification(srchKey, srchVal), pageRequest);
     }
-    
+
     public List<BoardEntity> findAll() {
 		return boardRepository.findAll();
     }
-    
+
     public BoardEntity findById(Long id) {
 		return boardRepository.findById(id).orElseThrow();
     }
-    
+
     public BoardEntity findById(Long id, Authentication auth) {
-    	BoardEntity boardEntity = boardRepository.findById(id).orElseThrow();
+    	BoardEntity boardEntity = findById(id);
     	boardEntity.setAuthUserId(auth.getPrincipal());
 		return boardEntity;
     }
-    
+
     public void deleteById(Long id) {
-    	BoardEntity findBoard = findById(id);
-    	if(ObjectUtils.isNotEmpty(findBoard.getFileEntity())) {
-        	File file = new File(findBoard.getFileEntity().getFilePath() + findBoard.getFileEntity().getFileNm());
+    	BoardEntity boardEntity = findById(id);
+    	if(ObjectUtils.isNotEmpty(boardEntity.getFileEntity())) {
+        	File file = new File(boardEntity.getFileEntity().getFilePath() + boardEntity.getFileEntity().getFileNm());
 //        	if (file.exists()) {
         		file.delete();
 //        	}

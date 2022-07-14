@@ -8,7 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 
 import lombok.Data;
 
@@ -22,11 +22,11 @@ public class RoleEntity implements Serializable {
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@NotNull
+	@NotBlank
     @Column(name = "role_key", unique = true)
     private String roleKey;
 
-	@NotNull
+	@NotBlank
     @Column(name = "role_name")
     private String roleName;
 

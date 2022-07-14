@@ -11,7 +11,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 
 import com.project.vue.common.TimeEntity;
 import com.project.vue.file.FileEntity;
@@ -28,11 +27,9 @@ public class AdminPostEntity extends TimeEntity {
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@NotEmpty
 	@NotBlank
 	private String title;
 
-	@NotEmpty
 	@NotBlank
 	@Column(columnDefinition = "LONGTEXT")
 	private String content;
@@ -46,7 +43,7 @@ public class AdminPostEntity extends TimeEntity {
 	@OneToOne(cascade = CascadeType.REMOVE) // 게시글 삭제 시 파일 데이터도 같이 삭제
 	@JoinColumn (name = "fileEntity") // referencedColumnName 미지정시 기본값 id
 	private FileEntity fileEntity;
-	
+
 	@Transient
 	private Object authUserId;
 
