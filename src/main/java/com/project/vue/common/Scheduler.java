@@ -35,8 +35,8 @@ public class Scheduler {
 						.from(qFileEntity)
 						.where(JPAExpressions.selectFrom(qBoardEntity)
 						.where(qFileEntity.id.eq(qBoardEntity.fileEntity().id)).notExists())
-						.fetchOne());
-		
+						.fetch());
+
 		if (garbageExists) {
 			long result = queryFactory.delete(qFileEntity)
 			.where(JPAExpressions.selectFrom(qBoardEntity)
