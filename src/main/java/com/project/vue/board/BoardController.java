@@ -2,6 +2,9 @@ package com.project.vue.board;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -18,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.project.vue.common.Constants;
+import com.project.vue.common.CookieCommon;
 import com.project.vue.common.SimpleResponse;
 import com.project.vue.common.excel.service.ExcelService;
 
@@ -32,6 +36,8 @@ public class BoardController {
 	
 	private final BoardService boardService;
 	
+	private final CookieCommon cookieCommon;
+	
 	@GetMapping
 	public ResponseEntity<Page<BoardEntity>> boardList(
 			@RequestParam int pageIndex, 
@@ -40,11 +46,25 @@ public class BoardController {
 			@RequestParam(required = false) String srchVal) {
 		return ResponseEntity.ok(boardService.findAll(pageIndex, pageSize, srchKey, srchVal));
 	}
-	
-	// detail 접근시 쿼리 2번 실행 하는 원인 파악 후 수정할 것
+
 	@GetMapping("find/{id}")
-	public ResponseEntity<BoardEntity> boardFindById(@PathVariable("id") Long id, Authentication auth) {
-		return ResponseEntity.ok(boardService.findById(id, auth));
+	public ResponseEntity<BoardEntity> boardFindById(
+			@PathVariable("id") Long id, 
+			Authentication auth, 
+			HttpServletRequest request, 
+			HttpServletResponse response) {
+		BoardEntity boardEntity = boardService.findById(id, auth);
+		// 작성자 확인
+		if (!boardEntity.getUserId().equals(boardEntity.getAuthUserId())) {
+			// 쿠키 유무 확인
+			if(cookieCommon.readCountCookie(response, request, boardEntity.getId())) {
+				// 조회수 반영
+				boardService.saveCount(id);
+				// count 즉각 반영이 안됨..
+				boardEntity.setCount(boardEntity.getCount()+1);
+			}
+		}
+		return ResponseEntity.ok(boardEntity);
 	}
 
 	@PostMapping("create")

@@ -112,7 +112,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //	          .antMatchers("/admin/**").hasRole("ADMIN")
 //	          .antMatchers("/user/**").hasRole("USER")
 	          .antMatchers(HttpMethod.GET,"/").permitAll() // 로그인을 요구하지 않음
-        	  .antMatchers(Constants.REQUEST_MAPPING_PREFIX+"/board/**").hasRole("USER")
+        	  .antMatchers(Constants.REQUEST_MAPPING_PREFIX+"/board/**").hasRole("USER2")
         	  .antMatchers("/api/**").permitAll()
 	          .antMatchers(HttpMethod.GET,"/signup").permitAll()
 	          .antMatchers(Constants.REQUEST_MAPPING_PREFIX+"/member/signup").permitAll()

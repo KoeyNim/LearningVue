@@ -30,7 +30,7 @@ public class BoardService {
 	private final JPAQueryFactory queryFactory;
 
 	// 수정시간이 바뀌게되는 이슈로 인해 querydsl로 세부 조작
-	@Transactional
+    @Transactional
 	public void saveCount(Long id) {
 		QBoardEntity qBoardEntity = QBoardEntity.boardEntity;
 		queryFactory.update(qBoardEntity)
