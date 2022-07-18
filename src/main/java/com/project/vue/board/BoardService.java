@@ -9,13 +9,11 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.project.vue.file.FileRepository;
 import com.project.vue.specification.SearchSpecification;
-import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
 
@@ -27,19 +25,24 @@ public class BoardService {
 
 	private final FileRepository fileRepository;
 
-	private final JPAQueryFactory queryFactory;
+//	private final JPAQueryFactory queryFactory;
 
 	// 수정시간이 바뀌게되는 이슈로 인해 querydsl로 세부 조작
-    @Transactional
-	public void saveCount(Long id) {
-		QBoardEntity qBoardEntity = QBoardEntity.boardEntity;
-		queryFactory.update(qBoardEntity)
-					.set(qBoardEntity.count, qBoardEntity.count.add(1))
-					.where(qBoardEntity.id.eq(id))
-					.execute();
-	}
+	// 22.07.18 속도 개선 및 영속성 이슈로 인해 사용하지 않지만 참고 자료 용으로 주석 처리
+//  @Transactional 
+//	public void saveCount(Long id) {
+//		QBoardEntity qBoardEntity = QBoardEntity.boardEntity;
+//		queryFactory.update(qBoardEntity)
+//					.set(qBoardEntity.count, qBoardEntity.count.add(1))
+//					.where(qBoardEntity.id.eq(id))
+//					.execute();
+//	}
+    
+    @Transactional // 자동으로 flush 명령을 수행하기 위해 어노테이션 사용
+    public void updateCount(Long id) {
+    	boardRepository.updateCount(id);
+    }
 
-	@Transactional
 	public void save(BoardEntity board) {
 		if (ObjectUtils.isNotEmpty(board.getId())) { // board.id 값이 비어있지 않은지 확인 (비어있으면 등록상황이다.)
 			BoardEntity	findBoard = boardRepository.findById(board.getId()).orElseThrow(); // 수정 전에 저장된 board 객체를 찾는다.
@@ -66,12 +69,6 @@ public class BoardService {
 
     public BoardEntity findById(Long id) {
 		return boardRepository.findById(id).orElseThrow();
-    }
-
-    public BoardEntity findById(Long id, Authentication auth) {
-    	BoardEntity boardEntity = findById(id);
-    	boardEntity.setAuthUserId(auth.getPrincipal());
-		return boardEntity;
     }
 
     public void deleteById(Long id) {

@@ -9,7 +9,6 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -48,23 +47,14 @@ public class BoardController {
 	}
 
 	@GetMapping("find/{id}")
-	public ResponseEntity<BoardEntity> boardFindById(
-			@PathVariable("id") Long id, 
-			Authentication auth, 
-			HttpServletRequest request, 
-			HttpServletResponse response) {
-		BoardEntity boardEntity = boardService.findById(id, auth);
-		// 작성자 확인
-		if (!boardEntity.getUserId().equals(boardEntity.getAuthUserId())) {
-			// 쿠키 유무 확인
-			if(cookieCommon.readCountCookie(response, request, boardEntity.getId())) {
-				// 조회수 반영
-				boardService.saveCount(id);
-				// count 즉각 반영이 안됨..
-				boardEntity.setCount(boardEntity.getCount()+1);
-			}
+	public ResponseEntity<BoardEntity> boardFindById(@PathVariable("id") Long id, 
+														HttpServletRequest request, HttpServletResponse response) {
+		// 쿠키 유무 및 접근하는 게시글 조회 여부 확인
+		if(cookieCommon.readCountCookie(response, request, id)) {
+			// 조회수 반영
+			boardService.updateCount(id);
 		}
-		return ResponseEntity.ok(boardEntity);
+		return ResponseEntity.ok(boardService.findById(id));
 	}
 
 	@PostMapping("create")

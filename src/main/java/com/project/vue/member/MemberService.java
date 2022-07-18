@@ -18,10 +18,10 @@ public class MemberService {
 	
 	private final BCryptPasswordEncoder passwordEncoder;
     
-    public MemberEntity save(MemberEntity member) {
+    public void save(MemberEntity member) {
     	member.setUserPwd(passwordEncoder.encode(member.getUserPwd()));
     	member.setRole(roleRepository.findByRoleKey(RoleEnum.USER.getRoleKey()));
-    	return memberRepository.save(member);
+    	memberRepository.save(member);
     }
     
     public MemberEntity findUserId(String userId) {
