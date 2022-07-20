@@ -16,7 +16,7 @@
 </head>
 <body>
 	<div id="page" layout:fragment="content">
-		<span class="pagetit">{{ result.id ? '게시글 수정' : '게시글 등록' }} </span></br>
+		<span class="pagetit">{{ result.id ? '게시글 수정' : '게시글 등록' }}</span>
 		<span>{{ errors.first('title') }}</span>
 		<span class="form-label">제목 *</span>
 		<div class="form-field">
@@ -25,8 +25,8 @@
         <span>{{ errors.first('content') }}</span>
 		<span class="form-label">내용​ *</span>
 		<div class="form-field">
-			<!-- <textarea name="content" id="summernote" v-model="result.content"></textarea> -->
-			<ckeditor :editor="editor" @ready="onReady" id="content" name="content" v-model="result.content" :config="editorConfig" tag-name="textarea" v-validate="'required'"></ckeditor>
+			<textarea name="content" id="summernote" v-model="result.content"></textarea>
+			<!-- <ckeditor :editor="editor" @ready="onReady" id="content" name="content" v-model="result.content" :config="editorConfig" tag-name="textarea" v-validate="'required'"></ckeditor> -->
 		</div>
 		<div v-if="result.fileEntity">
 			<span class="form-label">파일</span>
@@ -44,6 +44,7 @@
 				<button type="button" class="btn solidbtn md mo-full sm-h pink" @click.prevent="fnSave">{{ result.id ? '수정' : '등록' }}</button>
 				<button type="button" class="btn solidbtn md mo-full sm-h black" @click.prevent="fnCancel">취소</button>
 			</div>
+       </div>
 	</div>
 </body>
 </html>

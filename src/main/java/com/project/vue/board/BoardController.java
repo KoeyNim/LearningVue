@@ -9,6 +9,7 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -47,35 +48,38 @@ public class BoardController {
 	}
 
 	@GetMapping("find/{id}")
-	public ResponseEntity<BoardEntity> boardFindById(@PathVariable("id") Long id, 
-														HttpServletRequest request, HttpServletResponse response) {
+	public ResponseEntity<BoardEntity> boardFindById(
+			@PathVariable("id") Long id, 
+			HttpServletRequest request, 
+			HttpServletResponse response,
+			Authentication auth) {
 		// 쿠키 유무 및 접근하는 게시글 조회 여부 확인
 		if(cookieCommon.readCountCookie(response, request, id)) {
 			// 조회수 반영
 			boardService.updateCount(id);
 		}
-		return ResponseEntity.ok(boardService.findById(id));
+		return ResponseEntity.ok(boardService.findById(id, auth));
 	}
 
 	@PostMapping("create")
 	public ResponseEntity<SimpleResponse> boardCreate(@RequestBody BoardEntity board) {
 		log.debug("create board : {}", board);
 		boardService.save(board);
-		return ResponseEntity.ok(SimpleResponse.builder().message("글이 등록되었습니다.").build());
+		return ResponseEntity.ok(SimpleResponse.builder().message("게시글이 등록되었습니다.").build());
 	}
 
 	@PutMapping("update/{id}")
 	public ResponseEntity<SimpleResponse> boardUpdate(@RequestBody BoardEntity board) {
 		log.debug("update board : {}", board);
 		boardService.save(board);
-		return ResponseEntity.ok(SimpleResponse.builder().message("글이 수정되었습니다.").build());
+		return ResponseEntity.ok(SimpleResponse.builder().message("게시글이 수정되었습니다.").build());
 	}
 	
 	@DeleteMapping("delete/{id}")
 	public ResponseEntity<SimpleResponse> boardDelete(@PathVariable("id") Long id) {
 		log.debug("delete board id : {}", id);
 		boardService.deleteById(id);
-		return ResponseEntity.ok(SimpleResponse.builder().message("글이 삭제되었습니다.").build());
+		return ResponseEntity.ok(SimpleResponse.builder().message("게시글이 삭제되었습니다.").build());
 	}
 	
 	@GetMapping("excel")

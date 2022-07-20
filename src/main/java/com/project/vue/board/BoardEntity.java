@@ -9,9 +9,11 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
 
 import org.apache.poi.ss.usermodel.BorderStyle;
+import org.hibernate.annotations.DynamicUpdate;
 
 import com.project.vue.common.TimeEntity;
 import com.project.vue.common.excel.annotation.ExcelColumnOptions;
@@ -26,6 +28,7 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper=true)
 @Table(name = "board")
 @ExcelFileName(fileName = "게시판") // excel/annotation/ExcelFileName.java
+@DynamicUpdate
 public class BoardEntity extends TimeEntity {
 
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -53,4 +56,7 @@ public class BoardEntity extends TimeEntity {
 	@OneToOne(cascade = CascadeType.REMOVE) // 게시글 삭제 시 파일 데이터도 같이 삭제
 	@JoinColumn(name = "fileEntity") // referencedColumnName 미지정시 기본값 id
 	private FileEntity fileEntity;
+	
+	@Transient
+	private Object authUserId;
 }

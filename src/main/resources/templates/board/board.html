@@ -38,7 +38,7 @@
 				</tr>
 			</tbody>
 			<tbody class="list" v-else>
-				<tr v-for="(data, index) in result.content" @click="goRegOrDetail(data.id)">
+				<tr v-for="(data, index) in result.content" @click="goDetail(data.id)">
 					<td class="efw500">{{result.totalElements - index - (result.pageable.pageNumber * result.pageable.pageSize)}}</td>
 					<td>{{data.title}}</td>
 					<!--/**<td style="text-overflow: ellipsis; overflow: hidden">{{data.content.replace(/(<([^>]+)>)/ig,"")}}</td>**/-->
@@ -61,7 +61,7 @@
 			<div class="lt"></div>
 			<div class="rt">
                 <a class="blue btn md sm-h solidbtn" @click.prevent="downloadExcel()">엑셀 다운로드</a>
-				<button type="button" class="btn solidbtn md mo-full sm-h pink" @click.prevent="goRegOrDetail()">등록</button>
+				<button type="button" class="btn solidbtn md mo-full sm-h pink" @click.prevent="goRegist">등록</button>
 				<button type="button" class="btn solidbtn md mo-full sm-h lightblue" @click.prevent="location.href='/'">이전</button>
 			</div>
 		</div>

@@ -2,30 +2,29 @@ let vu;
 $().ready(() => {
     vu = new Vue({
         el: '#page',
-        components: {
+/*        components: {
+            // Use the <ckeditor> component in this view.
             ckeditor: CKEditor.component
-        },
+        },*/
         data: {
             result:{},
             imgFile:[],
             
             // CKEditor
-            editor: ClassicEditor,
+/*            editor: ClassicEditor,
             editorConfig: {
                 extraPlugins: [customUploadAdapter], // 이미지 업로드 어댑터
-            mediaEmbed: {
-                previewsInData: true // media oembed 태그안에 iframe 태그를 생성
-            },
+                mediaEmbed: {previewsInData: true}, // media oembed 태그안에 iframe 태그를 생성
                 language: 'ko',
-            }
+            }*/
         },
         created() {
             this.fnLoad();
         },
-        /*mounted() {
+        mounted() {
             const me = this;
             $('#summernote').summernote({
-                height: 300,                  // 에디터 높이
+                height: 600,                  // 에디터 높이
                 minHeight: null,              // 최소 높이
                 maxHeight: null,              // 최대 높이
                 focus: true,                  // 에디터 로딩후 포커스를 맞출지 여부
@@ -54,15 +53,15 @@ $().ready(() => {
             }
             });
             
-        },*/
+        },
         methods: {
             // ck-editor toolbar 변경
-            onReady(editor)  {
+/*            onReady(editor)  {
                 editor.ui.getEditableElement().parentElement.insertBefore(
                     editor.ui.view.toolbar.element,
                     editor.ui.getEditableElement()
                 );
-            },
+            },*/
             $fileSelect : function $fileSelect(){ 
                 this.imgFile = this.$refs.imgFile.files[0];
                 console.log(this.imgFile);
@@ -83,11 +82,10 @@ $().ready(() => {
             fnSave() {
                 this.$validator.validateAll().then(success => {
                     if(success){
-                        /*
                         if ($('#summernote').summernote('isEmpty')) {
                             alert('내용을 입력해주세요.');
                             return;
-                        }*/
+                        }
                         const ex = !!this.result.id;
                         let result = Object.assign({}, this.result);
                         let fileData = '';
@@ -133,23 +131,17 @@ $().ready(() => {
         }
     })
     // summernote image upload
-    /*function uploadImage(image) {
+    function uploadImage(image) {
         const formData = new FormData();
-        formData.append('image', image);
-        $.ajax({
-            type : "POST",
-            url : API_VERSION + '/imageupload',
+        const options = {
             enctype : 'multipart/form-data',
             contentType : false,
             processData : false,
             cache : false,
-            data : formData,
-            beforeSend(xhr) {
-                var header = $("meta[name='_csrf_header']").attr("content");
-                var token = $("meta[name='_csrf']").attr("content");
-                xhr.setRequestHeader(header, token);
-            },
-        }).done(function(url) {
+        };
+        formData.append('image', image);
+        ajaxAPI('POST', API_VERSION + '/imageupload', formData, options
+        ).done(function(url) {
             console.log(url);
             $('#summernote').summernote('insertImage', url, function($image) {
                 $image.css('width', "50%");
@@ -157,11 +149,12 @@ $().ready(() => {
         }).fail((jqXHR, stat, err) => {
             console.log(stat+':'+err);
         });
-    }*/
+    }
     
-    function customUploadAdapter(editor) {
+    // CKEditor image upload
+/*    function customUploadAdapter(editor) {
         editor.plugins.get('FileRepository').createUploadAdapter = (loader) => {
             return new UploadAdapter(loader, editor)
         }
-    }
+    }*/
 });
