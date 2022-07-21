@@ -31,6 +31,8 @@ $(document).ready(function() {
                 ajaxAPI('DELETE', API_VERSION + '/board/delete/' + this.result.id
                 ).done((response) => {
                     alert(response.message);
+                    // List sessionStorage option 삭제
+                    sessionStorage.removeItem('pageOptions');
                     location.href = '/board';
                 }).fail((response) => {
                     alert('게시글 삭제 오류');

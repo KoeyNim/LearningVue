@@ -19,12 +19,12 @@ $(document).ready(function() {
 
         },
         created() {
+          // sessionStorage 체크 후 data에 반영
+          const pageOptions = JSON.parse(sessionStorage.getItem('pageOptions'));
           if(!!sessionStorage.getItem('pageOptions')) {
-              const pageOptions = JSON.parse(sessionStorage.getItem('pageOptions'));
               Object.assign(this._data, pageOptions);
           }
-          this.fnGetList();
-          sessionStorage.removeItem('pageOptions');
+          this.fnGetList(pageOptions ? pageOptions.pageIndex ? pageOptions.pageIndex : null : null);
         },
         methods: {
             fnGetList(idx) {
@@ -42,11 +42,17 @@ $(document).ready(function() {
                 if (me.result.totalPages > 0 && me.pageIndex >= me.result.totalPages) { // 요청 페이지 번호가 total값 보다 높을 경우 total값으로 초기화
                     me.pageIndex = me.result.totalPages -1;
                 }
-                
                 const url = API_VERSION + '/board' + '?pageIndex=' + me.pageIndex + 
-                                               '&pageSize='  + me.pageSize +
-                                               '&srchKey='   + me.srchKey + 
-                                              '&srchVal='   + me.srchVal;
+                                                     '&pageSize='  + me.pageSize +
+                                                     '&srchKey='   + me.srchKey + 
+                                                     '&srchVal='   + me.srchVal;
+                const pageOptions = {
+                    pageIndex : me.pageIndex,
+                    pageSize : me.pageSize,
+                    srchKey : me.srchKey,
+                    srchVal : me.srchVal
+                };
+                sessionStorage.setItem('pageOptions', JSON.stringify(pageOptions));
                 ajaxAPI('GET', url
                 ).done((response) => {
                     me.result = response;
@@ -57,14 +63,6 @@ $(document).ready(function() {
                 location.href ='/board/regist';
             },
             goDetail(id) {
-                const me = this;
-                const pageOptions = {
-                    pageIndex : me.pageIndex,
-                    pageSize : me.pageSize,
-                    srchKey : me.srchKey,
-                    srchVal : me.srchVal
-                };
-                sessionStorage.setItem('pageOptions', JSON.stringify(pageOptions));
                 location.href ='/board/detail?id=' + id;
             },
             downloadExcel() {
