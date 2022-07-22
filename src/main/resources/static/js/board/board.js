@@ -21,7 +21,7 @@ $(document).ready(function() {
         created() {
           // sessionStorage 체크 후 data에 반영
           const pageOptions = JSON.parse(sessionStorage.getItem('pageOptions'));
-          if(!!sessionStorage.getItem('pageOptions')) {
+          if(!!pageOptions) {
               Object.assign(this._data, pageOptions);
           }
           this.fnGetList(pageOptions ? pageOptions.pageIndex ? pageOptions.pageIndex : null : null);

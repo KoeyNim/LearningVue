@@ -12,8 +12,10 @@ function ajaxAPI(type, url, data, options) {
     if (options) {
         Object.assign(ajaxParam, options);
     };
-    
-    // GET 방식에서는 csrf를 적용할 필요가 없음.   
+
+    console.log("type : ", type, ", ", "url : ", url, ", ", "data : ", data);
+
+    // GET 방식에서는 csrf를 적용할 필요가 없음.
     if (type !== 'GET') {
         let csrf = {
             beforeSend(xhr) {
@@ -22,9 +24,11 @@ function ajaxAPI(type, url, data, options) {
                 xhr.setRequestHeader(header, token);
             }};
         Object.assign(ajaxParam, csrf);
+        // List sessionStorage option 삭제
+        if (sessionStorage.getItem('pageOptions')) {
+            return $.ajax(ajaxParam).done(sessionStorage.removeItem('pageOptions'));
+        }
     };
-    console.log("type : ", type, ", ", "url : ", url, ", ", "data : ", data);
-
     return $.ajax(ajaxParam);
 }
 
