@@ -53,7 +53,7 @@ public class WebAuthenticationProvider implements AuthenticationProvider {
 			throw new BadCredentialsException("비밀번호가 다릅니다. 다시 입력해주세요.");    		
 		}
 		
-		// Role을 넣지 않으면 Tomcat Thread를 전부 실행함
+		// Role을 넣지 않으면 에러 발생
 		return new UsernamePasswordAuthenticationToken(userId, userPwd, findMember.getAuthorities());
 	}
 	

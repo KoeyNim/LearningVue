@@ -46,11 +46,11 @@ public class BoardService {
 
 	public void save(BoardEntity board) {
 		if (ObjectUtils.isNotEmpty(board.getId())) { // board.id 값이 비어있지 않은지 확인 (비어있으면 등록상황이다.)
-			BoardEntity	findBoard = boardRepository.findById(board.getId()).orElseThrow(); // 수정 전에 저장된 board 객체를 찾는다.
-			if (ObjectUtils.isNotEmpty(findBoard.getFileEntity()) // 수정전 board 객체의 파일이 비어있는지 확인
+			BoardEntity	boardEntity = boardRepository.findById(board.getId()).orElseThrow(); // 수정 전에 저장된 board 객체를 찾는다.
+			if (ObjectUtils.isNotEmpty(boardEntity.getFileEntity()) // 수정전 board 객체의 파일이 비어있는지 확인
 					&& ObjectUtils.notEqual(board.getFileEntity().getId(), // 저장할 파일과 저장 되어있는 파일의 id값 일치여부 확인
-							              findBoard.getFileEntity().getId())) { 
-				fileRepository.deleteById(findBoard.getFileEntity().getId()); // 조건에 모두 만족하는 파일 데이터를 삭제 (수정되어 필요없는 파일)
+							boardEntity.getFileEntity().getId())) { 
+				fileRepository.deleteById(boardEntity.getFileEntity().getId()); // 조건에 모두 만족하는 파일 데이터를 삭제 (수정되어 필요없는 파일)
 			}
 		} else {
 			board.setUserId(SecurityContextHolder.getContext().getAuthentication().getName());
@@ -75,7 +75,7 @@ public class BoardService {
     public BoardEntity findById(Long id, Authentication auth) {
     	BoardEntity boardEntity = findById(id);
     	boardEntity.setAuthUserId(auth.getPrincipal());
-		return boardRepository.findById(id).orElseThrow();
+		return boardEntity;
     }
 
     public void deleteById(Long id) {

@@ -14,24 +14,24 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @ControllerAdvice
 public class GlobalExceptionHandler {
-	
+
     // 400 BadRequest
     @ExceptionHandler(RuntimeException.class)
-    public void badRequestExceptionHandler(final RuntimeException e, HttpServletResponse response) throws IOException {
+    private void badRequestExceptionHandler(final RuntimeException e, HttpServletResponse response) throws IOException {
         log.warn("error ", e);
         response.sendError(HttpStatus.BAD_REQUEST.value());
     }
 
     // 401 AccessDenied
     @ExceptionHandler(AccessDeniedException.class)
-    public void accessDeniedExceptionHandler(final AccessDeniedException e, HttpServletResponse response) throws IOException {
+    private void accessDeniedExceptionHandler(final AccessDeniedException e, HttpServletResponse response) throws IOException {
     	log.warn("error ", e);
     	response.sendError(HttpStatus.UNAUTHORIZED.value());
     }
 
     // 500 InternalServerError
     @ExceptionHandler(Exception.class)
-    public void exceptionHandler(final Exception e, HttpServletResponse response) throws IOException {
+    private void exceptionHandler(final Exception e, HttpServletResponse response) throws IOException {
         log.info("Exception Class Name : {}",e.getClass().getName());
         log.error("error ", e);
         response.sendError(HttpStatus.INTERNAL_SERVER_ERROR.value());
