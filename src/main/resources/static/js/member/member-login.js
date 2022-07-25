@@ -28,7 +28,7 @@ $().ready(() => {
             },
             signIn() {
                 const me = this;
-                this.$validator.validateAll().then(success => {
+                me.$validator.validateAll().then(success => {
                 if(success) {
                     
                 if ($('#saveid').prop('checked')) {
@@ -38,8 +38,8 @@ $().ready(() => {
                 }
                 
                 let form = new FormData();
-                form.append('userId', this.member.userId);
-                form.append('userPwd', this.member.userPwd);
+                form.append('userId', me.member.userId);
+                form.append('userPwd', me.member.userPwd);
 
                 var token = $("meta[name='_csrf']").attr("content");
                 var header = $("meta[name='_csrf_header']").attr("content");
@@ -58,7 +58,7 @@ $().ready(() => {
                     console.log(error.config);
                 });
                     } else {
-                            alert("입력 정보가 맞지 않습니다. 아이디와 비밀번호를 다시 입력해주세요.");
+                        alert("입력 정보가 맞지 않습니다. 아이디와 비밀번호를 다시 입력해주세요.");
                     }
                 });
             },

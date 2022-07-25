@@ -20,11 +20,11 @@ public class MemberService {
     
     public void save(MemberEntity member) {
     	member.setUserPwd(passwordEncoder.encode(member.getUserPwd()));
-    	member.setRole(roleRepository.findByRoleKey(RoleEnum.USER.getRoleKey()));
+    	member.setRole(roleRepository.findByRoleKey(RoleEnum.USER.getRoleKey()).orElseThrow());
     	memberRepository.save(member);
     }
     
     public MemberEntity findUserId(String userId) {
-    	return memberRepository.findByUserId(userId);
+    	return memberRepository.findByUserId(userId).orElseThrow();
     }
 }

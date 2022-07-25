@@ -1,7 +1,9 @@
 package com.project.vue.role;
 
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface RoleRepository extends JpaRepository<RoleEntity, Long> {
-	RoleEntity findByRoleKey(String roleKey);
+	Optional<RoleEntity> findByRoleKey(String roleKey);
 }

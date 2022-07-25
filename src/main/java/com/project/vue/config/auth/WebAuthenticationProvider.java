@@ -1,6 +1,5 @@
 package com.project.vue.config.auth;
 
-import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -22,6 +21,8 @@ import lombok.extern.slf4j.Slf4j;
 public class WebAuthenticationProvider implements AuthenticationProvider {
 
 	private final MemberRepository memberRepository;
+	
+	private final BCryptPasswordEncoder passwordEncoder;
 
 	@Override
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
@@ -33,22 +34,10 @@ public class WebAuthenticationProvider implements AuthenticationProvider {
 		log.debug("## userId: {}", userId);
 		log.trace("## userPwd: {}", userPwd);
 		
-		MemberEntity findMember = memberRepository.findByUserId(userId);
+		MemberEntity findMember = memberRepository.findByUserId(userId)
+				.orElseThrow(() -> new UsernameNotFoundException("계정을 찾을 수 없습니다."));
 		log.debug("## findMember: {}", findMember);
 		
-		if(userId.isEmpty()) {
-			throw new UsernameNotFoundException("아이디를 입력해주세요.");
-		}
-		
-		if(userPwd.isEmpty()) {
-			throw new BadCredentialsException("비밀번호를 입력해주세요.");    		
-		}
-		
-		if(ObjectUtils.isEmpty(findMember)) {
-			throw new UsernameNotFoundException("찾을 수 없는 아이디 입니다.");
-		}
-		
-		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 		if(!(passwordEncoder.matches(userPwd, findMember.getUserPwd()))) {
 			throw new BadCredentialsException("비밀번호가 다릅니다. 다시 입력해주세요.");    		
 		}
