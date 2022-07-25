@@ -58,5 +58,5 @@ public class BoardEntity extends TimeEntity {
 	private FileEntity fileEntity;
 	
 	@Transient
-	private Object authUserId;
+	private String authUserId;
 }
