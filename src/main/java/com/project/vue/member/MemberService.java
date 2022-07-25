@@ -1,5 +1,8 @@
 package com.project.vue.member;
 
+import java.util.NoSuchElementException;
+import java.util.Optional;
+
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -20,11 +23,12 @@ public class MemberService {
     
     public void save(MemberEntity member) {
     	member.setUserPwd(passwordEncoder.encode(member.getUserPwd()));
-    	member.setRole(roleRepository.findByRoleKey(RoleEnum.USER.getRoleKey()).orElseThrow());
+    	member.setRole(roleRepository.findByRoleKey(RoleEnum.USER.getRoleKey())
+    			.orElseThrow(() -> new NoSuchElementException("데이터베이스 에서 해당 권한을 찾을 수 없습니다.")));
     	memberRepository.save(member);
     }
     
-    public MemberEntity findUserId(String userId) {
-    	return memberRepository.findByUserId(userId).orElseThrow();
+    public Optional<MemberEntity> findUserId(String userId) {
+    	return memberRepository.findByUserId(userId);
     }
 }

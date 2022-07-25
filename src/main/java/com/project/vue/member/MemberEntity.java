@@ -13,6 +13,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -45,7 +46,7 @@ public class MemberEntity implements UserDetails {
 	@Column(columnDefinition = "varchar(255)")
 	private String userPwd;
 
-	@NotBlank
+	@NotNull
 	private Integer age;
 
 	@NotBlank
@@ -62,7 +63,7 @@ public class MemberEntity implements UserDetails {
 	@Convert(converter = StringCryptoConverter.class)
 	private String phone;
 
-	@NotBlank
+	@NotNull
 	@OneToOne
 	@JoinColumn(name="role", referencedColumnName = "role_Key")
 	private RoleEntity role;

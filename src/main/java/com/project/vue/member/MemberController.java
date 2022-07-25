@@ -1,6 +1,5 @@
 package com.project.vue.member;
 
-import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -34,7 +33,7 @@ public class MemberController {
 	@PostMapping("checkid")
 	public ResponseEntity<SimpleResponse> checkId(@RequestBody String userId) {
 		log.debug("userId : {}", userId);
-		return 	ObjectUtils.isEmpty(memberService.findUserId(userId)) 
+		return 	memberService.findUserId(userId).isEmpty()
 				? ResponseEntity.ok(SimpleResponse.builder().message("사용 가능한 ID 입니다.").build()) 
 				: ResponseEntity.status(HttpStatus.CONFLICT).body(SimpleResponse.builder()
 													.success(false)
