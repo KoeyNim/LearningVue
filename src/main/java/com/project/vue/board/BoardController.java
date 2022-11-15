@@ -45,41 +45,42 @@ public class BoardController {
 	 * @return Page<BoardEntity>
 	 */
 	@GetMapping
-	public Page<BoardEntity> boardList(Pageable page, BoardRequest srch) {
+	public Page<BoardEntity> findAll(Pageable page, BoardRequest srch) {
 		log.debug("api/v1/board - get - page : {}, srch : {}", page, srch);
 		return boardService.findAll(page, srch);
 	}
 
 	@GetMapping("find/{id}")
-	public ResponseEntity<BoardEntity> boardFindById(
+	public BoardEntity findById(
 			@PathVariable("id") Long id, 
 			HttpServletRequest request, 
 			HttpServletResponse response,
 			Authentication auth) {
+//		log.debug("api/v1/board - get - page : {}, srch : {}", page, srch);
 		// 쿠키 유무 및 접근하는 게시글 조회 여부 확인
 		if(cookieCommon.readCountCookie(response, request, id)) {
 			// 조회수 반영
 			boardService.updateCount(id);
 		}
-		return ResponseEntity.ok(boardService.findById(id, auth));
+		return boardService.findById(id, auth);
 	}
 
 	@PostMapping("create")
-	public ResponseEntity<SimpleResponse> boardCreate(@RequestBody BoardEntity board) {
+	public ResponseEntity<SimpleResponse> create(@RequestBody BoardEntity board) {
 		log.debug("create board : {}", board);
 		boardService.save(board);
 		return ResponseEntity.ok(SimpleResponse.builder().message("게시글이 등록되었습니다.").build());
 	}
 
 	@PutMapping("update/{id}")
-	public ResponseEntity<SimpleResponse> boardUpdate(@RequestBody BoardEntity board) {
+	public ResponseEntity<SimpleResponse> update(@RequestBody BoardEntity board) {
 		log.debug("update board : {}", board);
 		boardService.save(board);
 		return ResponseEntity.ok(SimpleResponse.builder().message("게시글이 수정되었습니다.").build());
 	}
 	
 	@DeleteMapping("delete/{id}")
-	public ResponseEntity<SimpleResponse> boardDelete(@PathVariable("id") Long id) {
+	public ResponseEntity<SimpleResponse> deleteById(@PathVariable("id") Long id) {
 		log.debug("delete board id : {}", id);
 		boardService.deleteById(id);
 		return ResponseEntity.ok(SimpleResponse.builder().message("게시글이 삭제되었습니다.").build());

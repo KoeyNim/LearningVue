@@ -17,7 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
-@RequiredArgsConstructor
 public class CookieCommon {
 	
 	public boolean readCountCookie(HttpServletResponse response, HttpServletRequest request, Long id) {

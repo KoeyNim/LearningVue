@@ -114,16 +114,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	          .antMatchers(HttpMethod.GET,"/").permitAll() // 로그인을 요구하지 않음
         	  .antMatchers(Constants.REQUEST_MAPPING_PREFIX+"/board/**").hasRole("USER2")
         	  .antMatchers("/api/**").permitAll()
-	          .antMatchers(HttpMethod.GET,"/signup").permitAll()
-	          .antMatchers(Constants.REQUEST_MAPPING_PREFIX+"/member/signup").permitAll()
+	          .antMatchers(HttpMethod.GET,"/member-signup").permitAll()
+	          .antMatchers(Constants.REQUEST_MAPPING_PREFIX+"/member/member-signup").permitAll()
 //	          .anyRequest().permitAll() // 나머지 요청에 대해서는 로그인을 요구하지 않음.
 	          .expressionHandler(expressionHandler()) // 권한 계층 커스텀 Method
 	          .anyRequest().authenticated() // 모든 요청에 로그인을 요구
 
         // 로그인 인증
 	    .and().formLogin()
-	          .loginPage("/login") // 로그인 페이지
-	          .loginProcessingUrl(Constants.REQUEST_MAPPING_PREFIX + "/login/security") // 로그인 검증 url
+	          .loginPage("/member-login") // 로그인 페이지
+	          .loginProcessingUrl(Constants.REQUEST_MAPPING_PREFIX + "/member-login/security") // 로그인 검증 url
               .usernameParameter("userId") // 검증시 가지고 갈 아이디 기본값 : username
               .passwordParameter("userPwd") // 검증시 가지고 갈 비밀번호 기본값 : password
 	          .successHandler(authenticationSucessHandler) // 로그인 성공 핸들러
@@ -137,13 +137,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //        .and().addFilterBefore(new WebAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
         http.sessionManagement()
     	    .maximumSessions(1) // 허용 session 갯수, -1인 경우 무제한 세션
-    	    .expiredUrl("/login?expire=true") // session 만료 시 이동 url
+    	    .expiredUrl("/member-login?expire=true") // session 만료 시 이동 url
     	    .maxSessionsPreventsLogin(false); // true일 경우 동시로그인 차단, false일 경우 기존 세션 만료
 //        .and().sessionFixation().changeSessionId(); // 세션 고정 보호
         // 로그아웃
         http.logout()
 //        	.logoutUrl("/logout") // 로그아웃 url  기본값 : /logout
-        	.logoutSuccessUrl("/login") // 로그아웃 성공 url
+        	.logoutSuccessUrl("/member-login") // 로그아웃 성공 url
 //        	.logoutRequestMatcher(new AntPathRequestMatcher("/logout")) // 로그아웃 실행 주소
         	.clearAuthentication(true) // 로그아웃시 인증정보 삭제
         	.invalidateHttpSession(true).deleteCookies("JSESSIONID"); // 로그아웃 시 세션 삭제, 쿠키 제거

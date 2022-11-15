@@ -43,7 +43,7 @@ $().ready(() => {
 
                 var token = $("meta[name='_csrf']").attr("content");
                 var header = $("meta[name='_csrf_header']").attr("content");
-                axios.post(API_VERSION + '/login/security', form, {headers: {[header]: token}})
+                axios.post(API_VERSION + '/member-login/security', form, {headers: {[header]: token}})
                 .then(response => {
                     location.href = "/board";
                 })
@@ -63,7 +63,7 @@ $().ready(() => {
                 });
             },
             signUp() {
-                location.href = "/signup"
+                location.href = "/member-signup"
             }
         }
     });

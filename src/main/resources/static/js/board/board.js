@@ -75,15 +75,15 @@ $(() => {
             },
             fnRegist(e) {
               console.log('fnRegist', arguments);
-              location.href ='/board/regist';
+              location.href ='/board-form';
             },
             fnDetail(e, id) {
               console.log('fnDetail', arguments);
-              location.href ='/board/detail?id=' + id;
+              location.href ='/board-detail?id=' + id;
             },
             fnDwldExcel(e) {
               console.log('fnDwldExcel', arguments);
-              location.href= API_VERSION + '/board/excel';
+              location.href= API_VERSION + '/excel';
             },
         }
     });

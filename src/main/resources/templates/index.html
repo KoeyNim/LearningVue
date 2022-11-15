@@ -10,12 +10,12 @@
 	{{message}}</br>
 	<a th:href="@{/board}">게시판</a></br>
 	<h2 th:text="${userId}"></h2>
-	<a th:if="${userId == 'anonymousUser'}" th:href="@{/login}">로그인</a>
+	<a th:if="${userId == 'anonymousUser'}" th:href="@{/member-login}">로그인</a>
 	<form th:unless="${userId == 'anonymousUser'}" method="post" th:action="@{/logout}">
 	    <!-- @click : List sessionStorage option 삭제 -->
 	    <button type="submit" @click="sessionStorage.removeItem('pageOptions');">로그아웃</button>
 	</form>
-	<a th:if="${userId == 'anonymousUser'}" th:href="@{/signup}">회원가입</a>
+	<a th:if="${userId == 'anonymousUser'}" th:href="@{/member-signup}">회원가입</a>
 	</div>
 </div>
 </body>
