@@ -24,10 +24,6 @@ function ajaxAPI(type, url, data, options) {
                 xhr.setRequestHeader(header, token);
             }};
         Object.assign(ajaxParam, csrf);
-        // List sessionStorage option 삭제
-        if (sessionStorage.getItem('pageOptions')) {
-            return $.ajax(ajaxParam).done(sessionStorage.removeItem('pageOptions'));
-        }
     };
     return $.ajax(ajaxParam);
 }

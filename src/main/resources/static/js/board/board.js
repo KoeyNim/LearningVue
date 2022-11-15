@@ -1,19 +1,23 @@
 let vu;
 $(() => {
+    // 새로고침시 히스토리 초기화
+    if(performance.getEntriesByType("navigation")[0].type === 'reload') {
+      history.replaceState(null, '', location.pathname);
+    }
+
     vu = new Vue({
         el: '#contents',
         data: {
-            srch: {
+            srch: !!history.state ? history.state.srch : {
               page:0,
               size:5,
               sort:'id,desc',
               srchKey: undefined,
               srchVal: undefined,
             },
-            page: {
+            page: !!history.state ? history.state.page : {
               pageCount: 5,
               totalPages: 0,
-              start: 0,
               numbers:[],
             },
             list:{},
@@ -27,58 +31,59 @@ $(() => {
         created() {
           let me = this;
           me.fnGets();
-//          // sessionStorage 체크 후 data에 반영
-//          const pageOptions = JSON.parse(sessionStorage.getItem('pageOptions'));
-//          if(!!pageOptions) {
-//              Object.assign(this._data, pageOptions);
-//          }
-//          this.fnGetList(pageOptions ? pageOptions.pageIndex ? pageOptions.pageIndex : null : null);
         },
         methods: {
             fnGets(e) {
-                console.log('fnGets', arguments);
-                let me = this;
-//                const pageOptions = {
-//                    pageIndex : me.pageIndex,
-//                    pageSize : me.pageSize,
-//                    srchKey : me.srchKey,
-//                    srchVal : me.srchVal
-//                };
-//                sessionStorage.setItem('pageOptions', JSON.stringify(pageOptions));
-                ajaxAPI('GET', API_VERSION + '/board', me.srch
-                ).done((res) => {
-                    console.log('done', res, arguments)
-                    Object.assign(me.page, res);
-                    me.list = res.content;
-                    me.page.numbers = setPagination(me.page.totalPages , me.page.number+1, me.page.pageCount);
-                }).fail(() => alert('잘못된 요청입니다.'));
+              console.log('fnGets', arguments);
+              let me = this;
+              ajaxAPI('GET', API_VERSION + '/board', me.srch
+              ).done((res) => {
+                  console.log('done', res, arguments)
+                  Object.assign(me.page, res);
+                  me.list = res.content;
+                  // 페이지 번호 계산
+                  me.page.numbers = setPagination(me.page.totalPages , me.page.number+1, me.page.pageCount);
+                  // 히스토리에 검색 데이터 저장
+                  history.replaceState({srch: me.srch, page: me.page}, '', location.pathname); 
+              }).fail(() => alert('잘못된 요청입니다.'));
             },
             fnPage(e, page) {
               console.log('fnPage', arguments);
               let me = this;
-              if (!page) {
+
+              // 요청페이지가 존재하지 않거나 존재하지만 최소값 보다 낮을 경우 0으로 초기화
+              if (!page || (!!page && page < 0)) {
                   me.srch.page = 0;
-              } else {
-                  me.srch.page = page;
+                  me.fnGets(e);
+                  return;
               }
-              
-              if (!!page && page < 0) { // 요청 페이지 번호가 존재하며 최소값 보다 낮을 경우 0으로 초기화
-                  me.srch.page = 0;
-              }
-              
-              if (me.page.totalPages > 0 && me.srch.page >= me.page.totalPages) { // 요청 페이지 번호가 total값 보다 높을 경우 total값으로 초기화
+
+              // 요청 페이지 번호가 total값 보다 높을 경우 total값으로 초기화
+              if (me.page.totalPages > 0 && page >= me.page.totalPages) {
                   me.srch.page = me.page.totalPages -1;
+                  me.fnGets(e);
+                  return;
               }
+              me.srch.page = page;
               me.fnGets(e);
             },
-            goRegist() {
-                location.href ='/board/regist';
+            fnSrch(e) {
+              console.log('fnSrch', arguments);
+              let me = this;
+              Object.assign(me.srch, {page:0});
+              me.fnGets(e);
             },
-            goDetail(id) {
-                location.href ='/board/detail?id=' + id;
+            fnRegist(e) {
+              console.log('fnRegist', arguments);
+              location.href ='/board/regist';
             },
-            downloadExcel() {
-                location.href= API_VERSION + '/board/excel';
+            fnDetail(e, id) {
+              console.log('fnDetail', arguments);
+              location.href ='/board/detail?id=' + id;
+            },
+            fnDwldExcel(e) {
+              console.log('fnDwldExcel', arguments);
+              location.href= API_VERSION + '/board/excel';
             },
         }
     });

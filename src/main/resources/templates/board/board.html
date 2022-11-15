@@ -14,10 +14,10 @@
                     </option>
                 </select>
                 <span class="form-search">
-                    <input type="text" class="form-input" :maxlength="20" v-model="srch.srchVal" @keydown.enter.prevent="fnGets(0)" />
-                    <button class="btn" @click.prevent="fnGets(0)"></button>
+                    <input type="text" class="form-input" :maxlength="20" v-model="srch.srchVal" @keydown.enter.prevent="fnSrch" />
+                    <button class="btn" @click.prevent="fnSrch"></button>
                 </span>
-				<select class="form-select" id="pageSizeSelector" v-model="srch.size" @change="fnGets(0)">
+				<select class="form-select" id="pageSizeSelector" v-model="srch.size" @change="fnSrch">
 					<option v-for="data in options" :value="data">
 					   {{ data }}개씩
 					</option>
@@ -38,7 +38,7 @@
 				</tr>
 			</tbody>
 			<tbody class="list" v-else>
-				<tr v-for="(data, index) in page.content" @click="goDetail(data.id)">
+				<tr v-for="(data, index) in page.content" @click="fnDetail($event, data.id)">
 					<td class="efw500">{{page.totalElements - index - (page.pageable.pageNumber * page.pageable.pageSize)}}</td>
 					<td>{{data.title}}</td>
 					<!--/**<td style="text-overflow: ellipsis; overflow: hidden">{{data.content.replace(/(<([^>]+)>)/ig,"")}}</td>**/-->
@@ -48,12 +48,14 @@
 				</tr>
 			</tbody>
 		</table>
+		<!-- start paginate -->
     <th:block th:replace="frags/paginate :: paginate"></th:block>
+    <!-- end paginate -->
 		<div class="card-btn-box noline flex-box flex-spc-btw">
 			<div class="lt"></div>
 			<div class="rt">
-                <a class="blue btn md sm-h solidbtn" @click.prevent="downloadExcel()">엑셀 다운로드</a>
-				<button type="button" class="btn solidbtn md mo-full sm-h pink" @click.prevent="goRegist">등록</button>
+                <a class="blue btn md sm-h solidbtn" @click.prevent="fnDwldExcel($event)">엑셀 다운로드</a>
+				<button type="button" class="btn solidbtn md mo-full sm-h pink" @click.prevent="fnRegist($event)">등록</button>
 				<button type="button" class="btn solidbtn md mo-full sm-h lightblue" @click.prevent="location.href='/'">이전</button>
 			</div>
 		</div>
