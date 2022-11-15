@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -14,7 +15,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import com.project.vue.common.SimpleResponse;
 import com.project.vue.common.excel.service.ExcelService;
@@ -30,45 +30,51 @@ public class AdminPostController {
 	
 	private final AdminPostService adminPostService;
 	
+//	@GetMapping
+//	public ResponseEntity<Page<AdminPostEntity>> postList(
+//			@RequestParam int pageIndex, 
+//			@RequestParam int pageSize,
+//			@RequestParam(required = false) String sortKey,
+//			@RequestParam(required = false) String order,
+//			@RequestParam(required = false) String srchKey,
+//			@RequestParam(required = false) String srchVal) {
+//		return ResponseEntity.ok(adminPostService.findAll(pageIndex, pageSize, sortKey, order, srchKey, srchVal));
+//	}
+
 	@GetMapping
-	public ResponseEntity<Page<AdminPostEntity>> postList(
-			@RequestParam int pageIndex, 
-			@RequestParam int pageSize,
-			@RequestParam(required = false) String sortKey,
-			@RequestParam(required = false) String order,
-			@RequestParam(required = false) String srchKey,
-			@RequestParam(required = false) String srchVal) {
-		return ResponseEntity.ok(adminPostService.findAll(pageIndex, pageSize, sortKey, order, srchKey, srchVal));
+	public ResponseEntity<Page<AdminPostEntity>> findAll(Pageable page, AdminPostRequest srch) {
+		log.debug("api/posts - get - page : {}, srch : {}", page, srch);
+		return ResponseEntity.ok(adminPostService.findAll(page, srch));
 	}
 	
 	@GetMapping("{id}")
-	public ResponseEntity<AdminPostEntity> postFindById(@PathVariable("id") Long id) {
+	public ResponseEntity<AdminPostEntity> findById(@PathVariable("id") Long id) {
 		return ResponseEntity.ok(adminPostService.findById(id));
 	}
 
 	@PostMapping("create")
-	public ResponseEntity<SimpleResponse> postCreate(@RequestBody AdminPostEntity post) {
+	public ResponseEntity<SimpleResponse> create(@RequestBody AdminPostEntity post) {
 		log.debug("create post : {}",post);
 		adminPostService.save(post);
 		return ResponseEntity.ok(SimpleResponse.builder().message("글이 등록되었습니다.").build());
 	}
 
 	@PutMapping("update/{id}")
-	public ResponseEntity<SimpleResponse> postUpdate(@RequestBody AdminPostEntity post) {
+	public ResponseEntity<SimpleResponse> update(@RequestBody AdminPostEntity post) {
 		log.debug("update post : {}",post);
 		adminPostService.save(post);
 		return ResponseEntity.ok(SimpleResponse.builder().message("글이 수정되었습니다.").build());
 	}
 	
 	@DeleteMapping("delete/{id}")
-	public ResponseEntity<SimpleResponse> postDelete(@PathVariable("id") Long id) {
+	public ResponseEntity<SimpleResponse> delete(@PathVariable("id") Long id) {
 		log.debug("delete post id : {}",id);
 		adminPostService.deleteById(id);
 		return ResponseEntity.ok(SimpleResponse.builder().message("글이 삭제되었습니다.").build());
 	}
 	
 	@DeleteMapping("deletemany")
-	public ResponseEntity<SimpleResponse> postDeleteMany(@RequestBody List<Long> ids) {
+	public ResponseEntity<SimpleResponse> deleteMany(@RequestBody List<Long> ids) {
 		log.debug("delete many post ids : {}",ids);
 //		List<Long> longCasting = ids.stream().map(Long::parseLong).collect(Collectors.toList());
 		adminPostService.deleteAllByIdInBatch(ids);

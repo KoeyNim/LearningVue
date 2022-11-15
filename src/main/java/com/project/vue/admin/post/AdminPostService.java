@@ -6,11 +6,8 @@ import java.util.List;
 import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -56,15 +53,8 @@ public class AdminPostService {
 		adminPostRepository.save(post);
 	}
 	
-    public Page<AdminPostEntity> findAll(
-    		int pageIndex, int pageSize,
-    		String sortKey, String order,
-    		String srchKey, String srchVal) {
-    	PageRequest pageRequest = PageRequest.of(pageIndex, pageSize, 
-    			Sort.by(StringUtils.isBlank(order)   ? Direction.DESC : Direction.valueOf(order),
-    					StringUtils.isBlank(sortKey) ? "registDate"   : sortKey));
-		return adminPostRepository.findAll(
-				SearchSpecification.searchAdminPostSpecification(srchKey, srchVal), pageRequest);
+	public Page<AdminPostEntity> findAll(Pageable page, AdminPostRequest srch) {
+		return adminPostRepository.findAll(SearchSpecification.searchAdminPostSpecification(srch), page);
     }
     
     public List<AdminPostEntity> findAll() {

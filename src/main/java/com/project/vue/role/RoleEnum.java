@@ -1,5 +1,10 @@
 package com.project.vue.role;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public enum RoleEnum {
 
 	ADMIN("ROLE_ADMIN", "어드민"),
@@ -20,18 +25,5 @@ public enum RoleEnum {
 //		}
 //		return null;
 //	}
-
-	RoleEnum(String roleKey, String roleName) {
-		this.roleKey = roleKey;
-		this.roleName = roleName;
-	}
-
-	public String getRoleKey() {
-		return roleKey;
-	}
-
-	public String getRoleName() {
-		return roleName;
-	}
 
 }

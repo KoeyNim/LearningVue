@@ -7,10 +7,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.project.vue.common.Constants;
 import com.project.vue.common.CookieCommon;
@@ -29,7 +29,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@Controller
+@RestController
 @RequestMapping(Constants.REQUEST_MAPPING_PREFIX+"/board")
 @RequiredArgsConstructor
 public class BoardController {
@@ -38,13 +38,16 @@ public class BoardController {
 	
 	private final CookieCommon cookieCommon;
 	
+	/**
+	 * 게시글 조회
+	 * @param page 페이징
+	 * @param srch 검색 조건
+	 * @return Page<BoardEntity>
+	 */
 	@GetMapping
-	public ResponseEntity<Page<BoardEntity>> boardList(
-			@RequestParam int pageIndex, 
-			@RequestParam int pageSize,
-			@RequestParam(required = false) String srchKey,
-			@RequestParam(required = false) String srchVal) {
-		return ResponseEntity.ok(boardService.findAll(pageIndex, pageSize, srchKey, srchVal));
+	public Page<BoardEntity> boardList(Pageable page, BoardRequest srch) {
+		log.debug("api/v1/board - get - page : {}, srch : {}", page, srch);
+		return boardService.findAll(page, srch);
 	}
 
 	@GetMapping("find/{id}")

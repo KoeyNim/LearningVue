@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<!-- paginate -->
+<div th:fragment="paginate" class="page_wrap">
+  <div class="page_nation">
+    <a class="arrow block_prev"              :class="{cursor_default : page.first}"                           @click="page.first ? void(0) : fnPage($event, page.numbers[0]-6)"></a>
+    <a class="arrow prev"                    :class="{cursor_default : page.first}"                           @click="page.first ? void(0) : fnPage($event, page.number-1)"></a>
+    <a v-for="(data, index) in page.numbers" :class="[page.number === data-1 ? 'active cursor_default' : '']" @click="page.number === data-1 ? void(0) : fnPage($event, data-1)">{{data}}</a>
+    <a class="arrow next"                    :class="{cursor_default : page.last}"                            @click="page.last ? void(0) : fnPage($event, page.number+1)"></a>
+    <a class="arrow block_next"              :class="{cursor_default : page.last}"                            @click="page.last ? void(0) : fnPage($event, page.numbers[0]+4)"></a>
+  </div>
+</div>
+</body>
+</html>

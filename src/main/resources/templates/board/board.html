@@ -1,23 +1,23 @@
 <!DOCTYPE html>
-<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	layout:decorate="~{layout/layout}">
 <head>
 <script th:src="@{/static/js/board/board.js}"></script>
 </head>
 <body>
-	<div id="page" layout:fragment="content">
+	<div id="contents" layout:fragment="content">
         <div class="tbl-sort-box flex-box flex-spc-btw">
 			<span class="pagetit">게시글 리스트</span>
-                <select class="form-select" v-model="srchKey">
+                <select class="form-select" v-model="srch.srchKey">
                     <option v-for="data in srchOptions" :value="data.value">
                        {{ data.text }}
                     </option>
                 </select>
                 <span class="form-search">
-                    <input type="text" class="form-input"  :maxlength="20" v-model="srchVal" @keydown.enter.prevent="fnGetList(0)" />
-                    <button class="btn" @click.prevent="fnGetList(0)"></button>
+                    <input type="text" class="form-input" :maxlength="20" v-model="srch.srchVal" @keydown.enter.prevent="fnGets(0)" />
+                    <button class="btn" @click.prevent="fnGets(0)"></button>
                 </span>
-				<select class="form-select" id="pageSizeSelector" v-model="pageSize" @change="fnGetList(0)">
+				<select class="form-select" id="pageSizeSelector" v-model="srch.size" @change="fnGets(0)">
 					<option v-for="data in options" :value="data">
 					   {{ data }}개씩
 					</option>
@@ -32,14 +32,14 @@
 				<th>작성일</th>
 				<th>조회수</th>
 			</tr>
-			<tbody v-if="result.empty">
+			<tbody v-if="page.empty">
 				<tr>
 					<td colspan="15" class="fs16 fc-lightgrey" style="text-align: center;">조회된 내용이 없습니다.</td>
 				</tr>
 			</tbody>
 			<tbody class="list" v-else>
-				<tr v-for="(data, index) in result.content" @click="goDetail(data.id)">
-					<td class="efw500">{{result.totalElements - index - (result.pageable.pageNumber * result.pageable.pageSize)}}</td>
+				<tr v-for="(data, index) in page.content" @click="goDetail(data.id)">
+					<td class="efw500">{{page.totalElements - index - (page.pageable.pageNumber * page.pageable.pageSize)}}</td>
 					<td>{{data.title}}</td>
 					<!--/**<td style="text-overflow: ellipsis; overflow: hidden">{{data.content.replace(/(<([^>]+)>)/ig,"")}}</td>**/-->
 					<td>{{data.userId}}</td>
@@ -48,15 +48,7 @@
 				</tr>
 			</tbody>
 		</table>
-		<div class="page_wrap">
-	        <div class="page_nation">
-	            <a class="arrow block_prev"            :class="{cursor_default : result.first}"                       @click="result.first ? void(0) : fnGetList(pagingList[0]-6)"></a>
-	            <a class="arrow prev"                  :class="{cursor_default : result.first}"                       @click="result.first ? void(0) : fnGetList(pageIndex - 1)"></a>
-	            <a v-for="(data, index) in pagingList" :class="[pageIndex === data-1 ? 'active cursor_default' : '']" @click="pageIndex === data-1 ? void(0) : fnGetList(data-1)">{{data}}</a>
-	            <a class="arrow next"                  :class="{cursor_default : result.last}"                        @click="result.last ? void(0) : fnGetList(pageIndex + 1)"></a>
-	            <a class="arrow block_next"            :class="{cursor_default : result.last}"                        @click="result.last ? void(0) : fnGetList(pagingList[0]+4)"></a>
-	        </div>
-        </div>
+    <th:block th:replace="frags/paginate :: paginate"></th:block>
 		<div class="card-btn-box noline flex-box flex-spc-btw">
 			<div class="lt"></div>
 			<div class="rt">

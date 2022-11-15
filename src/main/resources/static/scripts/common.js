@@ -32,15 +32,15 @@ function ajaxAPI(type, url, data, options) {
     return $.ajax(ajaxParam);
 }
 
-function setPagination(totalPage, currentPage, pageSize) {
-    let currentPagingBlockNumber = Math.ceil(currentPage/pageSize);
-    let blockPageNumber = (currentPagingBlockNumber * pageSize);
-    let startPageNumber = blockPageNumber - (pageSize -1);
-    let endPageNumber = blockPageNumber > totalPage ? totalPage : blockPageNumber;
-    let pagingList = [];
+function setPagination(totalPages, currentPage, size) {
+    let currentPagingBlockNumber = Math.ceil(currentPage/size);
+    let blockPageNumber = (currentPagingBlockNumber * size);
+    let startPageNumber = blockPageNumber - (size -1);
+    let endPageNumber = blockPageNumber > totalPages ? totalPages : blockPageNumber;
+    let page = [];
     
     for (let i=startPageNumber; i<=endPageNumber; i++) {
-        pagingList.push(i);
+        page.push(i);
     }
-    return pagingList;
+    return page;
 }
