@@ -1,11 +1,13 @@
 package com.project.vue.board;
 
-import java.util.List;
+import java.io.ByteArrayOutputStream;
+import java.net.URLEncoder;
 
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import com.project.vue.common.Constants;
 import com.project.vue.common.CookieCommon;
@@ -46,44 +49,48 @@ public class BoardController {
 		return boardService.findAll(page, srch);
 	}
 
-	@GetMapping("find/{id}")
+	@GetMapping("detail/{id}")
 	public BoardEntity findById(@PathVariable Long id) {
-		log.debug("api/v1/find/ - get - id : {}", id);
+		log.debug("api/v1/detail/ - get - id : {}", id);
 		cookieCommon.readCountCookie(id);
 		return boardService.findById(id);
 	}
 
 	@PostMapping("create")
 	public ResponseEntity<SimpleResponse> create(@RequestBody BoardEntity board) {
-		log.debug("create board : {}", board);
+		log.debug("api/v1/create/ - post - board : {}", board);
 		boardService.save(board);
 		return ResponseEntity.ok(SimpleResponse.builder().message("게시글이 등록되었습니다.").build());
 	}
 
-	@PutMapping("update/{id}")
+	@PutMapping("update")
 	public ResponseEntity<SimpleResponse> update(@RequestBody BoardEntity board) {
-		log.debug("update board : {}", board);
+		log.debug("api/v1/update/ - put - board : {}", board);
 		boardService.save(board);
 		return ResponseEntity.ok(SimpleResponse.builder().message("게시글이 수정되었습니다.").build());
 	}
 	
 	@DeleteMapping("delete/{id}")
 	public ResponseEntity<SimpleResponse> delete(@PathVariable("id") Long id) {
-		log.debug("delete board id : {}", id);
+		log.debug("api/v1/delete/ - delete - id : {}", id);
 		boardService.deleteById(id);
 		return ResponseEntity.ok(SimpleResponse.builder().message("게시글이 삭제되었습니다.").build());
 	}
 	
 	@GetMapping("excel")
-	public ResponseEntity<ByteArrayResource> excel() {
-		try {
-	        List<BoardEntity> dataList = boardService.findAll();
-	        
-	        ExcelService<BoardEntity> excelService = new ExcelService<>(dataList, BoardEntity.class);
-	        
-			return excelService.downloadExcel();
+	public ResponseEntity<StreamingResponseBody> dwldExcel() {
+		log.debug("api/v1/excel/ - dwldExcel");
+		try (ByteArrayOutputStream bs = new ByteArrayOutputStream()) {
+	        ExcelService<BoardEntity> excelService = new ExcelService<>(boardService.findAll(), BoardEntity.class);
+	        String fileNm = excelService.create(bs);
+
+			return ResponseEntity.ok()
+					 //attachement = 로컬에 저장, filename = 다운로드시 파일 이름 지정
+					.contentType(MediaType.APPLICATION_OCTET_STREAM)
+					.header(HttpHeaders.CONTENT_DISPOSITION, "attachement; filename=" + URLEncoder.encode(fileNm, "UTF-8").replaceAll("\\+", "%20"))
+					.body(os -> os.write(bs.toByteArray()));
 		} catch(Exception e) {
-			return new ResponseEntity<ByteArrayResource>(HttpStatus.CONFLICT);
+			return new ResponseEntity<StreamingResponseBody>(HttpStatus.CONFLICT);
 		}
 	}
 }

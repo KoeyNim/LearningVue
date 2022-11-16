@@ -13,7 +13,7 @@ $(document).ready(function() {
             fnLoad() {
                 const me = this;
                 me.result.id = URLSearch.get('id');
-                ajaxAPI('GET', API_VERSION + '/board/find/' + me.result.id, undefined, {async: false}
+                ajaxAPI('GET', API_VERSION + '/board/detail/' + me.result.id, undefined, {async: false}
                 ).done(response => {
                     me.result = response;
                     me.filePath = me.result.fileEntity ? API_VERSION + '/download/' + me.result.fileEntity.id : '';

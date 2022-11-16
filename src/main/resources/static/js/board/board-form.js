@@ -71,7 +71,7 @@ $().ready(() => {
                 // create or update
                 me.result.id = URLSearch.get('id');
                 if (!me.result.id) return;
-                ajaxAPI('GET', API_VERSION + '/board/find/' + me.result.id, undefined, {async: false}
+                ajaxAPI('GET', API_VERSION + '/board/detail/' + me.result.id, undefined, {async: false}
                 ).done((response) => {
                     me.result = response;
                 }).fail(() => {
@@ -111,7 +111,7 @@ $().ready(() => {
                             result = Object.assign(this.result, {fileEntity : fileData});
                         }
                         ajaxAPI(ex ? 'PUT' : 'POST', 
-                                API_VERSION + '/board' + (ex ? '/update/' + this.result.id : '/create'), 
+                                API_VERSION + '/board' + (ex ? '/update' : '/create'), 
                                 JSON.stringify(result),
                                 {contentType: 'application/json; charset=UTF-8', cache: false}
                         ).done((response) => {

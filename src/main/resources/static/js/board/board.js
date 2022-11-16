@@ -83,7 +83,7 @@ $(() => {
             },
             fnDwldExcel(e) {
             	console.log('fnDwldExcel', arguments);
-            	location.href= API_VERSION + '/excel';
+            	location.href= API_VERSION + '/board/excel';
             },
         }
     });

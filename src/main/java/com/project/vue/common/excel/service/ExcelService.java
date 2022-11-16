@@ -1,6 +1,6 @@
 package com.project.vue.common.excel.service;
 
-import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Method;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -17,10 +17,6 @@ import org.apache.poi.xssf.streaming.SXSSFCell;
 import org.apache.poi.xssf.streaming.SXSSFRow;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import com.project.vue.common.excel.ExcelUtils;
@@ -48,34 +44,28 @@ public class ExcelService<T> {
 	}
 
 	/**
-	 *  다운로드
+	 *  엑셀 생성
 	 */
-	public ResponseEntity<ByteArrayResource> downloadExcel() throws Exception {
-		try {
-			rowNo = 0;
+	public String create(OutputStream os) throws Exception {
+		rowNo = 0;
 
-			sheet = wb.createSheet(resource.getFileName());
+		sheet = wb.createSheet(resource.getFileName());
 
-			renderHeaderRow(resource.getHeaderList());
-			renderDataRow(dataList, resource.getColList(), resource.getColStyle());
-			renderColimnSize(resource.getColList().size());
+		renderHeaderRow(resource.getHeaderList());
+		renderDataRow(dataList, resource.getColList(), resource.getColStyle());
+		renderColimnSize(resource.getColList().size());
 
-			ByteArrayOutputStream stream = new ByteArrayOutputStream();
-			wb.write(stream);
-			wb.dispose();
-			wb.close();
-	    	String fileName = resource.getFileName()+"_"+LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy.MM.dd"))+".xlsx";
-			String orgFileName = new String(fileName.getBytes("UTF-8"), "ISO-8859-1");
+		wb.write(os);
+		wb.dispose();
+		wb.close();
 
-			return ResponseEntity.ok()
-					 //attachement = 로컬에 저장, filename = 다운로드시 파일 이름 지정
-					.header(HttpHeaders.CONTENT_DISPOSITION, "attachement; filename=" + orgFileName +";")
-					.header(HttpHeaders.CONTENT_TYPE, "ms-vnd/excel") 
-					.body(new ByteArrayResource(stream.toByteArray()));
-		} catch(Exception e) {
-			e.printStackTrace();
-			return new ResponseEntity<ByteArrayResource>(HttpStatus.CONFLICT);
-		}
+		StringBuilder fileNm = new StringBuilder();
+		fileNm.append(resource.getFileName());
+		fileNm.append("_");
+		fileNm.append(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy.MM.dd")));
+		fileNm.append(".xlsx");
+
+		return fileNm.toString();
 	}
 
 	/**
