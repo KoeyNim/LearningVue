@@ -2,15 +2,11 @@ package com.project.vue.board;
 
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -51,18 +47,10 @@ public class BoardController {
 	}
 
 	@GetMapping("find/{id}")
-	public BoardEntity findById(
-			@PathVariable("id") Long id, 
-			HttpServletRequest request, 
-			HttpServletResponse response,
-			Authentication auth) {
-//		log.debug("api/v1/board - get - page : {}, srch : {}", page, srch);
-		// 쿠키 유무 및 접근하는 게시글 조회 여부 확인
-		if(cookieCommon.readCountCookie(response, request, id)) {
-			// 조회수 반영
-			boardService.updateCount(id);
-		}
-		return boardService.findById(id, auth);
+	public BoardEntity findById(@PathVariable Long id) {
+		log.debug("api/v1/find/ - get - id : {}", id);
+		cookieCommon.readCountCookie(id);
+		return boardService.findById(id);
 	}
 
 	@PostMapping("create")
@@ -80,7 +68,7 @@ public class BoardController {
 	}
 	
 	@DeleteMapping("delete/{id}")
-	public ResponseEntity<SimpleResponse> deleteById(@PathVariable("id") Long id) {
+	public ResponseEntity<SimpleResponse> delete(@PathVariable("id") Long id) {
 		log.debug("delete board id : {}", id);
 		boardService.deleteById(id);
 		return ResponseEntity.ok(SimpleResponse.builder().message("게시글이 삭제되었습니다.").build());

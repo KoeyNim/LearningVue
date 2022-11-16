@@ -125,8 +125,8 @@ $().ready(() => {
                 });
             },
             fnCancel() {
-                const ex = !!this.result.id;
-                ex ? location.href = '/board/detail?id=' + this.result.id : location.href = '/board';
+                let me = this;
+                location.href = !!me.result.id ? '/board-detail?id=' + me.result.id : '/board';
             }
         }
     })

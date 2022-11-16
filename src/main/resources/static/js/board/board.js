@@ -2,23 +2,23 @@ let vu;
 $(() => {
     // 새로고침시 히스토리 초기화
     if(performance.getEntriesByType("navigation")[0].type === 'reload') {
-      history.replaceState(null, '', location.pathname);
+        history.replaceState(null, '', location.pathname);
     }
 
     vu = new Vue({
         el: '#contents',
         data: {
             srch: !!history.state ? history.state.srch : {
-              page:0,
-              size:5,
-              sort:'id,desc',
-              srchKey: undefined,
-              srchVal: undefined,
+            	page:0,
+            	size:5,
+            	sort:'id,desc',
+            	srchKey: undefined,
+            	srchVal: undefined,
             },
             page: !!history.state ? history.state.page : {
-              pageCount: 5,
-              totalPages: 0,
-              numbers:[],
+            	pageCount: 5,
+            	totalPages: 0,
+            	numbers:[],
             },
             list:{},
             options: pageSizeArr,
@@ -29,8 +29,8 @@ $(() => {
             ],
         },
         created() {
-          let me = this;
-          me.fnGets();
+            let me = this;
+            me.fnGets();
         },
         methods: {
             fnGets(e) {
@@ -44,8 +44,8 @@ $(() => {
                   // 페이지 번호 계산
                   me.page.numbers = setPagination(me.page.totalPages , me.page.number+1, me.page.pageCount);
                   // 히스토리에 검색 데이터 저장
-                  history.replaceState({srch: me.srch, page: me.page}, '', location.pathname); 
-              }).fail(() => alert('잘못된 요청입니다.'));
+                  history.replaceState({srch: me.srch, page: me.page}, '', location.pathname);
+              }).fail(() => alert('잘못된 요청입니다.')); // TODO fail
             },
             fnPage(e, page) {
               console.log('fnPage', arguments);
@@ -68,22 +68,22 @@ $(() => {
               me.fnGets(e);
             },
             fnSrch(e) {
-              console.log('fnSrch', arguments);
-              let me = this;
-              Object.assign(me.srch, {page:0});
-              me.fnGets(e);
+            	console.log('fnSrch', arguments);
+            	let me = this;
+            	Object.assign(me.srch, {page:0});
+            	me.fnGets(e);
             },
             fnRegist(e) {
-              console.log('fnRegist', arguments);
-              location.href ='/board-form';
+            	console.log('fnRegist', arguments);
+            	location.href ='/board-form';
             },
             fnDetail(e, id) {
-              console.log('fnDetail', arguments);
-              location.href ='/board-detail?id=' + id;
+            	console.log('fnDetail', arguments);
+            	location.href ='/board-detail?id=' + id;
             },
             fnDwldExcel(e) {
-              console.log('fnDwldExcel', arguments);
-              location.href= API_VERSION + '/excel';
+            	console.log('fnDwldExcel', arguments);
+            	location.href= API_VERSION + '/excel';
             },
         }
     });

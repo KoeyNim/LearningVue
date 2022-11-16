@@ -78,8 +78,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) throws Exception {
 //    	web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations()); // 폴더명이 지정되어 있음.
-        web.ignoring().antMatchers("/static/**");
-        web.ignoring().antMatchers("/error"); // 작동하지 않음
+        web.ignoring().antMatchers("/static/**", "/error");
     }
 
     // 권한 계층 설정 Bean

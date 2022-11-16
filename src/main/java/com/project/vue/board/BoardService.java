@@ -8,7 +8,6 @@ import javax.transaction.Transactional;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -69,17 +68,13 @@ public class BoardService {
 	}
 
 	public BoardEntity findById(Long id) {
-		return boardRepository.findById(id).orElseThrow();
-	}
-
-	public BoardEntity findById(Long id, Authentication auth) {
-		BoardEntity boardEntity = findById(id);
-		boardEntity.setAuthUserId(auth.getName());
+		BoardEntity boardEntity = boardRepository.findById(id).orElseThrow();
+		boardEntity.setAuthUserId(SecurityContextHolder.getContext().getAuthentication().getName());
 		return boardEntity;
 	}
 
 	public void deleteById(Long id) {
-		BoardEntity boardEntity = findById(id);
+		BoardEntity boardEntity = boardRepository.findById(id).orElseThrow();
 		if (ObjectUtils.isNotEmpty(boardEntity.getFileEntity())) {
 			File file = new File(boardEntity.getFileEntity().getFilePath() + boardEntity.getFileEntity().getFileNm());
 //        	if (file.exists()) {

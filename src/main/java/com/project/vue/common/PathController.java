@@ -1,10 +1,8 @@
 package com.project.vue.common;
 
-import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -30,11 +28,10 @@ public class PathController {
 
 	/**
 	 * @param page 페이지 경로
-	 * @param auth 로그인 데이터
 	 * @return String
 	 */
 	@GetMapping("{page}")
-	public String page(@PathVariable String page, Authentication auth) {
+	public String page(@PathVariable String page) {
 		log.debug("page: {}", page);
 		String view = null;
 
@@ -54,7 +51,7 @@ public class PathController {
 			throw new RuntimeException("Not Found Page : " + page); // TODO Exception..
 		}
 
-		if (page.contains("member") && !ObjectUtils.isEmpty(auth)) {
+		if (page.contains("member") && !SecurityContextHolder.getContext().getAuthentication().getName().equals("anonymousUser")) {
 			view = "redirect:board";
 		}
 		return view;

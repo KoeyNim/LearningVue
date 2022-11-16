@@ -24,7 +24,7 @@ $(document).ready(function() {
                 });
             },
             fnUpdate() {
-                location.href = '/board/regist?id=' + this.result.id;
+                location.href = '/board-form?id=' + this.result.id;
             },
             fnDelete() {
                 if(!confirm('이 게시글을 삭제하시겠습니까?')) return;
