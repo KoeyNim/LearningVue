@@ -24,8 +24,8 @@ import lombok.EqualsAndHashCode;
 @Table(name = "board")
 public class AdminPostEntity extends TimeEntity {
 
-	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+	@Id @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "BOARD_SEQ_NO_01_GENERATOR")
+	private Long boardSeqno;
 
 	@NotBlank
 	private String title;

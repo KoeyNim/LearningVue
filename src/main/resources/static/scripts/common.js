@@ -1,3 +1,4 @@
+// AJAX
 function ajaxAPI(type, url, data, options) {
 
     let ajaxParam = {
@@ -28,6 +29,7 @@ function ajaxAPI(type, url, data, options) {
     return $.ajax(ajaxParam);
 }
 
+// 현재 페이지 블록의 페이지 번호 리스트
 function setPagination(totalPages, currentPage, size) {
     let currentPagingBlockNumber = Math.ceil(currentPage/size);
     let blockPageNumber = (currentPagingBlockNumber * size);

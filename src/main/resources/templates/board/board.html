@@ -38,7 +38,7 @@
 				</tr>
 			</tbody>
 			<tbody class="list" v-else>
-				<tr v-for="(data, index) in page.content" @click="fnDetail($event, data.id)">
+				<tr v-for="(data, index) in page.content" @click="fnDetail($event, data.boardSeqno)">
 					<td class="efw500">{{page.totalElements - index - (page.pageable.pageNumber * page.pageable.pageSize)}}</td>
 					<td>{{data.title}}</td>
 					<!--/**<td style="text-overflow: ellipsis; overflow: hidden">{{data.content.replace(/(<([^>]+)>)/ig,"")}}</td>**/-->

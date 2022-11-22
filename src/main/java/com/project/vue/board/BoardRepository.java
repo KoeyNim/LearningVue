@@ -16,7 +16,7 @@ public interface BoardRepository extends JpaRepository<BoardEntity, Long>, JpaSp
 	Page<BoardEntity> findAll(Specification<BoardEntity> spec, Pageable pageable);
 	
 	@Modifying
-	@Query("UPDATE BoardEntity b SET b.count = b.count + 1 WHERE b.id =:id")
-	void updateCount(Long id);
+	@Query("UPDATE BoardEntity b SET b.count = b.count + 1 WHERE b.boardSeqno =:boardSeqno")
+	void updateCount(Long boardSeqno);
 
 }

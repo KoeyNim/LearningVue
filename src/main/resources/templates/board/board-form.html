@@ -16,7 +16,7 @@
 </head>
 <body>
 	<div id="page" layout:fragment="content">
-		<span class="pagetit">{{ result.id ? '게시글 수정' : '게시글 등록' }}</span>
+		<span class="pagetit">{{ result.boardSeqno ? '게시글 수정' : '게시글 등록' }}</span>
 		<span>{{ errors.first('title') }}</span>
 		<span class="form-label">제목 *</span>
 		<div class="form-field">
@@ -36,13 +36,13 @@
 	        </div>
         </div>
 		<div class="input-container"> 
-		    <input @change="$fileSelect()" type="file" ref="imgFile" /> 
+		    <input @change="fnFileSelect" type="file" ref="imgFile" /> 
 		</div>
 		<div class="card-btn-box noline flex-box flex-spc-btw">
 		    <div class="lt"></div>
 		    <div class="rt">
-				<button type="button" class="btn solidbtn md mo-full sm-h pink" @click.prevent="fnSave">{{ result.id ? '수정' : '등록' }}</button>
-				<button type="button" class="btn solidbtn md mo-full sm-h black" @click.prevent="fnCancel">취소</button>
+				<button type="button" class="btn solidbtn md mo-full sm-h pink" @click.prevent="fnSave">{{ result.boardSeqno ? '수정' : '등록' }}</button>
+				<button type="button" class="btn solidbtn md mo-full sm-h black" @click.prevent="javascript:history.back();">취소</button>
 			</div>
        </div>
 	</div>

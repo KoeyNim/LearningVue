@@ -8,6 +8,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
@@ -29,11 +30,16 @@ import lombok.EqualsAndHashCode;
 @Table(name = "board")
 @ExcelFileName(fileName = "게시판") // excel/annotation/ExcelFileName.java
 @DynamicUpdate
+@SequenceGenerator(
+		name = "BOARD_SEQ_NO_GENERATOR",
+		sequenceName = "BOARD_SEQ_NO_01",
+		initialValue = 1, allocationSize = 1
+)
 public class BoardEntity extends TimeEntity {
 
-	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Id @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "BOARD_SEQ_NO_01_GENERATOR")
 	@ExcelColumnOptions(headerName = "No", ColumnStyle = BorderStyle.DASH_DOT)
-	private Long id;
+	private Long boardSeqno;
 
 	@NotBlank
 	@ExcelColumnOptions(headerName = "제목", ColumnStyle = BorderStyle.DOUBLE)

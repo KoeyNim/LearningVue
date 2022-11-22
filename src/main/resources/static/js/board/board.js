@@ -11,7 +11,7 @@ $(() => {
             srch: !!history.state ? history.state.srch : {
             	page:0,
             	size:5,
-            	sort:'id,desc',
+            	sort:'boardSeqno,desc',
             	srchKey: undefined,
             	srchVal: undefined,
             },
@@ -25,7 +25,7 @@ $(() => {
             srchOptions: [
                 {text: '전체', value: undefined},
                 {text: '제목', value: 'title'},
-                {text: '작성자', value: 'userId'},
+                {text: '작성자', value: 'userid'},
             ],
         },
         created() {
@@ -38,7 +38,7 @@ $(() => {
               let me = this;
               ajaxAPI('GET', API_VERSION + '/board', me.srch
               ).done((res) => {
-                  console.log('done', res, arguments)
+                  console.log('done', res, arguments);
                   Object.assign(me.page, res);
                   me.list = res.content;
                   // 페이지 번호 계산
@@ -77,9 +77,10 @@ $(() => {
             	console.log('fnRegist', arguments);
             	location.href ='/board-form';
             },
-            fnDetail(e, id) {
+            fnDetail(e, boardSeqno) {
             	console.log('fnDetail', arguments);
-            	location.href ='/board-detail?id=' + id;
+            	sessionStorage.setItem('boardSeqno', boardSeqno);
+            	location.href ='/board-detail';
             },
             fnDwldExcel(e) {
             	console.log('fnDwldExcel', arguments);

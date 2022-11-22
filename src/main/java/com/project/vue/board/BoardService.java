@@ -38,25 +38,26 @@ public class BoardService {
 //	}
 
 	@Transactional // 자동으로 flush 명령을 수행하기 위해 어노테이션 사용
-	public void updateCount(Long id) {
-		boardRepository.updateCount(id);
+	public void updateCount(long boardSeqno) {
+		boardRepository.updateCount(boardSeqno);
 	}
-
+	
+	// TODO 파일 수정시 기존 파일 히스토리 삭제 불가능 (Foreign key)
 	public void save(BoardEntity board) {
-		if (ObjectUtils.isEmpty(board.getId())) { // board.id 값 체크 (없으면 등록상황이다.)
+		if (ObjectUtils.isEmpty(board.getBoardSeqno())) { // board.id 값 체크 (없으면 등록상황이다.)
 			board.setUserId(SecurityContextHolder.getContext().getAuthentication().getName());
 			boardRepository.save(board);
 			return;
 		}
 
-		BoardEntity boardEntity = boardRepository.findById(board.getId()).orElseThrow(); // 수정 전에 저장된 board 객체를 찾는다.
+		BoardEntity boardEntity = boardRepository.findById(board.getBoardSeqno()).orElseThrow(); // 수정 전에 저장된 board 객체를 찾는다.
 
 		if (ObjectUtils.isNotEmpty(boardEntity.getFileEntity()) // 수정전 board 객체의 파일이 비어있는지 확인
 				&& ObjectUtils.notEqual(board.getFileEntity().getId(), // 저장할 파일과 저장 되어있는 파일의 id값 일치여부 확인
 						boardEntity.getFileEntity().getId())) {
-			fileRepository.deleteById(boardEntity.getFileEntity().getId()); // 조건에 모두 만족하는 파일 데이터를 삭제 (수정되어 필요없는 파일)
+			boardRepository.save(board);
+//			fileRepository.deleteById(boardEntity.getFileEntity().getId()); // 조건에 모두 만족하는 파일 데이터를 삭제 (수정되어 필요없는 파일) TODO ...
 		}
-		boardRepository.save(board);
 	}
 
 	public List<BoardEntity> findAll() {
@@ -67,20 +68,20 @@ public class BoardService {
 		return boardRepository.findAll(SearchSpecification.searchBoardSpecification(srch), page);
 	}
 
-	public BoardEntity findById(Long id) {
-		BoardEntity boardEntity = boardRepository.findById(id).orElseThrow();
+	public BoardEntity findById(long boardSeqno) {
+		BoardEntity boardEntity = boardRepository.findById(boardSeqno).orElseThrow();
 		boardEntity.setAuthUserId(SecurityContextHolder.getContext().getAuthentication().getName());
 		return boardEntity;
 	}
 
-	public void deleteById(Long id) {
-		BoardEntity boardEntity = boardRepository.findById(id).orElseThrow();
+	public void deleteById(long boardSeqno) {
+		BoardEntity boardEntity = boardRepository.findById(boardSeqno).orElseThrow();
 		if (ObjectUtils.isNotEmpty(boardEntity.getFileEntity())) {
 			File file = new File(boardEntity.getFileEntity().getFilePath() + boardEntity.getFileEntity().getFileNm());
 //        	if (file.exists()) {
 			file.delete();
 //        	}
 		}
-		boardRepository.deleteById(id);
+		boardRepository.deleteById(boardSeqno);
 	}
 }

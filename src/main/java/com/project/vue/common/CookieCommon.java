@@ -27,15 +27,15 @@ public class CookieCommon {
 
 	/**
 	 * 조회수 쿠키
-	 * @param id {@link BoardEntity}
+	 * @param boardSeqno {@link BoardEntity}
 	 */
-	public void readCountCookie(Long id) {
+	public void readCountCookie(long boardSeqno) {
 		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
 		HttpServletResponse response = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getResponse();
 
 		Cookie[] cookies = request.getCookies();
 		String cookieNm = "readCount";
-		String newCookieVal = "|" + id;
+		String newCookieVal = "|" + boardSeqno;
 		// cookieNm 쿠키의 value를 가져옴, 없을시 쿠키 기본값 생성
 		String cookieVal = Arrays.stream(cookies)
 				.filter(e -> StringUtils.equals(e.getName(), cookieNm))
@@ -53,7 +53,7 @@ public class CookieCommon {
 			// 유효시간 설정 (초)
 			cookie.setMaxAge(60 * 60 * 24);
 			response.addCookie(cookie);
-			boardService.updateCount(id);
+			boardService.updateCount(boardSeqno);
 		}
 	}
 }

@@ -11,7 +11,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -49,11 +48,11 @@ public class BoardController {
 		return boardService.findAll(page, srch);
 	}
 
-	@GetMapping("detail/{id}")
-	public BoardEntity findById(@PathVariable Long id) {
-		log.debug("api/v1/detail/ - get - id : {}", id);
-		cookieCommon.readCountCookie(id);
-		return boardService.findById(id);
+	@GetMapping("detail")
+	public BoardEntity findById(long boardSeqno) {
+		log.debug("api/v1/detail/ - get - boardSeqno : {}", boardSeqno);
+		cookieCommon.readCountCookie(boardSeqno);
+		return boardService.findById(boardSeqno);
 	}
 
 	@PostMapping("create")
@@ -70,10 +69,10 @@ public class BoardController {
 		return ResponseEntity.ok(SimpleResponse.builder().message("게시글이 수정되었습니다.").build());
 	}
 	
-	@DeleteMapping("delete/{id}")
-	public ResponseEntity<SimpleResponse> delete(@PathVariable("id") Long id) {
-		log.debug("api/v1/delete/ - delete - id : {}", id);
-		boardService.deleteById(id);
+	@DeleteMapping("delete")
+	public ResponseEntity<SimpleResponse> delete(long boardSeqno) {
+		log.debug("api/v1/delete/ - delete - boardSeqno : {}", boardSeqno);
+		boardService.deleteById(boardSeqno);
 		return ResponseEntity.ok(SimpleResponse.builder().message("게시글이 삭제되었습니다.").build());
 	}
 	

@@ -2,10 +2,8 @@ package com.project.vue.admin.post;
 
 import java.util.List;
 
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.project.vue.common.SimpleResponse;
-import com.project.vue.common.excel.service.ExcelService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -81,16 +78,17 @@ public class AdminPostController {
 		return ResponseEntity.ok(SimpleResponse.builder().message("글이 삭제되었습니다.").build());
 	}
 	
-	@GetMapping("excel")
-	public ResponseEntity<ByteArrayResource> excel() {
-		try {
-	        List<AdminPostEntity> dataList = adminPostService.findAll();
-	        
-	        ExcelService<AdminPostEntity> excelService = new ExcelService<>(dataList, AdminPostEntity.class);
-			
-			return excelService.downloadExcel();
-		} catch(Exception e) {
-			return new ResponseEntity<ByteArrayResource>(HttpStatus.CONFLICT);
-		}
-	}
+	//TODO ...
+//	@GetMapping("excel")
+//	public ResponseEntity<ByteArrayResource> excel() {
+//		try {
+//	        List<AdminPostEntity> dataList = adminPostService.findAll();
+//	        
+//	        ExcelService<AdminPostEntity> excelService = new ExcelService<>(dataList, AdminPostEntity.class);
+//			
+//			return excelService.create();
+//		} catch(Exception e) {
+//			return new ResponseEntity<ByteArrayResource>(HttpStatus.CONFLICT);
+//		}
+//	}
 }

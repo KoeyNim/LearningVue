@@ -1,5 +1,7 @@
 let vu;
 $().ready(() => {
+    const boardSeqno = URLSearch.get('boardSeqno');;
+
     vu = new Vue({
         el: '#page',
 /*        components: {
@@ -19,17 +21,20 @@ $().ready(() => {
             }*/
         },
         created() {
-            this.fnLoad();
+            if(!!boardSeqno) {
+                let me = this;
+                me.fnGets();
+            }
         },
         mounted() {
-            const me = this;
+            let me = this;
             $('#summernote').summernote({
                 height: 600,                  // 에디터 높이
                 minHeight: null,              // 최소 높이
                 maxHeight: null,              // 최대 높이
                 focus: true,                  // 에디터 로딩후 포커스를 맞출지 여부
                 lang: "ko-KR",                // 한글 설정
-                placeholder: '최대 2048자까지 쓸 수 있습니다',    //placeholder 설정
+                placeholder: '최대 2048자까지 작성할 수 있습니다',    //placeholder 설정
                 toolbar: [
                     ['fontname', ['fontname']],
                     ['fontsize', ['fontsize']],
@@ -44,15 +49,14 @@ $().ready(() => {
                 fontSizes: ['8','9','10','11','12','14','16','18','20','22','24','28','30','36','50','72'],
                 
                 callbacks : {
-                onImageUpload : function(images) {
-                    uploadImage(images[0]);
-                },
-                onChange : function(contents) {
-                    me.result.content = contents
+                    onImageUpload : function(images) {
+                        uploadImage(images[0]);
+                    },
+                    onChange : function(contents) {
+                        me.result.content = contents
+                    }
                 }
-            }
             });
-            
         },
         methods: {
             // ck-editor toolbar 변경
@@ -62,34 +66,24 @@ $().ready(() => {
                     editor.ui.getEditableElement()
                 );
             },*/
-            $fileSelect : function $fileSelect(){ 
-                this.imgFile = this.$refs.imgFile.files[0];
-                console.log(this.imgFile);
-            },
-            fnLoad() {
-                const me = this; 
-                // create or update
-                me.result.id = URLSearch.get('id');
-                if (!me.result.id) return;
-                ajaxAPI('GET', API_VERSION + '/board/detail/' + me.result.id, undefined, {async: false}
+            fnGets(e) {
+                console.log('fnGets', arguments);
+                let me = this;
+                ajaxAPI('GET', API_VERSION + '/board/detail', {boardSeqno : boardSeqno}, {async: false}
                 ).done((response) => {
                     me.result = response;
-                }).fail(() => {
-                    alert('잘못된 요청입니다.');
-                    location.href = '/board';
                 });
             },
-            fnSave() {
-                this.$validator.validateAll().then(success => {
+            fnSave(e) {
+                console.log('fnSave', arguments);
+                let me = this;
+                me.$validator.validateAll().then(success => {
                     if(success){
                         if ($('#summernote').summernote('isEmpty')) {
                             alert('내용을 입력해주세요.');
                             return;
                         }
-                        const ex = !!this.result.id;
-                        let result = Object.assign({}, this.result);
-                        let fileData = '';
-                        if(this.imgFile instanceof File) {
+                        if(me.imgFile instanceof File) {
                             const formData = new FormData();
                             const options = {
                                 enctype: 'multipart/form-data',
@@ -98,35 +92,30 @@ $().ready(() => {
                                 cache: false,
                                 async: false,
                             };
-                            formData.append('imgFile', this.imgFile);
+                            formData.append('imgFile', me.imgFile);
                             ajaxAPI('POST', API_VERSION + '/fileupload', formData, options
-                            ).done((response) => {
-                                fileData = response;
-                            }).fail((response) => {
-                                alert('파일 업로드 오류');
-                                console.log(response.responseJSON.message);
+                            ).done((res) => {
+                                console.log('done', arguments);
+                                Object.assign(me.result, {fileEntity : res});
                             });
                         }
-                        if(fileData) {
-                            result = Object.assign(this.result, {fileEntity : fileData});
-                        }
-                        ajaxAPI(ex ? 'PUT' : 'POST', 
-                                API_VERSION + '/board' + (ex ? '/update' : '/create'), 
-                                JSON.stringify(result),
+                        ajaxAPI(!!boardSeqno ? 'PUT' : 'POST', 
+                                API_VERSION + '/board' + (!!boardSeqno ? '/update' : '/create'), 
+                                JSON.stringify(me.result),
                                 {contentType: 'application/json; charset=UTF-8', cache: false}
-                        ).done((response) => {
-                            alert(response.message);
+                        ).done((res) => {
+                            console.log('done', arguments);
+                            alert(res.message);
                             location.href = '/board';
-                        }).fail((response) => {
-                            alert(ex ? '게시글 수정 오류' : '게시글 작성 오류');
-                            console.log(response.responseJSON.message);
                         });
                     }
                 });
             },
-            fnCancel() {
-                let me = this;
-                location.href = !!me.result.id ? '/board-detail?id=' + me.result.id : '/board';
+            fnFileSelect(e) {
+                console.log('fnFileSelect', arguments);
+                let me = this
+                me.imgFile = me.$refs.imgFile.files[0];
+                console.log(me.imgFile);
             }
         }
     })
@@ -141,13 +130,11 @@ $().ready(() => {
         };
         formData.append('image', image);
         ajaxAPI('POST', API_VERSION + '/imageupload', formData, options
-        ).done(function(url) {
-            console.log(url);
+        ).done((res) => {
+            console.log('done', arguments);
             $('#summernote').summernote('insertImage', url, function($image) {
                 $image.css('width', "50%");
             });
-        }).fail((jqXHR, stat, err) => {
-            console.log(stat+':'+err);
         });
     }
     
