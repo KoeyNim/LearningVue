@@ -10,8 +10,6 @@ $().ready(() => {
         },*/
         data: {
             result:{},
-            imgFile:[],
-            
             // CKEditor
 /*            editor: ClassicEditor,
             editorConfig: {
@@ -50,7 +48,7 @@ $().ready(() => {
                 
                 callbacks : {
                     onImageUpload : function(images) {
-                        uploadImage(images[0]);
+                        me.fnUploadImage(images[0]);
                     },
                     onChange : function(contents) {
                         me.result.content = contents
@@ -69,41 +67,40 @@ $().ready(() => {
             fnGets(e) {
                 console.log('fnGets', arguments);
                 let me = this;
-                ajaxAPI('GET', API_VERSION + '/board/detail', {boardSeqno : boardSeqno}, {async: false}
-                ).done((response) => {
-                    me.result = response;
+                $ajax.api({
+                    url: API_VERSION + '/board/detail',
+                    data: {boardSeqno : boardSeqno},
+                    async: false
+                }).done((res) => {
+                    console.log('done', arguments);
+                    me.result = res;
                 });
             },
             fnSave(e) {
                 console.log('fnSave', arguments);
                 let me = this;
-                me.$validator.validateAll().then(success => {
-                    if(success){
+                me.$validator.validateAll().then((success) => {
+                    if(success){ 
                         if ($('#summernote').summernote('isEmpty')) {
                             alert('내용을 입력해주세요.');
                             return;
                         }
-                        if(me.imgFile instanceof File) {
-                            const formData = new FormData();
-                            const options = {
-                                enctype: 'multipart/form-data',
-                                processData: false,
-                                contentType: false,
-                                cache: false,
-                                async: false,
-                            };
-                            formData.append('imgFile', me.imgFile);
-                            ajaxAPI('POST', API_VERSION + '/fileupload', formData, options
-                            ).done((res) => {
-                                console.log('done', arguments);
-                                Object.assign(me.result, {fileEntity : res});
-                            });
-                        }
-                        ajaxAPI(!!boardSeqno ? 'PUT' : 'POST', 
-                                API_VERSION + '/board' + (!!boardSeqno ? '/update' : '/create'), 
-                                JSON.stringify(me.result),
-                                {contentType: 'application/json; charset=UTF-8', cache: false}
-                        ).done((res) => {
+
+                        const formData = new FormData();
+                        formData.append('title', me.result.title);
+                        formData.append('content', me.result.content);
+                        if(me.$refs.file.files[0] instanceof File) formData.append('file', me.$refs.file.files[0]);
+                        if(!!boardSeqno) formData.append('boardSeqno', boardSeqno);
+
+                        $ajax.api({
+                            url: API_VERSION + '/board' + (!!boardSeqno ? '/update' : '/create'),
+                            type: !!boardSeqno ? 'PUT' : 'POST',
+                            data: formData,
+                            enctype: 'multipart/form-data',
+                            processData: false,
+                            contentType: false,
+                            cache: false
+                        }).done((res) => {
                             console.log('done', arguments);
                             alert(res.message);
                             location.href = '/board';
@@ -111,33 +108,29 @@ $().ready(() => {
                     }
                 });
             },
-            fnFileSelect(e) {
-                console.log('fnFileSelect', arguments);
-                let me = this
-                me.imgFile = me.$refs.imgFile.files[0];
-                console.log(me.imgFile);
+            /* summernote 이미지 업로드 **/
+            fnUploadImage(image) {
+                console.log('fnUploadImage', arguments);
+                const formData = new FormData();
+                formData.append('image', image);
+                $ajax.api({
+                    url: API_VERSION + '/image/upload',
+                    type: 'POST',
+                    data: formData,
+                    enctype : 'multipart/form-data',
+                    contentType : false,
+                    processData : false,
+                    cache : false
+                }).done((res) => {
+                    console.log('done', arguments);
+                    $('#summernote').summernote('insertImage', res, ($image) => {
+                        $image.css('width', "50%");
+                    });
+                });
             }
         }
     })
-    // summernote image upload
-    function uploadImage(image) {
-        const formData = new FormData();
-        const options = {
-            enctype : 'multipart/form-data',
-            contentType : false,
-            processData : false,
-            cache : false,
-        };
-        formData.append('image', image);
-        ajaxAPI('POST', API_VERSION + '/imageupload', formData, options
-        ).done((res) => {
-            console.log('done', arguments);
-            $('#summernote').summernote('insertImage', url, function($image) {
-                $image.css('width', "50%");
-            });
-        });
-    }
-    
+
     // CKEditor image upload
 /*    function customUploadAdapter(editor) {
         editor.plugins.get('FileRepository').createUploadAdapter = (loader) => {

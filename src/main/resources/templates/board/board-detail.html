@@ -72,7 +72,7 @@
 				<div class="rt">
 					<button v-if="result.userId == result.authUserId" type="button" class="btn solidbtn md mo-full sm-h pink" @click.prevent="fnUpdate($event, result.boardSeqno)">수정</button>
 					<button type="button" class="btn solidbtn md mo-full sm-h lightblue" @click.prevent="javascript:history.back();">목록</button>
-					<button v-if="result.userId == result.authUserId" type="button" class="btn solidbtn md mo-full sm-h black" @click.prevent="fnDelete">삭제</button>
+					<button v-if="result.userId == result.authUserId" type="button" class="btn solidbtn md mo-full sm-h black" @click.prevent="fnDelete($event)">삭제</button>
 				</div>
 			</div>
 		</div>

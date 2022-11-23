@@ -21,10 +21,12 @@ import com.project.vue.common.excel.annotation.ExcelColumnOptions;
 import com.project.vue.common.excel.annotation.ExcelFileName;
 import com.project.vue.file.FileEntity;
 
-import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
-@Data
+@Getter @Setter @ToString
 @Entity
 @EqualsAndHashCode(callSuper=true)
 @Table(name = "board")

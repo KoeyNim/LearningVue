@@ -12,6 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.project.vue.file.FileRepository;
+import com.project.vue.file.FileService;
 import com.project.vue.specification.SearchSpecification;
 
 import lombok.RequiredArgsConstructor;
@@ -21,8 +22,9 @@ import lombok.RequiredArgsConstructor;
 public class BoardService {
 
 	private final BoardRepository boardRepository;
-
 	private final FileRepository fileRepository;
+
+	private final FileService fileService;
 
 //	private final JPAQueryFactory queryFactory;
 
@@ -41,23 +43,44 @@ public class BoardService {
 	public void updateCount(long boardSeqno) {
 		boardRepository.updateCount(boardSeqno);
 	}
-	
-	// TODO 파일 수정시 기존 파일 히스토리 삭제 불가능 (Foreign key)
-	public void save(BoardEntity board) {
-		if (ObjectUtils.isEmpty(board.getBoardSeqno())) { // board.id 값 체크 (없으면 등록상황이다.)
-			board.setUserId(SecurityContextHolder.getContext().getAuthentication().getName());
-			boardRepository.save(board);
-			return;
+
+	public void save(BoardSaveRequest req) {
+		BoardEntity entity = new BoardEntity();
+
+		entity.setTitle(req.getTitle());
+		entity.setContent(req.getContent());
+		entity.setUserId(SecurityContextHolder.getContext().getAuthentication().getName());
+
+		if(ObjectUtils.isNotEmpty(req.getFile())) { // TODO Exception..
+			try {
+				entity.setFileEntity(fileService.upld(req.getFile()));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		boardRepository.save(entity);
+	}
+	public void save(long boardSeqno, BoardSaveRequest req) {
+		BoardEntity entity = boardRepository.findById(boardSeqno).orElseThrow(RuntimeException::new); // TODO Exception..
+		String userid = SecurityContextHolder.getContext().getAuthentication().getName();
+
+		if(!userid.equals(entity.getUserId())) {
+			throw new RuntimeException("400 Error BadRequset"); // TODO Exception..
 		}
 
-		BoardEntity boardEntity = boardRepository.findById(board.getBoardSeqno()).orElseThrow(); // 수정 전에 저장된 board 객체를 찾는다.
+		entity.setTitle(req.getTitle());
+		entity.setContent(req.getContent());
 
-		if (ObjectUtils.isNotEmpty(boardEntity.getFileEntity()) // 수정전 board 객체의 파일이 비어있는지 확인
-				&& ObjectUtils.notEqual(board.getFileEntity().getId(), // 저장할 파일과 저장 되어있는 파일의 id값 일치여부 확인
-						boardEntity.getFileEntity().getId())) {
-			boardRepository.save(board);
-//			fileRepository.deleteById(boardEntity.getFileEntity().getId()); // 조건에 모두 만족하는 파일 데이터를 삭제 (수정되어 필요없는 파일) TODO ...
+		if(ObjectUtils.isNotEmpty(req.getFile())) { // TODO Exception..
+			try {
+				// TODO 파일 수정시 기존 파일 히스토리 삭제 불가능 (Foreign key)
+//				fileRepository.deleteById(entity.getFileEntity().getId()); // 조건에 모두 만족하는 파일 데이터를 삭제 (수정되어 필요없는 파일)
+				entity.setFileEntity(fileService.upld(req.getFile()));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
+		boardRepository.save(entity);
 	}
 
 	public List<BoardEntity> findAll() {

@@ -1,13 +1,12 @@
 let vu;
-$(document).ready(function() {
-    
+$(() => {
     const boardSeqno = sessionStorage.getItem('boardSeqno');
-    
+
     vu = new Vue({
         el: '#page',
         data: {
             result: {},
-            filePath:'',
+            filePath: undefined,
         },
         created() {
             let me = this;
@@ -17,24 +16,30 @@ $(document).ready(function() {
             fnGets(e) {
                 console.log('fnGets', arguments);
                 let me = this;
-                ajaxAPI('GET', API_VERSION + '/board/detail', {boardSeqno : boardSeqno}, {async: false}
-                ).done(res => {
+                $ajax.api({
+                    url: API_VERSION + '/board/detail',
+                    data: {boardSeqno, boardSeqno},
+                    async: false
+                }).done(res => {
                     console.log('done', res, arguments);
                     me.result = res;
-                    me.filePath = me.result.fileEntity ? API_VERSION + '/download/' + me.result.fileEntity.id : '';
+                    if(!!me.result?.fileEntity) me.filePath = API_VERSION + '/file/download/' + me.result.fileEntity.id;
                 });
             },
             fnUpdate(e, boardSeqno) {
                 console.log('fnUpdate', arguments);
                 location.href = '/board-form?boardSeqno=' + boardSeqno;
             },
-            fnDelete() {
+            fnDelete(e) {
                 console.log('fnDelete', arguments);
                 if(!confirm('이 게시글을 삭제하시겠습니까?')) return;
-                ajaxAPI('DELETE', API_VERSION + '/board/delete', {boardSeqno : boardSeqno}
-                ).done((res) => {
+                $ajax.api({
+                    url: API_VERSION + '/board/delete',
+                    type: 'DELETE',
+                    data: {boardSeqno, boardSeqno}
+                }).done((res) => {
                     console.log('done', res, arguments);
-                    alert(response.message);
+                    alert(res.message);
                     location.href = '/board';
                 });
             }

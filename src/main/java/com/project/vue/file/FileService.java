@@ -1,6 +1,11 @@
 package com.project.vue.file;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.UUID;
 
 import javax.transaction.Transactional;
@@ -10,25 +15,30 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class FileService {
 	
 	private final FileRepository fileRepository;
 	
-	// apllication.yml 에서 경로 설정
+	/* application.yml file 경로 **/
 	@Value("${site.upload}")
 	private String FILE_UPLOAD_PATH;
 
-	@Transactional
-    public FileEntity save(MultipartFile file) throws Exception {
+	@Transactional // TODO Path 사용 및 void로 변경
+    public FileEntity upld(MultipartFile file) throws Exception {
+		log.debug("file upload - file name : {}", file.getOriginalFilename());
 		try {
 			if(file.isEmpty()) {
 				throw new Exception("Failed to store empty image " + file.getOriginalFilename());
 			}
 			String uuid = UUID.randomUUID().toString().replaceAll("-", "");
 			File uploadDir = new File(FILE_UPLOAD_PATH + uuid);
+			
+			Path path = Path.of(FILE_UPLOAD_PATH + uuid);
 			
 			if (!uploadDir.exists()) {
 				uploadDir.mkdirs();
@@ -51,7 +61,19 @@ public class FileService {
 		}
     }
 	
-	public FileEntity findById(Long id) {
-		return fileRepository.findById(id).orElseThrow();
+	/**
+	 * @param id file 키값
+	 * @param os outputStream
+	 * @return <String> 파일명
+	 */
+	public String dwld(long id, OutputStream os) {
+		FileEntity entity = fileRepository.findById(id).orElseThrow(RuntimeException::new); // TODO Exception
+		Path filePath = Paths.get(entity.getFilePath() + entity.getFileNm());
+		try {
+			os.write(Files.readAllBytes(filePath));
+			return entity.getOrignFileNm();
+		} catch (IOException e) { // TODO Exception
+			throw new RuntimeException(e);
+		}
 	}
 }
