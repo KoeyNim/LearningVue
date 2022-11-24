@@ -1,6 +1,7 @@
 package com.project.vue.file;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -33,10 +34,10 @@ public class FileController {
 			String orgFileName = fileService.dwld(id, bs);
 			return ResponseEntity.ok()
 					.contentType(MediaType.APPLICATION_OCTET_STREAM)
-					// attachement = 로컬에 저장, filename 파일 이름
+					/* attachement -> 로컬에 저장, filename -> 파일 이름 **/
 					.header(HttpHeaders.CONTENT_DISPOSITION, "attachement; filename=\"" + new String(orgFileName.getBytes("UTF-8"), "ISO-8859-1") +"\"")
 					.body(os -> os.write(bs.toByteArray()));
-		} catch(Exception e) { // TODO Exception
+		} catch(IOException e) { // TODO Exception
 			return new ResponseEntity<StreamingResponseBody>(HttpStatus.CONFLICT);
 		}
 	}

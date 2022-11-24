@@ -24,7 +24,7 @@
 								<div class="form-field">
 									<input type="text" class="form-input" name="userId" v-model="member.userId" :maxlength="16" placeholder="아이디" 
 									:data-vv-as="$('#userId').text()" v-validate="'required|alpha_num|min:5|max:16'" @change="change = true"/>
-									<a v-if="change" class="btn solidbtn md md-h pink" @click.self.prevent="checkId">중복 확인</a>
+									<a v-if="change" class="btn solidbtn md md-h pink" @click.self.prevent="fnIdChk($event)">중복 확인</a>
 									<a v-else class="btn solidbtn md md-h grey" style="cursor:default;">중복 확인</a>
 								</div>
 							</div>
@@ -106,7 +106,7 @@
 					<div class="lt"></div>
 					<div class="rt">
 						<a class="btn solidbtn md md-h black" @click.self.prevent="history.back();" >취소</a>
-						<a class="btn solidbtn md md-h pink" @click.self.prevent="signUp">가입</a>
+						<a class="btn solidbtn md md-h pink" @click.self.prevent="fnSignUp($event)">가입</a>
 					</div>
 				</div>
 			</div>

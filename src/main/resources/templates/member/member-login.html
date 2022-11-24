@@ -16,7 +16,7 @@
 			<div class="login-form-wrap">
 				<div class="login-form-row">
 					<label class="login-input id">
-						<input type="text" v-model="member.userId" name="userId" ref="userId" :maxlength="16" @keyup.enter="signIn" autocomplete="off"
+						<input type="text" v-model="member.userId" name="userId" ref="userId" :maxlength="16" @keyup.enter="fnLogin($event)" autocomplete="off"
 						:data-vv-as="$('#userId').text()" v-validate="'required|min:5|max:16'"/>
 						<span class="label on" id="userId">아이디</span>
 					</label>
@@ -24,7 +24,7 @@
 				</div>
 				<div class="login-form-row">
 					<label class="login-input pw">
-						<input type="password" v-model="member.userPwd" name="userPwd" ref="userPwd" :maxlength="20" @keyup.enter="signIn" autocomplete="off" 
+						<input type="password" v-model="member.userPwd" name="userPwd" ref="userPwd" :maxlength="20" @keyup.enter="fnLogin($event)" autocomplete="off" 
 						:data-vv-as="$('#userPwd').text()" v-validate="'required|min:5|max:20'"/>
 						<span class="label on" id="userPwd">비밀번호</span>
 					</label>
@@ -38,8 +38,8 @@
 				</div>
 			</div>
 			<div class="login-btn-wrap">
-				<a title="로그인하기" class="btn solidbtn loginbtn lg-h pink" @click.prevent="signIn" >로그인</a>
-				<a title="회원가입하기" class="btn solidbtn loginbtn lg-h pink" @click.prevent="signUp" >회원가입</a>
+				<a title="로그인하기" class="btn solidbtn loginbtn lg-h pink" @click.prevent="fnLogin($event)" >로그인</a>
+				<a title="회원가입하기" class="btn solidbtn loginbtn lg-h pink" @click.prevent="fnSignUp($event)" >회원가입</a>
 			</div>
 		</div>
 	</div>

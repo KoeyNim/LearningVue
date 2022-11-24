@@ -24,7 +24,7 @@ public class ImageService {
 	private String IMAGE_UPLOAD_PATH;
 	
 	@Transactional
-	public ImageEntity save(MultipartFile image) throws Exception {
+	public ImageEntity upld(MultipartFile image) throws Exception {
 		try {
 			if(image.isEmpty()) {
 				throw new Exception("Failed to store empty image " + image.getOriginalFilename());

@@ -1,5 +1,5 @@
 let vu;
-$().ready(() => {
+$(() => {
     const boardSeqno = URLSearch.get('boardSeqno');;
 
     vu = new Vue({
@@ -80,7 +80,7 @@ $().ready(() => {
                 console.log('fnSave', arguments);
                 let me = this;
                 me.$validator.validateAll().then((success) => {
-                    if(success){ 
+                    if(success) {
                         if ($('#summernote').summernote('isEmpty')) {
                             alert('내용을 입력해주세요.');
                             return;
@@ -108,7 +108,7 @@ $().ready(() => {
                     }
                 });
             },
-            /* summernote 이미지 업로드 **/
+            /* summernote 이미지 업로드 **/ // TODO 게시글 저장 완료시에 DB에 남게 변경. back 단에서 해결해야 할듯..
             fnUploadImage(image) {
                 console.log('fnUploadImage', arguments);
                 const formData = new FormData();

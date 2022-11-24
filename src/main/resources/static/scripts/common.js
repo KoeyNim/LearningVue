@@ -1,34 +1,3 @@
-// AJAX
-function ajaxAPI(type, url, data, options) {
-
-    let ajaxParam = {
-        type: type,
-        url: url,
-    };
-
-    if (data) {
-        Object.assign(ajaxParam, {data: data});
-    };
-
-    if (options) {
-        Object.assign(ajaxParam, options);
-    };
-
-    console.log("type : ", type, ", ", "url : ", url, ", ", "data : ", data);
-
-    // GET 방식에서는 csrf를 적용할 필요가 없음.
-    if (type !== 'GET') {
-        let csrf = {
-            beforeSend(xhr) {
-                var header = $("meta[name='_csrf_header']").attr("content");
-                var token = $("meta[name='_csrf']").attr("content");
-                xhr.setRequestHeader(header, token);
-            }};
-        Object.assign(ajaxParam, csrf);
-    };
-    return $.ajax(ajaxParam);
-}
-
 /* ajax API **/
 const $ajax = {
     api: (options) => {
@@ -86,3 +55,35 @@ function setPagination(totalPages, currentPage, size) {
     }
     return page;
 }
+
+/* ajax api 사용하지 않음.
+function ajaxAPI(type, url, data, options) {
+
+    let ajaxParam = {
+        type: type,
+        url: url,
+    };
+
+    if (data) {
+        Object.assign(ajaxParam, {data: data});
+    };
+
+    if (options) {
+        Object.assign(ajaxParam, options);
+    };
+
+    console.log("type : ", type, ", ", "url : ", url, ", ", "data : ", data);
+
+    // GET 방식에서는 csrf를 적용할 필요가 없음.
+    if (type !== 'GET') {
+        let csrf = {
+            beforeSend(xhr) {
+                var header = $("meta[name='_csrf_header']").attr("content");
+                var token = $("meta[name='_csrf']").attr("content");
+                xhr.setRequestHeader(header, token);
+            }};
+        Object.assign(ajaxParam, csrf);
+    };
+    return $.ajax(ajaxParam);
+}
+**/

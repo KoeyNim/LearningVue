@@ -39,12 +39,16 @@ public class MemberEntity implements UserDetails {
 
 	@NotBlank
 	@Column(columnDefinition = "varchar(255)")
+	private String userPwd;
+
+	@NotBlank
+	@Column(columnDefinition = "varchar(255)")
 	@Convert(converter = StringCryptoConverter.class)
 	private String userName;
 
 	@NotBlank
-	@Column(columnDefinition = "varchar(255)")
-	private String userPwd;
+	@Column(columnDefinition = "varchar(4)")
+	private String gender;
 
 	@NotNull
 	private Integer age;
@@ -53,10 +57,6 @@ public class MemberEntity implements UserDetails {
 	@Column(columnDefinition = "varchar(255)")
 	@Convert(converter = StringCryptoConverter.class)
 	private String email;
-
-	@NotBlank
-	@Column(columnDefinition = "varchar(4)")
-	private String gender;
 
 	@NotBlank
 	@Column(columnDefinition = "varchar(255)")

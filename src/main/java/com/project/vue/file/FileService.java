@@ -1,6 +1,5 @@
 package com.project.vue.file;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
@@ -28,49 +27,47 @@ public class FileService {
 	@Value("${site.upload}")
 	private String FILE_UPLOAD_PATH;
 
-	@Transactional // TODO Path 사용 및 void로 변경
-    public FileEntity upld(MultipartFile file) throws Exception {
+	/**
+	 * 파일 업로드
+	 * @param file 파일
+	 * @return <FileEntity> entity
+	 */
+	@Transactional
+    public FileEntity upld(MultipartFile file) {
 		log.debug("file upload - file name : {}", file.getOriginalFilename());
+		String uuid = UUID.randomUUID().toString().replaceAll("-", "");
+		Path path = Path.of(FILE_UPLOAD_PATH);
 		try {
-			if(file.isEmpty()) {
-				throw new Exception("Failed to store empty image " + file.getOriginalFilename());
+			/* 상위 디렉토리까지 폴더 생성 **/
+			if (path.toFile().mkdirs()) {
+				log.debug("execute mkdirs - path {}", FILE_UPLOAD_PATH);
 			}
-			String uuid = UUID.randomUUID().toString().replaceAll("-", "");
-			File uploadDir = new File(FILE_UPLOAD_PATH + uuid);
-			
-			Path path = Path.of(FILE_UPLOAD_PATH + uuid);
-			
-			if (!uploadDir.exists()) {
-				uploadDir.mkdirs();
-			}
-			
-	//		String ext = "."+ StringUtils.substringAfter(imgFile.getOriginalFilename(), "."); // 파일 이름에서 확장자 추출
-			FileEntity fileEntity = new FileEntity();
-			
-			fileEntity.setFileNm(uuid);
-			fileEntity.setFileSize(file.getSize());
-			fileEntity.setFilePath(FILE_UPLOAD_PATH);
-			fileEntity.setContentType(file.getContentType());
-			fileEntity.setOrignFileNm(file.getOriginalFilename());
-			
-			file.transferTo(uploadDir);
-			fileRepository.save(fileEntity);
-		return fileEntity;
-		} catch (Exception e) {
-			throw new Exception("Failed to store file " + file.getOriginalFilename(), e);
+			FileEntity entity = new FileEntity();
+			entity.setFileNm(uuid);
+			entity.setFileSize(file.getSize());
+			entity.setFilePath(FILE_UPLOAD_PATH);
+			entity.setContentType(file.getContentType());
+			entity.setOrignFileNm(file.getOriginalFilename());
+
+			file.transferTo(path.resolve(uuid));
+			fileRepository.save(entity);
+			return entity;
+		} catch (IOException e) {
+			throw new RuntimeException(e); // TODO Exception
 		}
     }
 	
 	/**
+	 * 파일 다운로드
 	 * @param id file 키값
 	 * @param os outputStream
 	 * @return <String> 파일명
 	 */
 	public String dwld(long id, OutputStream os) {
 		FileEntity entity = fileRepository.findById(id).orElseThrow(RuntimeException::new); // TODO Exception
-		Path filePath = Paths.get(entity.getFilePath() + entity.getFileNm());
+		Path path = Paths.get(entity.getFilePath() + entity.getFileNm());
 		try {
-			os.write(Files.readAllBytes(filePath));
+			os.write(Files.readAllBytes(path));
 			return entity.getOrignFileNm();
 		} catch (IOException e) { // TODO Exception
 			throw new RuntimeException(e);
