@@ -1,69 +1,71 @@
 package com.project.vue.file.image;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.UUID;
 
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
-import org.thymeleaf.util.StringUtils;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ImageService {
 	
 	private final ImageRepository imageRepository;
 	
+	/* TEMP 이미지 경로 **/
+	@Value("${site.temp-image}")
+	private String TEMP_IMAGE_PATH;
+	
+	/* 이미지 업로드 경로 **/
 	@Value("${site.image}")
 	private String IMAGE_UPLOAD_PATH;
-	
-	@Transactional
-	public ImageEntity upld(MultipartFile image) throws Exception {
+
+	public ImageEntity temp(MultipartFile image) {
+		log.debug("image temp - image name : {}", image.getOriginalFilename());
+		String uuid = UUID.randomUUID().toString().replaceAll("-", "");
+		Path path = Path.of(TEMP_IMAGE_PATH);
 		try {
-			if(image.isEmpty()) {
-				throw new Exception("Failed to store empty image " + image.getOriginalFilename());
+			/* 상위 디렉토리까지 폴더 생성 **/
+			if (path.toFile().mkdirs()) {
+				log.debug("execute mkdirs - path {}", TEMP_IMAGE_PATH);
 			}
-			
-			String fileNm = createImage(image);
-			ImageEntity imageEntity = new ImageEntity();
-			
-			imageEntity.setOrignFileNm(image.getOriginalFilename());
-			imageEntity.setFileNm(fileNm);
-			imageEntity.setContentType(image.getContentType());
-			imageEntity.setFileSize(image.getResource().contentLength());
-			imageEntity.setFilePath(IMAGE_UPLOAD_PATH);   
-			
-			imageRepository.save(imageEntity);
-			return imageEntity;
-			
-		} catch (Exception e) {
-			throw new Exception("Failed to store file " + image.getOriginalFilename(), e);
+			ImageEntity entity = new ImageEntity();
+			entity.setFileNm(uuid);
+			entity.setFileSize(image.getSize());
+			entity.setFilePath(IMAGE_UPLOAD_PATH);
+			entity.setContentType(image.getContentType());
+			entity.setOrignFileNm(image.getOriginalFilename());
+
+			image.transferTo(path.resolve(uuid));
+			return entity;
+		} catch (IOException e) {
+			throw new RuntimeException(e); // TODO Exception
 		}
 	}
 
-	public ImageEntity findById(Long id) {
-		return imageRepository.findById(id).orElseThrow();
+	@Transactional
+	public void save(ImageEntity entity) {
+		Path tempPath = Path.of(TEMP_IMAGE_PATH).resolve(entity.getFileNm());
+		Path savePath = Path.of(IMAGE_UPLOAD_PATH).resolve(entity.getFileNm());
+			try {
+				Files.copy(tempPath, savePath);
+				Files.delete(tempPath);
+			} catch (IOException e) {
+				throw new RuntimeException(e); // TODO Exception
+			}
+		imageRepository.save(entity);
 	}
-	
-	// 이미지 체크 후 이름 생성
-	public String createImage(MultipartFile image) throws IOException {
-		File uploadDir = new File(IMAGE_UPLOAD_PATH);
-		
-		if (!uploadDir.exists()) {
-			uploadDir.mkdirs();
-		}
-		String uuid = UUID.randomUUID().toString().replaceAll("-", "");
-		String ext = "."+ StringUtils.substringAfter(image.getOriginalFilename(), ".");
-		String fileNm = uuid + ext;
-		File saveFile = new File(IMAGE_UPLOAD_PATH, fileNm);
-		FileCopyUtils.copy(image.getBytes(), saveFile);
-		
-		return fileNm;
+
+	public ImageEntity findByFileNm(String fileNm) {
+		return imageRepository.findByFileNm(fileNm).orElseThrow(RuntimeException::new); // TODO Exception
 	}
 }

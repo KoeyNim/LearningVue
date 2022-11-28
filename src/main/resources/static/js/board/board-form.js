@@ -9,7 +9,9 @@ $(() => {
             ckeditor: CKEditor.component
         },*/
         data: {
-            result:{},
+            result:{
+                editorImage: undefined
+            },
             // CKEditor
 /*            editor: ClassicEditor,
             editorConfig: {
@@ -47,11 +49,11 @@ $(() => {
                 fontSizes: ['8','9','10','11','12','14','16','18','20','22','24','28','30','36','50','72'],
                 
                 callbacks : {
-                    onImageUpload : function(images) {
+                    onImageUpload : (images) => {
                         me.fnUploadImage(images[0]);
                     },
-                    onChange : function(contents) {
-                        me.result.content = contents
+                    onChange : (contents) => {
+                        me.result.content = contents;
                     }
                 }
             });
@@ -91,6 +93,7 @@ $(() => {
                         formData.append('content', me.result.content);
                         if(me.$refs.file.files[0] instanceof File) formData.append('file', me.$refs.file.files[0]);
                         if(!!boardSeqno) formData.append('boardSeqno', boardSeqno);
+                        if(!!me.result.editorImage) formData.append('image', JSON.stringify(me.result.editorImage));
 
                         $ajax.api({
                             url: API_VERSION + '/board' + (!!boardSeqno ? '/update' : '/create'),
@@ -108,13 +111,15 @@ $(() => {
                     }
                 });
             },
-            /* summernote 이미지 업로드 **/ // TODO 게시글 저장 완료시에 DB에 남게 변경. back 단에서 해결해야 할듯..
+            /* summernote 이미지 업로드 **/
             fnUploadImage(image) {
                 console.log('fnUploadImage', arguments);
+                let me = this;
+
                 const formData = new FormData();
                 formData.append('image', image);
                 $ajax.api({
-                    url: API_VERSION + '/image/upload',
+                    url: API_VERSION + '/image/temp',
                     type: 'POST',
                     data: formData,
                     enctype : 'multipart/form-data',
@@ -123,7 +128,9 @@ $(() => {
                     cache : false
                 }).done((res) => {
                     console.log('done', arguments);
-                    $('#summernote').summernote('insertImage', res, ($image) => {
+                    me.result.editorImage = {};
+                    Object.assign(me.result.editorImage, res);
+                    $('#summernote').summernote('insertImage', API_VERSION + '/image/find/'+ res.fileNm , ($image) => {
                         $image.css('width', "50%");
                     });
                 });

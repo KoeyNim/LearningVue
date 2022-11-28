@@ -11,20 +11,28 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import com.project.vue.file.FileRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.vue.file.FileService;
+import com.project.vue.file.image.ImageEntity;
+import com.project.vue.file.image.ImageService;
 import com.project.vue.specification.SearchSpecification;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class BoardService {
 
 	private final BoardRepository boardRepository;
-	private final FileRepository fileRepository;
 
 	private final FileService fileService;
+	private final ImageService imageService;
+	
+	private static final ObjectMapper OM = new ObjectMapper();
 
 //	private final JPAQueryFactory queryFactory;
 
@@ -51,14 +59,22 @@ public class BoardService {
 		entity.setContent(req.getContent());
 		entity.setUserId(SecurityContextHolder.getContext().getAuthentication().getName());
 
-		if(ObjectUtils.isNotEmpty(req.getFile())) { // TODO Exception..
+		if(ObjectUtils.isNotEmpty(req.getFile())) { 
+			entity.setFileEntity(fileService.upld(req.getFile()));
+		}
+		
+		/* JSON String Deserialize **/
+		if(ObjectUtils.isNotEmpty(req.getImage())) {
 			try {
-				entity.setFileEntity(fileService.upld(req.getFile()));
-			} catch (Exception e) {
-				e.printStackTrace();
+				JsonNode jn = OM.readTree(req.getImage());
+				imageService.save(OM.treeToValue(jn, ImageEntity.class));
+			} catch (JsonProcessingException | IllegalArgumentException e) {
+				throw new RuntimeException(e); // TODO Exception..
 			}
 		}
+		
 		boardRepository.save(entity);
+		
 	}
 	public void save(long boardSeqno, BoardSaveRequest req) {
 		BoardEntity entity = boardRepository.findById(boardSeqno).orElseThrow(RuntimeException::new); // TODO Exception..
@@ -71,15 +87,20 @@ public class BoardService {
 		entity.setTitle(req.getTitle());
 		entity.setContent(req.getContent());
 
-		if(ObjectUtils.isNotEmpty(req.getFile())) { // TODO Exception..
+		if(ObjectUtils.isNotEmpty(req.getFile())) {
+			entity.setFileEntity(fileService.upld(req.getFile()));
+		}
+
+		/* JSON String Deserialize **/
+		if(ObjectUtils.isNotEmpty(req.getImage())) {
 			try {
-				// TODO 파일 수정시 기존 파일 히스토리 삭제 불가능 (Foreign key)
-//				fileRepository.deleteById(entity.getFileEntity().getId()); // 조건에 모두 만족하는 파일 데이터를 삭제 (수정되어 필요없는 파일)
-				entity.setFileEntity(fileService.upld(req.getFile()));
-			} catch (Exception e) {
-				e.printStackTrace();
+				JsonNode jn = OM.readTree(req.getImage());
+				imageService.save(OM.treeToValue(jn, ImageEntity.class));
+			} catch (JsonProcessingException | IllegalArgumentException e) {
+				throw new RuntimeException(e); // TODO Exception..
 			}
 		}
+
 		boardRepository.save(entity);
 	}
 

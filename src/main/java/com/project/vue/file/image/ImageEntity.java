@@ -7,33 +7,27 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import com.project.vue.common.TimeEntity;
-
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 @Data
 @Entity
-@EqualsAndHashCode(callSuper=true)
 @Table(name = "image")
-public class ImageEntity extends TimeEntity {
+public class ImageEntity {
 
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
+
 	@Column(columnDefinition = "varchar(100)")
 	private String fileNm;
-	
+
 	private Long fileSize;
-	
+
 	@Column(columnDefinition = "varchar(100)")
 	private String filePath;
-	
+
 	@Column(columnDefinition = "varchar(100)")
 	private String contentType;
 
 	@Column(columnDefinition = "varchar(100)")
 	private String orignFileNm;
-
-
 }
