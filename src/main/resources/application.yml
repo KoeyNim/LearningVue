@@ -47,7 +47,7 @@ logging:
     # org.hibernate.type.descriptor.sql.BasicExtractor: trace # output bind
     com.project.vue: trace # 해당 패키지의 log 범위 (TRACE > DEBUG > INFO > WARN > ERROR > FATAL)
 site:
-  upload: D:/W/bin/upload/file/
+  upload: D:/W/bin/upload/file
   image: D:/W/bin/upload/image/
   temp-image: D:/W/bin/temp/image/
   secretKey: y/B?E(G+KbPeShVm

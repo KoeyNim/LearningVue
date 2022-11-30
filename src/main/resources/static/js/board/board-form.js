@@ -10,7 +10,7 @@ $(() => {
         },*/
         data: {
             result:{
-                editorImage: undefined
+                imgNmList: []
             },
             // CKEditor
 /*            editor: ClassicEditor,
@@ -54,9 +54,21 @@ $(() => {
                     },
                     onChange : (contents) => {
                         me.result.content = contents;
+                    },
+                    onMediaDelete : function(target) {
+                        me.result.imgNmList = me.result.imgNmList.filter((e) => {
+                            return e !== target[0].attributes.getNamedItem('img-name').value;
+                        });
                     }
                 }
             });
+
+            /* 에디터 내부 이미지 파일명 리스트 **/
+            if(!!$($('img[name=innerImg]')[0]).attr('img-name')) {
+                $('img[name=innerImg]').each((index, item) => {
+                    me.result.imgNmList.push(item.attributes.getNamedItem('img-name').value);
+                })
+            }
         },
         methods: {
             // ck-editor toolbar 변경
@@ -75,7 +87,7 @@ $(() => {
                     async: false
                 }).done((res) => {
                     console.log('done', arguments);
-                    me.result = res;
+                    Object.assign(me.result, res);
                 });
             },
             fnSave(e) {
@@ -93,7 +105,7 @@ $(() => {
                         formData.append('content', me.result.content);
                         if(me.$refs.file.files[0] instanceof File) formData.append('file', me.$refs.file.files[0]);
                         if(!!boardSeqno) formData.append('boardSeqno', boardSeqno);
-                        if(!!me.result.editorImage) formData.append('image', JSON.stringify(me.result.editorImage));
+                        if(!!me.result.imgNmList) formData.append('imgNmList', JSON.stringify(me.result.editorImage));
 
                         $ajax.api({
                             url: API_VERSION + '/board' + (!!boardSeqno ? '/update' : '/create'),
@@ -128,10 +140,12 @@ $(() => {
                     cache : false
                 }).done((res) => {
                     console.log('done', arguments);
-                    me.result.editorImage = {};
-                    Object.assign(me.result.editorImage, res);
-                    $('#summernote').summernote('insertImage', API_VERSION + '/image/find/'+ res.fileNm , ($image) => {
-                        $image.css('width', "50%");
+                    me.result.imgNmList.push(res);
+                    /* img tag 생성 **/
+                    $('#summernote').summernote('insertImage', API_VERSION + '/image/find/'+ res, ($img) => {
+                        $img.attr('name', 'innerImg');
+                        $img.attr('img-name', res);
+                        $img.css('width', "50%");
                     });
                 });
             }

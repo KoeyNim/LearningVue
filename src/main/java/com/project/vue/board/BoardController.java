@@ -46,6 +46,11 @@ public class BoardController {
 		return boardService.findAll(page, srch);
 	}
 
+	/**
+	 * 게시글 상세 조회
+	 * @param boardSeqno 게시글 키 번호
+	 * @return BoardEntity
+	 */
 	@GetMapping("detail")
 	public BoardEntity findById(long boardSeqno) {
 		log.debug("api/v1/detail/ - gets - boardSeqno : {}", boardSeqno);

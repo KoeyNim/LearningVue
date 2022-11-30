@@ -15,15 +15,12 @@ import lombok.Data;
 public class FileEntity {
 
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+	private Long fileSeqno;
 	
 	@Column(columnDefinition = "varchar(100)")
 	private String fileNm;
 	
 	private Long fileSize;
-	
-	@Column(columnDefinition = "varchar(100)")
-	private String filePath;
 	
 	@Column(columnDefinition = "varchar(100)")
 	private String contentType;

@@ -15,15 +15,14 @@ import lombok.Data;
 public class ImageEntity {
 
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+	private Long imageSeqno;
+	
+	private Long boardSeqno;
 
 	@Column(columnDefinition = "varchar(100)")
 	private String fileNm;
 
 	private Long fileSize;
-
-	@Column(columnDefinition = "varchar(100)")
-	private String filePath;
 
 	@Column(columnDefinition = "varchar(100)")
 	private String contentType;

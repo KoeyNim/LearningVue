@@ -31,16 +31,16 @@ public class Scheduler {
 		
 		Boolean garbageExists = ObjectUtils.isNotEmpty(
 						queryFactory
-						.select(qFileEntity.id)
+						.select(qFileEntity.fileSeqno)
 						.from(qFileEntity)
 						.where(JPAExpressions.selectFrom(qBoardEntity)
-						.where(qFileEntity.id.eq(qBoardEntity.fileEntity().id)).notExists())
+						.where(qFileEntity.fileSeqno.eq(qBoardEntity.fileEntity().fileSeqno)).notExists())
 						.fetch());
 
 		if (garbageExists) {
 			long result = queryFactory.delete(qFileEntity)
 			.where(JPAExpressions.selectFrom(qBoardEntity)
-			.where(qFileEntity.id.eq(qBoardEntity.fileEntity().id))
+			.where(qFileEntity.fileSeqno.eq(qBoardEntity.fileEntity().fileSeqno))
 			.notExists()).execute();
 			log.info("{} value CleanGarbageFile", result);
 		} else {

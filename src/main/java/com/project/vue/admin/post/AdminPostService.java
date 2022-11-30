@@ -1,11 +1,13 @@
 package com.project.vue.admin.post;
 
-import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
@@ -28,6 +30,10 @@ public class AdminPostService {
 	
 	private final JPAQueryFactory queryFactory;
 	
+	/* application.yml file 경로 **/
+	@Value("${site.upload}")
+	private String FILE_UPLOAD_PATH;
+	
 	// 수정시간이 바뀌게되는 이슈로 인해 querydsl로 세부 조작
 	@Transactional
 	public void saveCount(Long id) {
@@ -43,9 +49,9 @@ public class AdminPostService {
 		if (ObjectUtils.isNotEmpty(post.getBoardSeqno())) { // post.id 값이 비어있지 않은지 확인 (비어있으면 등록상황이다.)
 			AdminPostEntity	findPost = adminPostRepository.findById(post.getBoardSeqno()).orElseThrow(); // 수정 전에 저장된 post 객체를 찾는다.
 			if (ObjectUtils.isNotEmpty(findPost.getFileEntity()) // 수정전 post 객체의 파일이 비어있는지 확인
-					&& ObjectUtils.notEqual(post.getFileEntity().getId(), // 저장할 파일과 저장 되어있는 파일의 id값 일치여부 확인
-							findPost.getFileEntity().getId())) { 
-				fileRepository.deleteById(findPost.getFileEntity().getId()); // 조건에 모두 만족하는 파일 데이터를 삭제 (수정되어 필요없는 파일)
+					&& ObjectUtils.notEqual(post.getFileEntity().getFileSeqno(), // 저장할 파일과 저장 되어있는 파일의 id값 일치여부 확인
+							findPost.getFileEntity().getFileSeqno())) { 
+				fileRepository.deleteById(findPost.getFileEntity().getFileSeqno()); // 조건에 모두 만족하는 파일 데이터를 삭제 (수정되어 필요없는 파일)
 			}
 		} else {
 			post.setUserId(SecurityContextHolder.getContext().getAuthentication().getName());
@@ -74,9 +80,9 @@ public class AdminPostService {
     public void deleteById(Long id) {
     	AdminPostEntity findPost = findById(id);
     	if(ObjectUtils.isNotEmpty(findPost.getFileEntity())) {
-        	File file = new File(findPost.getFileEntity().getFilePath() + findPost.getFileEntity().getFileNm());
+    		Path path = Paths.get(FILE_UPLOAD_PATH).resolve(findPost.getFileEntity().getFileNm());
 //        	if (file.exists()) {
-        		file.delete();
+    			path.toFile().delete();
 //        	}
     	}
     	adminPostRepository.deleteById(id);
@@ -86,9 +92,8 @@ public class AdminPostService {
     	Iterable<AdminPostEntity> findPost = adminPostRepository.findAllById(ids);
     	if (findPost.iterator().hasNext()) {
     		if(ObjectUtils.isNotEmpty(findPost.iterator().next().getFileEntity())) {
-	    		File file = new File(findPost.iterator().next().getFileEntity().getFilePath() + 
-						 findPost.iterator().next().getFileEntity().getFileNm());
-	    		file.delete();
+    			Path path = Paths.get(FILE_UPLOAD_PATH).resolve(findPost.iterator().next().getFileEntity().getFileNm());
+	    		path.toFile().delete();
     		}
     	}
     	adminPostRepository.deleteAllByIdInBatch(ids);

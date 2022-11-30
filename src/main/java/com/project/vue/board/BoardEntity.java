@@ -62,7 +62,7 @@ public class BoardEntity extends TimeEntity {
 	private Integer count = 0;
 
 	@OneToOne(cascade = CascadeType.REMOVE) // 게시글 삭제 시 파일 데이터도 같이 삭제
-	@JoinColumn(name = "fileEntity") // referencedColumnName 미지정시 기본값 id
+	@JoinColumn(name = "fileEntity") // referencedColumnName 미지정시 PK로 자동지정
 	private FileEntity fileEntity;
 	
 	@Transient

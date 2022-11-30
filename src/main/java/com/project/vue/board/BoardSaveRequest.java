@@ -17,6 +17,6 @@ public class BoardSaveRequest {
 	private String content;
 	/** 파일 */
 	private MultipartFile file;
-	/** 이미지 파일 JSON String */
-	private String image;
+	/** 이미지 파일명 */
+	private String imageNm;
 }

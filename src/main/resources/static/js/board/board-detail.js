@@ -23,7 +23,7 @@ $(() => {
                 }).done(res => {
                     console.log('done', res, arguments);
                     me.result = res;
-                    if(!!me.result?.fileEntity) me.filePath = API_VERSION + '/file/download/' + me.result.fileEntity.id;
+                    if(!!me.result?.fileEntity) me.filePath = API_VERSION + '/file/download/' + me.result.fileEntity.fileSeqno;
                 });
             },
             fnUpdate(e, boardSeqno) {

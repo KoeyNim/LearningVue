@@ -36,7 +36,7 @@ public class FileService {
     public FileEntity upld(MultipartFile file) {
 		log.debug("file upload - file name : {}", file.getOriginalFilename());
 		String uuid = UUID.randomUUID().toString().replaceAll("-", "");
-		Path path = Path.of(FILE_UPLOAD_PATH);
+		Path path = Paths.get(FILE_UPLOAD_PATH);
 		try {
 			/* 상위 디렉토리까지 폴더 생성 **/
 			if (path.toFile().mkdirs()) {
@@ -45,7 +45,6 @@ public class FileService {
 			FileEntity entity = new FileEntity();
 			entity.setFileNm(uuid);
 			entity.setFileSize(file.getSize());
-			entity.setFilePath(FILE_UPLOAD_PATH);
 			entity.setContentType(file.getContentType());
 			entity.setOrignFileNm(file.getOriginalFilename());
 
@@ -65,12 +64,26 @@ public class FileService {
 	 */
 	public String dwld(long id, OutputStream os) {
 		FileEntity entity = fileRepository.findById(id).orElseThrow(RuntimeException::new); // TODO Exception
-		Path path = Paths.get(entity.getFilePath() + entity.getFileNm());
+		Path path = Paths.get(FILE_UPLOAD_PATH).resolve(entity.getFileNm());
 		try {
 			os.write(Files.readAllBytes(path));
 			return entity.getOrignFileNm();
 		} catch (IOException e) { // TODO Exception
 			throw new RuntimeException(e);
+		}
+	}
+
+	/**
+	 * 파일 삭제
+	 * @param entity FileEntity
+	 */
+	public void delete(FileEntity entity) {
+		log.debug("--- delete file");
+		Path filePath = Paths.get(FILE_UPLOAD_PATH).resolve(entity.getFileNm());
+		String fileNm = filePath.toFile().getName();
+		log.debug("--- path : {}", filePath.toString());
+		if(filePath.toFile().delete()) {
+			log.debug("--- delete success file : {}", fileNm);
 		}
 	}
 }
