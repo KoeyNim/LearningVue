@@ -12,6 +12,7 @@ $(() => {
             result:{
                 imgNmList: []
             },
+            delImgList: []
             // CKEditor
 /*            editor: ClassicEditor,
             editorConfig: {
@@ -49,26 +50,31 @@ $(() => {
                 fontSizes: ['8','9','10','11','12','14','16','18','20','22','24','28','30','36','50','72'],
                 
                 callbacks : {
+                    /* 에디터 이미지 업로드 기능 사용시 호출 **/
                     onImageUpload : (images) => {
                         me.fnUploadImage(images[0]);
                     },
+                    /* 에디터 내부 content 변경시 호출 **/
                     onChange : (contents) => {
                         me.result.content = contents;
                     },
-                    onMediaDelete : function(target) {
-                        me.result.imgNmList = me.result.imgNmList.filter((e) => {
-                            return e !== target[0].attributes.getNamedItem('img-name').value;
-                        });
+                    /* 에디터 이미지 삭제버튼 클릭시 호출 **/
+                    onMediaDelete : (img) => {
+                        let imgNm = img[0].attributes.getNamedItem('img-name').value;
+                        if(!!boardSeqno) {
+                            me.delImgList.push(imgNm);
+                        } else {
+                            me.result.imgNmList = me.result.imgNmList.filter((el) => {return el !== imgNm;});
+                        }
                     }
                 }
             });
-
-            /* 에디터 내부 이미지 파일명 리스트 **/
-            if(!!$($('img[name=innerImg]')[0]).attr('img-name')) {
-                $('img[name=innerImg]').each((index, item) => {
-                    me.result.imgNmList.push(item.attributes.getNamedItem('img-name').value);
-                })
-            }
+//            /* 에디터 내부 이미지 파일명 리스트 **/
+//            if(!!$($('img[name=innerImg]')[0]).attr('img-name')) {
+//                $('img[name=innerImg]').each((index, item) => {
+//                    me.result.imgNmList.push(item.attributes.getNamedItem('img-name').value);
+//                })
+//            }
         },
         methods: {
             // ck-editor toolbar 변경
@@ -105,7 +111,9 @@ $(() => {
                         formData.append('content', me.result.content);
                         if(me.$refs.file.files[0] instanceof File) formData.append('file', me.$refs.file.files[0]);
                         if(!!boardSeqno) formData.append('boardSeqno', boardSeqno);
-                        if(!!me.result.imgNmList) formData.append('imgNmList', JSON.stringify(me.result.editorImage));
+                        if(!!(Array.isArray(me.result.imgNmList) && me.result.imgNmList.length !== 0)) {
+                            formData.append('imgNmList', me.result.imgNmList);
+                        }
 
                         $ajax.api({
                             url: API_VERSION + '/board' + (!!boardSeqno ? '/update' : '/create'),
@@ -118,18 +126,31 @@ $(() => {
                         }).done((res) => {
                             console.log('done', arguments);
                             alert(res.message);
-                            location.href = '/board';
+                            /* 게시글 수정시 DB 삭제 **/
+                            if(!!(!!boardSeqno && Array.isArray(me.delImgList) && me.delImgList.length !== 0)) {
+                                $ajax.api({
+                                    url: API_VERSION + '/image/delete',
+                                    type: 'DELETE',
+                                    data: {delImgList: me.delImgList},
+                                    async: false,
+                                }).done((res) => {
+                                    console.log('done', arguments);
+                                    location.href = '/board';
+                                });
+                            } else {
+                                location.href = '/board';
+                            }
                         });
                     }
                 });
             },
             /* summernote 이미지 업로드 **/
-            fnUploadImage(image) {
+            fnUploadImage(img) {
                 console.log('fnUploadImage', arguments);
                 let me = this;
 
                 const formData = new FormData();
-                formData.append('image', image);
+                formData.append('img', img);
                 $ajax.api({
                     url: API_VERSION + '/image/temp',
                     type: 'POST',

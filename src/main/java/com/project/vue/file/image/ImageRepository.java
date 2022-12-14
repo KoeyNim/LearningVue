@@ -8,5 +8,7 @@ public interface ImageRepository extends JpaRepository<ImageEntity, Long> {
 
 	Optional<ImageEntity> findByFileNm(String fileNm);
 
+	void deleteByFileNm(String fileNm);
+
 	void deleteAllByBoardSeqno(long boardSeqno);
 }

@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -65,8 +66,8 @@ public class BoardService {
 
 		boardRepository.save(entity);
 
-		if(ObjectUtils.isNotEmpty(req.getImageNm())) {
-			imageService.save(req.getImageNm(), entity.getBoardSeqno());
+		if(CollectionUtils.isNotEmpty(req.getImgNmList())) {
+			imageService.save(req.getImgNmList(), entity.getBoardSeqno());
 		}
 	}
 
@@ -90,8 +91,8 @@ public class BoardService {
 			entity.setFileEntity(fileService.upld(req.getFile()));
 		}
 		
-		if(ObjectUtils.isNotEmpty(req.getImageNm())) {
-			imageService.save(req.getImageNm(), boardSeqno);
+		if(CollectionUtils.isNotEmpty(req.getImgNmList())) {
+			imageService.save(req.getImgNmList(), boardSeqno);
 		}
 
 		boardRepository.save(entity);
@@ -135,7 +136,7 @@ public class BoardService {
 		if(ObjectUtils.isNotEmpty(boardEntity.getFileEntity())) {
 			fileService.delete(boardEntity.getFileEntity());
 		}
-		imageService.delete(boardSeqno);
+		imageService.deleteAll(boardSeqno);
 		boardRepository.deleteById(boardSeqno);
 	}
 }
