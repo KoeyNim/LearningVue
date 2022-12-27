@@ -20,6 +20,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.project.vue.common.Constants;
+import com.project.vue.config.auth.AjaxAuthenticationEntryPoint;
 import com.project.vue.config.auth.WebAuthenticationFailureHandler;
 import com.project.vue.config.auth.WebAuthenticationSucessHandler;
 import com.project.vue.role.RoleService;
@@ -148,6 +149,8 @@ public class WebSecurityConfig {
 //    		        	.logoutRequestMatcher(new AntPathRequestMatcher("/logout")) // 로그아웃 실행 주소
     		        	.clearAuthentication(true) // 로그아웃시 인증정보 삭제
     		        	.invalidateHttpSession(true).deleteCookies("JSESSIONID")) // 로그아웃 시 세션 삭제, 쿠키 제거)
+    			.exceptionHandling(error -> error
+    					.authenticationEntryPoint(new AjaxAuthenticationEntryPoint("/member-login")))
     			.build();
     }
 }

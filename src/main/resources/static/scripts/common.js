@@ -19,6 +19,10 @@ const $ajax = {
                 401: (...arguments) => {
                     console.log('401', arguments);
                     alert('인증되지 않음. 401');
+                    if (xhr.responseJSON.errType === 'XMLHttpRequest') {
+                        alert('세션 만료');
+                        location.href = xhr.responseJSON.message;
+                    }
                 },
                 404: (...arguments) => {
                     console.log('404', arguments);
