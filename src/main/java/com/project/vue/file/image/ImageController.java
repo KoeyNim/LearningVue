@@ -22,12 +22,12 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequestMapping(Constants.REQUEST_MAPPING_PREFIX + "/image")
 @RequiredArgsConstructor
-public class imageController {
+public class ImageController {
 
 	private final ImageService imageService;
 
 	@PostMapping("temp")
-	public String temp(MultipartFile img) {
+	public ImageTempResponse temp(MultipartFile img) {
 		log.debug("api/v1/image/temp - posts - img : {}", img.getOriginalFilename());
 		return imageService.temp(img);
 	}

@@ -1,18 +1,23 @@
 package com.project.vue.board;
 
+import java.util.Arrays;
 import java.util.List;
 
 import javax.transaction.Transactional;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.vue.file.FileService;
 import com.project.vue.file.image.ImageService;
+import com.project.vue.file.image.ImageTempResponse;
 import com.project.vue.specification.SearchSpecification;
 
 import lombok.RequiredArgsConstructor;
@@ -25,6 +30,8 @@ public class BoardService {
 
 	private final FileService fileService;
 	private final ImageService imageService;
+
+	private static final ObjectMapper OM = new ObjectMapper();
 	
 	/** 수정시간이 바뀌게되는 이슈로 인해 querydsl로 세부 조작
 	 *  22.07.18 느린 반영 및 영속성 이슈 발생으로 미사용 (참고용으로 남김)
@@ -53,6 +60,7 @@ public class BoardService {
 	 * 게시글 등록
 	 * @param req BoardSaveRequest
 	 */
+	@Transactional
 	public void save(BoardSaveRequest req) {
 		BoardEntity entity = new BoardEntity();
 
@@ -64,11 +72,18 @@ public class BoardService {
 			entity.setFileEntity(fileService.upld(req.getFile()));
 		}
 
-		boardRepository.save(entity);
-
-		if(CollectionUtils.isNotEmpty(req.getImgNmList())) {
-			imageService.save(req.getImgNmList(), entity.getBoardSeqno());
+		if(StringUtils.isNotBlank(req.getImgListJson())) {
+			try {
+				List<ImageTempResponse> deserializeList = Arrays.asList(OM.readValue(req.getImgListJson(), ImageTempResponse[].class));
+				if(CollectionUtils.isNotEmpty(deserializeList)) {
+					imageService.save(deserializeList, entity.getBoardSeqno());
+				}
+			} catch (JsonProcessingException e) {
+				throw new RuntimeException(e); // TODO Exception..
+			}
 		}
+
+		boardRepository.save(entity);
 	}
 
 	/**
@@ -91,8 +106,15 @@ public class BoardService {
 			entity.setFileEntity(fileService.upld(req.getFile()));
 		}
 		
-		if(CollectionUtils.isNotEmpty(req.getImgNmList())) {
-			imageService.save(req.getImgNmList(), boardSeqno);
+		if(StringUtils.isNotBlank(req.getImgListJson())) {
+			try {
+				List<ImageTempResponse> deserializeList = Arrays.asList(OM.readValue(req.getImgListJson(), ImageTempResponse[].class));
+				if(CollectionUtils.isNotEmpty(deserializeList)) {
+					imageService.save(deserializeList, entity.getBoardSeqno());
+				}
+			} catch (JsonProcessingException e) {
+				throw new RuntimeException(e); // TODO Exception..
+			}
 		}
 
 		boardRepository.save(entity);

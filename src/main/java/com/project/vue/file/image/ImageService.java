@@ -15,8 +15,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -26,8 +24,6 @@ import lombok.extern.slf4j.Slf4j;
 public class ImageService {
 
 	private final ImageRepository imageRepository;
-
-	private static final ObjectMapper OM = new ObjectMapper();
 
 	/* TEMP 이미지 경로 **/
 	@Value("${site.temp-image}")
@@ -42,7 +38,7 @@ public class ImageService {
 	 * @param img 이미지 객체
 	 * @return String 이미지명
 	 */
-	public String temp(MultipartFile img) {
+	public ImageTempResponse temp(MultipartFile img) {
 		String uuid = UUID.randomUUID().toString().replaceAll("-", "");
 		Path path = Paths.get(TEMP_IMAGE_PATH);
 		try {
@@ -51,7 +47,13 @@ public class ImageService {
 				log.debug("execute mkdirs - path {}", TEMP_IMAGE_PATH);
 			}
 			img.transferTo(path.resolve(uuid));
-			return uuid; // TODO 반환시 파일 정보를 반환하거나 저장된 파일로 orign 파일명, 파일 MINE TYPE 알아내는 방법 찾기.
+
+			ImageTempResponse res = ImageTempResponse.builder()
+					.imgNm(uuid)
+					.orignFileNm(img.getOriginalFilename())
+					.contentType(img.getContentType())
+					.build();
+			return res;
 		} catch (IOException e) {
 			throw new RuntimeException(e); // TODO Exception
 		}
@@ -71,14 +73,13 @@ public class ImageService {
 		return path;
 	}
 	
-	@Transactional
-	public void save(List<String> imgNmList, long boardSeqno) {
+	public void save(List<ImageTempResponse> imgList, Long boardSeqno) {
 		List<ImageEntity> list = new ArrayList<>();
 
-		imgNmList.forEach(el -> {
+		imgList.forEach(el -> {
 			try {
-				Path tempPath = Paths.get(TEMP_IMAGE_PATH).resolve(el);
-				Path savePath = Paths.get(IMAGE_UPLOAD_PATH).resolve(el);
+				Path tempPath = Paths.get(TEMP_IMAGE_PATH).resolve(el.getImgNm());
+				Path savePath = Paths.get(IMAGE_UPLOAD_PATH).resolve(el.getImgNm());
 				/* 동일 파일 존재시 덮어쓰기 **/
 				Path path = Files.copy(tempPath, savePath, StandardCopyOption.REPLACE_EXISTING);
 				/* TEMP 폴더에 있는 파일 삭제 **/
@@ -86,10 +87,10 @@ public class ImageService {
 
 				ImageEntity entity = new ImageEntity();
 				entity.setBoardSeqno(boardSeqno);
-				entity.setFileNm(el);
+				entity.setFileNm(el.getImgNm());
 				entity.setFileSize(Files.size(path));
-//				entity.setContentType(Files.(path)); 이미지 파일의 확장자가 없어 tika 라이브러리를 사용해야함.
-//				entity.setOrignFileNm(Files.); 파일명이 변경되어 와서 알수없음.
+				entity.setContentType(el.getContentType());
+				entity.setOrignFileNm(el.getOrignFileNm());
 
 				list.add(entity);
 			} catch (IllegalArgumentException | IOException e) {
@@ -105,12 +106,12 @@ public class ImageService {
 
 	/**
 	 * 이미지 삭제
-	 * @param imageNm 이미지명
+	 * @param imgNmList 이미지명 리스트
 	 */
 	@Transactional
-	public void delete(List<String> imageNm) {
+	public void delete(List<String> imgNmList) {
 		log.debug("--- delete image");
-		imageNm.forEach(el -> {
+		imgNmList.forEach(el -> {
 			Path filePath = Paths.get(IMAGE_UPLOAD_PATH).resolve(el);
 			String fileNm = filePath.toFile().getName();
 			log.debug("--- path : {}", filePath.toString());

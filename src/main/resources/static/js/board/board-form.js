@@ -10,7 +10,7 @@ $(() => {
         },*/
         data: {
             result:{
-                imgNmList: []
+                imgList: []
             },
             delImgList: []
             // CKEditor
@@ -59,12 +59,12 @@ $(() => {
                         me.result.content = contents;
                     },
                     /* 에디터 이미지 삭제버튼 클릭시 호출 **/
-                    onMediaDelete : (img) => {
-                        let imgNm = img[0].attributes.getNamedItem('img-name').value;
+                    onMediaDelete : (selectImg) => {
+                        let selectImgNm = selectImg[0].attributes.getNamedItem('img-name').value;
                         if(!!boardSeqno) {
-                            me.delImgList.push(imgNm);
+                            me.delImgList.push(selectImgNm);
                         } else {
-                            me.result.imgNmList = me.result.imgNmList.filter((el) => {return el !== imgNm;});
+                            me.result.imgList = me.result.imgList.filter((el) => {return el.imgNm !== selectImgNm;});
                         }
                     }
                 }
@@ -72,7 +72,7 @@ $(() => {
 //            /* 에디터 내부 이미지 파일명 리스트 **/
 //            if(!!$($('img[name=innerImg]')[0]).attr('img-name')) {
 //                $('img[name=innerImg]').each((index, item) => {
-//                    me.result.imgNmList.push(item.attributes.getNamedItem('img-name').value);
+//                    me.result.imgList.push(item.attributes.getNamedItem('img-name').value);
 //                })
 //            }
         },
@@ -111,8 +111,8 @@ $(() => {
                         formData.append('content', me.result.content);
                         if(me.$refs.file.files[0] instanceof File) formData.append('file', me.$refs.file.files[0]);
                         if(!!boardSeqno) formData.append('boardSeqno', boardSeqno);
-                        if(!!(Array.isArray(me.result.imgNmList) && me.result.imgNmList.length !== 0)) {
-                            formData.append('imgNmList', me.result.imgNmList);
+                        if(!!(Array.isArray(me.result.imgList) && me.result.imgList.length !== 0)) {
+                            formData.append('imgListJson', JSON.stringify(me.result.imgList));
                         }
 
                         $ajax.api({
@@ -161,11 +161,11 @@ $(() => {
                     cache : false
                 }).done((res) => {
                     console.log('done', arguments);
-                    me.result.imgNmList.push(res);
+                    me.result.imgList.push(res);
                     /* img tag 생성 **/
-                    $('#summernote').summernote('insertImage', API_VERSION + '/image/find/'+ res, ($img) => {
+                    $('#summernote').summernote('insertImage', API_VERSION + '/image/find/'+ res.imgNm, ($img) => {
                         $img.attr('name', 'innerImg');
-                        $img.attr('img-name', res);
+                        $img.attr('img-name', res.imgNm);
                         $img.css('width', "50%");
                     });
                 });

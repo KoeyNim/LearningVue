@@ -1,7 +1,5 @@
 package com.project.vue.board;
 
-import java.util.List;
-
 import org.springframework.web.multipart.MultipartFile;
 
 import lombok.Getter;
@@ -19,6 +17,6 @@ public class BoardSaveRequest {
 	private String content;
 	/** 파일 */
 	private MultipartFile file;
-	/** 이미지 파일명 리스트 */
-	private List<String> imgNmList;
+	/** 이미지 세부사항 JsonObject */
+	private String imgListJson;
 }
