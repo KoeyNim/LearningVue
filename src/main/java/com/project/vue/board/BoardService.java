@@ -67,11 +67,14 @@ public class BoardService {
 		entity.setTitle(req.getTitle());
 		entity.setContent(req.getContent());
 		entity.setUserId(SecurityContextHolder.getContext().getAuthentication().getName());
-
+		
+		/* 파일첨부 등록 **/
 		if(ObjectUtils.isNotEmpty(req.getFile())) { 
 			entity.setFileEntity(fileService.upld(req.getFile()));
 		}
+		boardRepository.save(entity);
 
+		/* 에디터 이미지 등록 **/
 		if(StringUtils.isNotBlank(req.getImgListJson())) {
 			try {
 				List<ImageTempResponse> deserializeList = Arrays.asList(OM.readValue(req.getImgListJson(), ImageTempResponse[].class));
@@ -82,8 +85,6 @@ public class BoardService {
 				throw new RuntimeException(e); // TODO Exception..
 			}
 		}
-
-		boardRepository.save(entity);
 	}
 
 	/**
@@ -91,6 +92,7 @@ public class BoardService {
 	 * @param boardSeqno 게시글 키 번호
 	 * @param req BoardSaveRequest
 	 */
+	@Transactional
 	public void save(long boardSeqno, BoardSaveRequest req) {
 		BoardEntity entity = boardRepository.findById(boardSeqno).orElseThrow(RuntimeException::new); // TODO Exception..
 		String userid = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -101,22 +103,23 @@ public class BoardService {
 
 		entity.setTitle(req.getTitle());
 		entity.setContent(req.getContent());
-
+		
+		/* 파일첨부 수정 **/
 		if(ObjectUtils.isNotEmpty(req.getFile())) {
 			entity.setFileEntity(fileService.upld(req.getFile()));
 		}
-		
+
+		/* 에디터 이미지 수정 **/
 		if(StringUtils.isNotBlank(req.getImgListJson())) {
 			try {
 				List<ImageTempResponse> deserializeList = Arrays.asList(OM.readValue(req.getImgListJson(), ImageTempResponse[].class));
 				if(CollectionUtils.isNotEmpty(deserializeList)) {
-					imageService.save(deserializeList, entity.getBoardSeqno());
+					imageService.save(deserializeList, boardSeqno);
 				}
 			} catch (JsonProcessingException e) {
 				throw new RuntimeException(e); // TODO Exception..
 			}
 		}
-
 		boardRepository.save(entity);
 	}
 
@@ -153,6 +156,7 @@ public class BoardService {
 	 * 게시글 삭제
 	 * @param boardSeqno 게시글 키 번호
 	 */
+	@Transactional
 	public void deleteById(long boardSeqno) {
 		BoardEntity boardEntity = boardRepository.findById(boardSeqno).orElseThrow(RuntimeException::new); // TODO Exception..
 		if(ObjectUtils.isNotEmpty(boardEntity.getFileEntity())) {

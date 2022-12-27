@@ -1,5 +1,6 @@
 package com.project.vue.file.image;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -10,5 +11,5 @@ public interface ImageRepository extends JpaRepository<ImageEntity, Long> {
 
 	void deleteByFileNm(String fileNm);
 
-	void deleteAllByBoardSeqno(long boardSeqno);
+	List<ImageEntity> findAllByBoardSeqno(Long boardSeqno);
 }

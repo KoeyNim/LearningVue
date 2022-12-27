@@ -7,8 +7,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.UUID;
 
-import javax.transaction.Transactional;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -32,7 +30,6 @@ public class FileService {
 	 * @param file 파일
 	 * @return <FileEntity> entity
 	 */
-	@Transactional
     public FileEntity upld(MultipartFile file) {
 		log.debug("file upload - file name : {}", file.getOriginalFilename());
 		String uuid = UUID.randomUUID().toString().replaceAll("-", "");

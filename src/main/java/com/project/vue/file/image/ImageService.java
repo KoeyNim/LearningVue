@@ -11,6 +11,7 @@ import java.util.UUID;
 
 import javax.transaction.Transactional;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -106,12 +107,12 @@ public class ImageService {
 
 	/**
 	 * 이미지 삭제
-	 * @param imgNmList 이미지명 리스트
+	 * @param delImgList 이미지명 리스트
 	 */
 	@Transactional
-	public void delete(List<String> imgNmList) {
+	public void delete(List<String> delImgList) {
 		log.debug("--- delete image");
-		imgNmList.forEach(el -> {
+		delImgList.forEach(el -> {
 			Path filePath = Paths.get(IMAGE_UPLOAD_PATH).resolve(el);
 			String fileNm = filePath.toFile().getName();
 			log.debug("--- path : {}", filePath.toString());
@@ -126,8 +127,15 @@ public class ImageService {
 	 * 이미지 전체 삭제
 	 * @param boardSeqno 게시글 키 번호
 	 */
-	@Transactional //TODO 전체 삭제시 delete method를 사용해서 실제 파일 삭제할것
 	public void deleteAll(long boardSeqno) {
-		imageRepository.deleteAllByBoardSeqno(boardSeqno);
+		List<ImageEntity> list = imageRepository.findAllByBoardSeqno(boardSeqno);
+		if(CollectionUtils.isEmpty(list)) {
+			return;
+		}
+		List<String> delImgList = new ArrayList<>();
+		list.forEach(el -> {
+			delImgList.add(el.getFileNm());
+		});
+		delete(delImgList);
 	}
 }
