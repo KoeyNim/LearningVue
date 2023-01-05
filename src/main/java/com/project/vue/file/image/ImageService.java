@@ -77,14 +77,21 @@ public class ImageService {
 	public void save(List<ImageTempResponse> imgList, Long boardSeqno) {
 		List<ImageEntity> list = new ArrayList<>();
 
+		Path tempPath = Paths.get(TEMP_IMAGE_PATH);
+		Path savePath = Paths.get(IMAGE_UPLOAD_PATH);
+
+		if (savePath.toFile().mkdirs()) {
+			log.debug("execute mkdirs - path {}", IMAGE_UPLOAD_PATH);
+		}
+
 		imgList.forEach(el -> {
 			try {
-				Path tempPath = Paths.get(TEMP_IMAGE_PATH).resolve(el.getImgNm());
-				Path savePath = Paths.get(IMAGE_UPLOAD_PATH).resolve(el.getImgNm());
+				Path tempImgPath = tempPath.resolve(el.getImgNm());
+				Path saveImgPath = savePath.resolve(el.getImgNm());
 				/* 동일 파일 존재시 덮어쓰기 **/
-				Path path = Files.copy(tempPath, savePath, StandardCopyOption.REPLACE_EXISTING);
+				Path path = Files.copy(tempImgPath, saveImgPath, StandardCopyOption.REPLACE_EXISTING);
 				/* TEMP 폴더에 있는 파일 삭제 **/
-				Files.delete(tempPath);
+				Files.delete(tempImgPath);
 
 				ImageEntity entity = new ImageEntity();
 				entity.setBoardSeqno(boardSeqno);
