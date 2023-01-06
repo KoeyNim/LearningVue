@@ -20,7 +20,7 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 import com.project.vue.common.Constants;
 import com.project.vue.common.CookieCommon;
 import com.project.vue.common.SimpleResponse;
-import com.project.vue.common.excel.service.ExcelService;
+import com.project.vue.common.excel.ExcelService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
