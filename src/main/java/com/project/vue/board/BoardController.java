@@ -1,6 +1,7 @@
 package com.project.vue.board;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.net.URLEncoder;
 
 import org.springframework.data.domain.Page;
@@ -91,7 +92,7 @@ public class BoardController {
 					.contentType(MediaType.APPLICATION_OCTET_STREAM)
 					.header(HttpHeaders.CONTENT_DISPOSITION, "attachement; filename=" + URLEncoder.encode(fileNm, "UTF-8").replaceAll("\\+", "%20"))
 					.body(os -> os.write(bs.toByteArray()));
-		} catch(Exception e) {
+		} catch(IOException e) {
 			return new ResponseEntity<StreamingResponseBody>(HttpStatus.CONFLICT);
 		}
 	}

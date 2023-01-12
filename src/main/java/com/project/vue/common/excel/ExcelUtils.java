@@ -38,9 +38,7 @@ public class ExcelUtils {
 		});
 
 		ExcelDTO resource = ExcelDTO.builder()
-								.excelNm(cls.isAnnotationPresent(ExcelFileName.class) 
-											? cls.getAnnotation(ExcelFileName.class).fileName() 
-										    : "미지정")
+								.excelNm(cls.getAnnotation(ExcelFileName.class).fileName())
 								.headerList(headerList)
 								.colList(colList)
 								.colStyle(colStyle).build();
