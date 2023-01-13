@@ -15,6 +15,9 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.project.vue.common.CookieCommon;
+import com.project.vue.common.exception.BizException;
+import com.project.vue.common.exception.CustomExceptionHandler.ErrorCode;
 import com.project.vue.file.FileService;
 import com.project.vue.file.image.ImageService;
 import com.project.vue.file.image.ImageTempResponse;
@@ -27,12 +30,12 @@ import lombok.RequiredArgsConstructor;
 public class BoardService {
 
 	private final BoardRepository boardRepository;
-
+	private final CookieCommon cookieCommon;
 	private final FileService fileService;
 	private final ImageService imageService;
 
 	private static final ObjectMapper OM = new ObjectMapper();
-	
+
 	/** 수정시간이 바뀌게되는 이슈로 인해 querydsl로 세부 조작
 	 *  22.07.18 느린 반영 및 영속성 이슈 발생으로 미사용 (참고용으로 남김)
 	 */
@@ -48,17 +51,40 @@ public class BoardService {
 //	}
 
 	/**
-	 * 조회수
-	 * @param boardSeqno 게시글 키 번호
+	 * 조회
+	 * @return List<BoardEntity>
 	 */
-	@Transactional
-	public void updateCount(long boardSeqno) {
-		boardRepository.updateCount(boardSeqno);
+	public List<BoardEntity> findAll() {
+		return boardRepository.findAll();
 	}
 
 	/**
-	 * 게시글 등록
-	 * @param req BoardSaveRequest
+	 * 조회
+	 * @param page 페이지 쿼리
+	 * @param srch 검색 쿼리
+	 * @return Page<BoardEntity>
+	 */
+	public Page<BoardEntity> findAll(Pageable page, BoardRequest srch) {
+		return boardRepository.findAll(SearchSpecification.searchBoardSpecification(srch), page);
+	}
+
+	/**
+	 * 게시글 상세 조회
+	 * @param boardSeqno 키값
+	 * @return BoardEntity
+	 */
+	@Transactional
+	public BoardEntity findById(long boardSeqno) {
+		cookieCommon.readCountCookie(boardSeqno);
+		BoardEntity entity = boardRepository.findById(boardSeqno)
+				.orElseThrow(() -> new BizException("Data is Not Found", ErrorCode.NOT_FOUND));
+		entity.setAuthUserId(SecurityContextHolder.getContext().getAuthentication().getName());
+		return entity;
+	}
+
+	/**
+	 * 등록
+	 * @param req 등록 데이터
 	 */
 	@Transactional
 	public void save(BoardSaveRequest req) {
@@ -77,33 +103,35 @@ public class BoardService {
 		/* 에디터 이미지 등록 **/
 		if(StringUtils.isNotBlank(req.getImgListJson())) {
 			try {
-				List<ImageTempResponse> deserializeList = Arrays.asList(OM.readValue(req.getImgListJson(), ImageTempResponse[].class));
+				List<ImageTempResponse> deserializeList = Arrays.asList(
+															OM.readValue(req.getImgListJson(), ImageTempResponse[].class));
 				if(CollectionUtils.isNotEmpty(deserializeList)) {
 					imageService.save(deserializeList, entity.getBoardSeqno());
 				}
-			} catch (JsonProcessingException e) {
-				throw new RuntimeException(e); // TODO Exception..
+			} catch (JsonProcessingException ex) {
+				throw new BizException("ObjectMapper Error", ex, ErrorCode.INTERNAL_SERVER_ERROR);
 			}
 		}
 	}
 
 	/**
-	 * 게시글 수정
-	 * @param boardSeqno 게시글 키 번호
-	 * @param req BoardSaveRequest
+	 * 수정
+	 * @param boardSeqno 키값
+	 * @param req 수정 데이터
 	 */
 	@Transactional
 	public void save(long boardSeqno, BoardSaveRequest req) {
-		BoardEntity entity = boardRepository.findById(boardSeqno).orElseThrow(RuntimeException::new); // TODO Exception..
+		BoardEntity entity = boardRepository.findById(boardSeqno)
+				.orElseThrow(() -> new BizException("Data is Not Found", ErrorCode.NOT_FOUND));
 		String userid = SecurityContextHolder.getContext().getAuthentication().getName();
 
 		if(!userid.equals(entity.getUserId())) {
-			throw new RuntimeException("400 Error BadRequset"); // TODO Exception..
+			throw new BizException("userid is not equals", ErrorCode.BAD_REQUEST);
 		}
 
 		entity.setTitle(req.getTitle());
 		entity.setContent(req.getContent());
-		
+
 		/* 파일첨부 수정 **/
 		if(ObjectUtils.isNotEmpty(req.getFile())) {
 			entity.setFileEntity(fileService.upld(req.getFile()));
@@ -112,55 +140,28 @@ public class BoardService {
 		/* 에디터 이미지 수정 **/
 		if(StringUtils.isNotBlank(req.getImgListJson())) {
 			try {
-				List<ImageTempResponse> deserializeList = Arrays.asList(OM.readValue(req.getImgListJson(), ImageTempResponse[].class));
+				List<ImageTempResponse> deserializeList = Arrays.asList(
+															OM.readValue(req.getImgListJson(), ImageTempResponse[].class));
 				if(CollectionUtils.isNotEmpty(deserializeList)) {
 					imageService.save(deserializeList, boardSeqno);
 				}
-			} catch (JsonProcessingException e) {
-				throw new RuntimeException(e); // TODO Exception..
+			} catch (JsonProcessingException ex) {
+				throw new BizException("ObjectMapper Error", ex, ErrorCode.INTERNAL_SERVER_ERROR);
 			}
 		}
 		boardRepository.save(entity);
 	}
 
 	/**
-	 * 게시글 조회
-	 * @return List<BoardEntity>
-	 */
-	public List<BoardEntity> findAll() {
-		return boardRepository.findAll();
-	}
-
-	/**
-	 * 게시글 조회
-	 * @param page 페이징
-	 * @param srch 검색 조건
-	 * @return Page<BoardEntity>
-	 */
-	public Page<BoardEntity> findAll(Pageable page, BoardRequest srch) {
-		return boardRepository.findAll(SearchSpecification.searchBoardSpecification(srch), page);
-	}
-
-	/**
-	 * 게시글 상세 조회
-	 * @param boardSeqno 게시글 키 번호
-	 * @return BoardEntity
-	 */
-	public BoardEntity findById(long boardSeqno) {
-		BoardEntity boardEntity = boardRepository.findById(boardSeqno).orElseThrow();
-		boardEntity.setAuthUserId(SecurityContextHolder.getContext().getAuthentication().getName());
-		return boardEntity;
-	}
-
-	/**
-	 * 게시글 삭제
-	 * @param boardSeqno 게시글 키 번호
+	 * 삭제
+	 * @param boardSeqno 키값
 	 */
 	@Transactional
 	public void deleteById(long boardSeqno) {
-		BoardEntity boardEntity = boardRepository.findById(boardSeqno).orElseThrow(RuntimeException::new); // TODO Exception..
-		if(ObjectUtils.isNotEmpty(boardEntity.getFileEntity())) {
-			fileService.delete(boardEntity.getFileEntity());
+		BoardEntity entity = boardRepository.findById(boardSeqno)
+				.orElseThrow(() -> new BizException("Data is Not Found", ErrorCode.NOT_FOUND));
+		if(ObjectUtils.isNotEmpty(entity.getFileEntity())) {
+			fileService.delete(entity.getFileEntity());
 		}
 		imageService.deleteAll(boardSeqno);
 		boardRepository.deleteById(boardSeqno);
