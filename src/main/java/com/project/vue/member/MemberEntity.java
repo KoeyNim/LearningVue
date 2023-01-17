@@ -21,8 +21,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import com.project.vue.common.StringCryptoConverter;
 import com.project.vue.role.RoleEntity;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @SuppressWarnings("serial")
@@ -30,6 +32,8 @@ import lombok.ToString;
 @Builder
 @Entity
 @Table(name = "member")
+@AllArgsConstructor
+@NoArgsConstructor
 public class MemberEntity implements UserDetails {
 
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -7,13 +7,17 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @Builder
 @Entity
 @Table(name = "file")
+@AllArgsConstructor
+@NoArgsConstructor
 public class FileEntity {
 
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
