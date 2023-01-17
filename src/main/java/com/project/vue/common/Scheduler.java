@@ -23,6 +23,9 @@ public class Scheduler {
 	
 	private final JPAQueryFactory queryFactory;
 	
+	/**
+	 * 사용하지 않는 파일 데이터 삭제 스케줄러
+	 */
 	@Transactional
 	@Scheduled(cron = "0 0 10 * * ?")
 	public void cleanGarbageFile() {

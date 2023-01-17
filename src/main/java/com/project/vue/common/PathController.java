@@ -9,6 +9,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import com.project.vue.common.exception.BizException;
+import com.project.vue.common.exception.CustomExceptionHandler.ErrorCode;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -48,7 +51,7 @@ public class PathController {
 		log.trace("{}", resource.getDescription());
 
 		if(!resource.exists()) {
-			throw new RuntimeException("Not Found Page : " + page); // TODO Exception..
+			throw new BizException("Not Found page : " + page, ErrorCode.NOT_FOUND);
 		}
 
 		if (page.contains("member") && !SecurityContextHolder.getContext().getAuthentication().getName().equals("anonymousUser")) {

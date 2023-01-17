@@ -21,22 +21,26 @@ import lombok.Getter;
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 public abstract class TimeEntity {
-	
+
 	@CreatedDate
 	@ExcelColumnOptions(headerName = "작성일", ColumnStyle = BorderStyle.DASH_DOT)
+	/** 작성일 */
 	private String registDate;
 
 	@LastModifiedDate
 	@ExcelColumnOptions(headerName = "수정일", ColumnStyle = BorderStyle.DASH_DOT)
+	/** 수정일 */
 	private String modifyDate;
-	
+
     @PrePersist
+    /** insert 연산시 실행 */
     public void onPrePersist() {
     	this.registDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss"));
     	this.modifyDate = this.registDate;
-    }    
-    
+    }
+
     @PreUpdate
+    /** update 연산시 실행 */
     public void onPreUpdate(){
     	this.modifyDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss"));
     }

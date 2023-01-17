@@ -21,10 +21,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 import com.project.vue.common.StringCryptoConverter;
 import com.project.vue.role.RoleEntity;
 
-import lombok.Data;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.ToString;
 
 @SuppressWarnings("serial")
-@Data
+@Getter @ToString
+@Builder
 @Entity
 @Table(name = "member")
 public class MemberEntity implements UserDetails {

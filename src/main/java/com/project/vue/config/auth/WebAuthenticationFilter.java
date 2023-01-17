@@ -17,7 +17,7 @@ public class WebAuthenticationFilter implements Filter {
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
-		log.trace("## AdminAuthenticationFilter: {}", ((HttpServletRequest) request).getRequestURI());
+		log.trace("## WebAuthenticationFilter: {}", ((HttpServletRequest) request).getRequestURI());
 
 		chain.doFilter(request, response);
 		

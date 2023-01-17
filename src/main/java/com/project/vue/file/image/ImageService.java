@@ -1,5 +1,6 @@
 package com.project.vue.file.image;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -16,6 +17,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.project.vue.common.exception.BizException;
+import com.project.vue.common.exception.CustomExceptionHandler.ErrorCode;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -26,11 +30,11 @@ public class ImageService {
 
 	private final ImageRepository imageRepository;
 
-	/* TEMP 이미지 경로 **/
+	/** TEMP 이미지 경로 */
 	@Value("${site.temp-image}")
 	private String TEMP_IMAGE_PATH;
 
-	/* 이미지 업로드 경로 **/
+	/** 이미지 업로드 경로 */
 	@Value("${site.image}")
 	private String IMAGE_UPLOAD_PATH;
 
@@ -43,7 +47,7 @@ public class ImageService {
 		String uuid = UUID.randomUUID().toString().replaceAll("-", "");
 		Path path = Paths.get(TEMP_IMAGE_PATH);
 		try {
-			/* 상위 디렉토리까지 폴더 생성 **/
+			/** 상위 디렉토리까지 폴더 생성 */
 			if (path.toFile().mkdirs()) {
 				log.debug("execute mkdirs - path {}", TEMP_IMAGE_PATH);
 			}
@@ -52,11 +56,10 @@ public class ImageService {
 			ImageTempResponse res = ImageTempResponse.builder()
 					.imgNm(uuid)
 					.orignFileNm(img.getOriginalFilename())
-					.contentType(img.getContentType())
-					.build();
+					.contentType(img.getContentType()).build();
 			return res;
-		} catch (IOException e) {
-			throw new RuntimeException(e); // TODO Exception
+		} catch (IOException ex) {
+			throw new BizException("Image Temp File Error", ex, ErrorCode.INTERNAL_SERVER_ERROR);
 		}
 	}
 	
@@ -67,7 +70,7 @@ public class ImageService {
 	 */
 	public Path getPath(String imgNm) {
 		Path path = Paths.get(TEMP_IMAGE_PATH + imgNm);
-		/* TEMP 폴더에 파일 존재여부 체크 **/
+		/** TEMP 폴더에 파일 존재여부 체크 */
 		if (!path.toFile().exists()) {
 			path = Paths.get(IMAGE_UPLOAD_PATH + imgNm);
 		}
@@ -93,23 +96,24 @@ public class ImageService {
 				/* TEMP 폴더에 있는 파일 삭제 **/
 				Files.delete(tempImgPath);
 
-				ImageEntity entity = new ImageEntity();
-				entity.setBoardSeqno(boardSeqno);
-				entity.setFileNm(el.getImgNm());
-				entity.setFileSize(Files.size(path));
-				entity.setContentType(el.getContentType());
-				entity.setOrignFileNm(el.getOrignFileNm());
+				ImageEntity entity = ImageEntity.builder()
+						.boardSeqno(boardSeqno)
+						.fileNm(el.getImgNm())
+						.fileSize(Files.size(path))
+						.contentType(el.getContentType())
+						.orignFileNm(el.getOrignFileNm()).build();
 
 				list.add(entity);
-			} catch (IllegalArgumentException | IOException e) {
-				throw new RuntimeException(e); // TODO Exception
+			} catch (IllegalArgumentException | IOException ex) {
+				throw new BizException("Image Save Error", ex, ErrorCode.INTERNAL_SERVER_ERROR);
 			}
 		});
 		imageRepository.saveAll(list);
 	}
 
 	public ImageEntity findByFileNm(String imgNm) {
-		return imageRepository.findByFileNm(imgNm).orElseThrow(RuntimeException::new); // TODO Exception
+		return imageRepository.findByFileNm(imgNm)
+				.orElseThrow(() -> new BizException("Data is Not Found", ErrorCode.NOT_FOUND));
 	}
 
 	/**
@@ -121,10 +125,10 @@ public class ImageService {
 		log.debug("--- delete image");
 		delImgList.forEach(el -> {
 			Path filePath = Paths.get(IMAGE_UPLOAD_PATH).resolve(el);
-			String fileNm = filePath.toFile().getName();
-			log.debug("--- path : {}", filePath.toString());
-			if(filePath.toFile().delete()) {
-				log.debug("--- delete success image : {}", fileNm);
+			log.debug("--- filePath : {}", filePath.toString());
+			File file = filePath.toFile();
+			if(file.delete()) {
+				log.debug("--- delete success image : {}", file.getName());
 				imageRepository.deleteByFileNm(el);
 			}
 		});
@@ -137,8 +141,10 @@ public class ImageService {
 	public void deleteAll(long boardSeqno) {
 		List<ImageEntity> list = imageRepository.findAllByBoardSeqno(boardSeqno);
 		if(CollectionUtils.isEmpty(list)) {
+			log.debug("--- list is empty");
 			return;
 		}
+
 		List<String> delImgList = new ArrayList<>();
 		list.forEach(el -> {
 			delImgList.add(el.getFileNm());

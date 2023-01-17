@@ -7,32 +7,34 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import lombok.Data;
+import lombok.Builder;
+import lombok.Getter;
 
-@Data
+@Getter
+@Builder
 @Entity
 @Table(name = "image")
 public class ImageEntity {
 
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-	/* 이미지 기본키 **/
+	/** 이미지 기본키 */
 	private Long imageSeqno;
 
-	/* 게시글 기본키 **/
+	/** 게시글 기본키 */
 	private Long boardSeqno;
 
 	@Column(columnDefinition = "varchar(100)")
-	/* 이미지명 **/
+	/** 이미지명 */
 	private String fileNm;
 
-	/* 이미지 크기 **/
+	/** 이미지 크기 */
 	private Long fileSize;
 
 	@Column(columnDefinition = "varchar(100)")
-	/* 이미지 타입 **/
+	/** 이미지 타입 */
 	private String contentType;
 
 	@Column(columnDefinition = "varchar(100)")
-	/* 실제 이미지명 **/
+	/** 실제 이미지명 */
 	private String orignFileNm;
 }

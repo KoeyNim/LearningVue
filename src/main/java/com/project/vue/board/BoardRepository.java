@@ -12,7 +12,8 @@ import org.springframework.data.jpa.repository.Query;
 public interface BoardRepository extends JpaRepository<BoardEntity, Long>, JpaSpecificationExecutor<BoardEntity> {
 
 	@Override
-	@EntityGraph(attributePaths = {"fileEntity"}, type = EntityGraph.EntityGraphType.LOAD) // query left outer join 생성 n+1 방지
+	/** query left outer join 생성 n+1 방지 */
+	@EntityGraph(attributePaths = {"fileEntity"}, type = EntityGraph.EntityGraphType.LOAD)
 	Page<BoardEntity> findAll(Specification<BoardEntity> spec, Pageable pageable);
 	
 	@Modifying

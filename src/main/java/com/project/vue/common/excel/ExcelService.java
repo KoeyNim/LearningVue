@@ -22,6 +22,9 @@ import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.springframework.stereotype.Component;
 
+import com.project.vue.common.exception.BizException;
+import com.project.vue.common.exception.CustomExceptionHandler.ErrorCode;
+
 import lombok.RequiredArgsConstructor;
 
 @Component
@@ -43,8 +46,12 @@ public class ExcelService<T> {
 		this.dataList = dataList;
 	}
 
+
 	/**
-	 *  엑셀 생성
+	 * 엑셀 생성
+	 * @param os OutputStream
+	 * @return String
+	 * @throws IOException
 	 */
 	public String create(OutputStream os) throws IOException {
 		rowNo = 0;
@@ -68,7 +75,8 @@ public class ExcelService<T> {
 	}
 
 	/**
-	 *  헤더 Row 생성
+	 * 헤더 Row
+	 * @param headerList 헤더 리스트
 	 */
 	private void renderHeaderRow(List<String> headerList) {
 		SXSSFRow headerRow = sheet.createRow(rowNo++);
@@ -81,7 +89,10 @@ public class ExcelService<T> {
 	}
 
 	/**
-	 * 데이터 Row 생성
+	 * 데이터 Row
+	 * @param dataList data 리스트
+	 * @param colList column 리스트
+	 * @param colStyle column style 리스트
 	 */
 	private void renderDataRow(List<T> dataList, List<String> colList, List<BorderStyle> colStyle) {
 		List<CellStyle> cellStyleList = colStyle.stream()
@@ -97,31 +108,35 @@ public class ExcelService<T> {
 
 	/**
 	 * 데이터 Cell 매핑
-	 * CellStyle 복제 (excel 2007 기준 64000개가 넘어갈 경우 에러 발생)
+	 * @param row row
+	 * @param columnIdx column id
+	 * @param data data
+	 * @param colList column 리스트
+	 * @param cellStyleList cell style 리스트
 	 */
-	private void renderDataCell(SXSSFRow row, int cellIdx, T data, List<String> colList, List<CellStyle> cellStyleList) {
-		SXSSFCell cell = row.createCell(cellIdx);
+	private void renderDataCell(SXSSFRow row, int columnIdx, T data, List<String> colList, List<CellStyle> cellStyleList) {
+		SXSSFCell cell = row.createCell(columnIdx);
 		try {
 			// 해당하는 method를 찾음
-			Method method = data.getClass().getMethod("get" + colList.get(cellIdx));
+			Method method = data.getClass().getMethod("get" + colList.get(columnIdx));
 			// method 실행
 			Object methodValue = method.invoke(data);
 
 			if (methodValue instanceof Integer) {
 				cell.setCellValue((Integer)methodValue);
-				cell.setCellStyle(cellStyleList.get(cellIdx));
+				cell.setCellStyle(cellStyleList.get(columnIdx));
 				return;
 			}
 
 			if (methodValue instanceof Long) {
 				cell.setCellValue((Long)methodValue);
-				cell.setCellStyle(cellStyleList.get(cellIdx));
+				cell.setCellStyle(cellStyleList.get(columnIdx));
 				return;
 			}
 			cell.setCellValue(ObjectUtils.isEmpty(methodValue) ? "" : methodValue.toString());
-			cell.setCellStyle(cellStyleList.get(cellIdx));
-		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-			throw new RuntimeException(e); // TODO exception..
+			cell.setCellStyle(cellStyleList.get(columnIdx));
+		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+			throw new BizException("Excel Cell Mapping Error", ex, ErrorCode.INTERNAL_SERVER_ERROR);
 		}
 	}
 

@@ -10,9 +10,6 @@ import javax.transaction.Transactional;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Service;
 
-import com.project.vue.role.rolehierarchy.RoleHierarchyEntity;
-import com.project.vue.role.rolehierarchy.RoleHierarchyRepository;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -20,61 +17,48 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @RequiredArgsConstructor
 public class RoleService {
-	
+
 	private final RoleRepository roleRepository;
-	private final RoleHierarchyRepository roleHierarchyRepository;
 	
-	@Transactional @PostConstruct // @PostConstruct : 의존성(Bean)이 초기화 된 직후에 한번만 실행 (서버 시작시 한번만 실행)
-	public void initRoleData() {
-
-		// 권한 초기 데이터 삽입
+	/** @PostConstruct : 의존성(Bean)이 초기화 된 직후에 한번만 실행 (서버 시작시 한번만 실행) */
+	@Transactional @PostConstruct
+	public void initRole() {
+		/** 권한 계층 초기 데이터 삽입 */
 		if(roleRepository.count() == 0) {
-			List<RoleEntity> roleLists = new ArrayList<>();
-			for (RoleEnum roleEnum : RoleEnum.values()) {
-				RoleEntity roleEntity = new RoleEntity();
-				roleEntity.setRoleKey(roleEnum.getRoleKey());
-				roleEntity.setRoleName(roleEnum.getRoleName());
-				roleLists.add(roleEntity);
-			}
-			roleRepository.saveAll(roleLists);
-		}
-
-		// 권한 계층 초기 데이터 삽입
-		if(roleHierarchyRepository.count() == 0) {
-			List<RoleHierarchyEntity> list = new ArrayList<>();
-			List<RoleEntity> roleLists = roleRepository.findAll();
-			for (RoleEntity role : roleLists) {
-				RoleHierarchyEntity roleHierarchy = new RoleHierarchyEntity();
-				// ADMIN 권한 체크 후 list에 추가
-				if (role.getRoleKey().equals(RoleEnum.ADMIN.getRoleKey())) {
-					roleHierarchy.setRoleKey(role.getRoleKey());
-					list.add(roleHierarchy);
+			log.debug("## initRole");
+			List<RoleEntity> list = new ArrayList<>();
+			/** ADMIN 권한 체크 후 list에 추가 */
+			for (RoleEnum role : RoleEnum.values()) {
+				RoleEntity entity = new RoleEntity();
+				if (role.getRoleKey().equals("ROLE_ADMIN")) {
+					entity.setRoleKey(role.getRoleKey());
+					list.add(entity);
 					continue;
 				}
-				roleHierarchy.setRoleKey(role.getRoleKey());
-				roleHierarchy.setParent(list.get(list.size()-1));
-				list.add(roleHierarchy);
+			entity.setRoleKey(role.getRoleKey());
+			entity.setParent(list.get(list.size()-1));
+			list.add(entity);
 			}
-			roleHierarchyRepository.saveAll(list);
+			roleRepository.saveAll(list);
 		}
 	}
 
-	// 계층권한 String Build
-	public String BuildAllHierarchy() {
-        List<RoleHierarchyEntity> roleHierarchies = roleHierarchyRepository.findAll();
+	/** 계층권한 String Builder **/
+	public String BuildRoleHierarchy() {
+        log.debug("## BuildRoleHierarchy");
+        List<RoleEntity> list = roleRepository.findAll();
 
-        Iterator<RoleHierarchyEntity> iterator = roleHierarchies.iterator();
+        Iterator<RoleEntity> iterator = list.iterator();
         StringBuilder concatRoles = new StringBuilder();
         while (iterator.hasNext()) {
-        	RoleHierarchyEntity roleHierarchy = iterator.next();
-            if (ObjectUtils.isNotEmpty(roleHierarchy.getParent())) {
-                concatRoles.append(roleHierarchy.getParent().getRoleKey());
+        	RoleEntity entity = iterator.next();
+            if (ObjectUtils.isNotEmpty(entity.getParent())) {
+                concatRoles.append(entity.getParent().getRoleKey());
                 concatRoles.append(" > ");
-                concatRoles.append(roleHierarchy.getRoleKey());
+                concatRoles.append(entity.getRoleKey());
                 concatRoles.append("\n");
             }
         }
-        log.debug("roleHierarchy = {}", concatRoles.toString());
         return concatRoles.toString();
 	}
 

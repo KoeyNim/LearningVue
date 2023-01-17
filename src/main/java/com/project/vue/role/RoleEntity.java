@@ -1,33 +1,47 @@
 package com.project.vue.role;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import lombok.Data;
 
 @Entity
-@Table(name = "ROLE")
+@Table(name = "role")
 @Data
 public class RoleEntity implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+	/** 기본키 */
 	private Long id;
 
-	@NotBlank
-    @Column(name = "role_key", unique = true)
+	@NotNull
+    @Column(name = "role_key")
+	/** role 키 */
     private String roleKey;
 
-	@NotBlank
-    @Column(name = "role_name")
-    private String roleName;
+    @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent", referencedColumnName = "role_key")
+    /** 권한계층 부모 role 키 */
+    private RoleEntity parent;
+
+    @OneToMany(mappedBy = "parent", cascade = {CascadeType.ALL})
+    /** 권한계층 */
+    private Set<RoleEntity> roleHierarchy = new HashSet<RoleEntity>();
 
 }

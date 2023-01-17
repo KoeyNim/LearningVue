@@ -12,21 +12,28 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.codec.Hex;
 
+import com.project.vue.common.exception.BizException;
+import com.project.vue.common.exception.CustomExceptionHandler.ErrorCode;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Convert
 public class StringCryptoConverter implements AttributeConverter<String, String> {
 	
+	/** 시크릿 키 */
 	@Value("${site.secretKey}")
 	private String Secret_KEY;
 
 	private static final String ALGORITHM = "AES/ECB/PKCS5Padding";
 
+	/**
+	 * 암호화
+	 */
 	@Override
 	public String convertToDatabaseColumn(String attribute) {
 		if (StringUtils.isBlank(attribute)) {
-			throw new NullPointerException();
+			throw new BizException("Null" + attribute, ErrorCode.INTERNAL_SERVER_ERROR);
 		}
 		Key key = new SecretKeySpec(Secret_KEY.getBytes(), "AES");
 		try {
@@ -34,11 +41,14 @@ public class StringCryptoConverter implements AttributeConverter<String, String>
 			cipher.init(Cipher.ENCRYPT_MODE, key);
 			return new String(Hex.encode(cipher.doFinal(attribute.getBytes("UTF-8"))));
 //			return new String(Base64Utils.encode(cipher.doFinal(attribute.getBytes("UTF-8"))));
-		} catch (Exception e) {
-			throw new RuntimeException(e);
+		} catch (Exception ex) {
+			throw new BizException("Convert To Database Column Error", ex, ErrorCode.INTERNAL_SERVER_ERROR);
 		} 
 	}
 
+	/**
+	 * 복호화
+	 */
 	@Override
 	public String convertToEntityAttribute(String dbData) {
 		Key key = new SecretKeySpec(Secret_KEY.getBytes(), "AES");
@@ -50,8 +60,8 @@ public class StringCryptoConverter implements AttributeConverter<String, String>
 		} catch (BadPaddingException e) {
 			log.info("Incorrect secret key");
 			return null;
-		} catch (Exception e) {
-			throw new RuntimeException(e);
+		} catch (Exception ex) {
+			throw new BizException("Convert To Entity Attribute Error", ex, ErrorCode.INTERNAL_SERVER_ERROR);
 		} 
 	}
 

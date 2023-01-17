@@ -9,7 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Component
 public class Utils {
-	
+	/** 2023/01/16~ 사용하지 않음 */
 	// IP check : request.getRemoteAddr() 값을 받음
 	// IPv4로 받고 싶을경우 VM argument 에서 -Djava.net.preferIPv4Stack=true 값 추가.
 	public static String getClientIP(HttpServletRequest request) {

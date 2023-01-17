@@ -6,7 +6,8 @@ import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 
 public class WebAuthenticationToken extends AbstractAuthenticationToken {
-	
+
+	private static final long serialVersionUID = 1L;
 	private String userId;
 	private String userPwd;
 
@@ -15,7 +16,7 @@ public class WebAuthenticationToken extends AbstractAuthenticationToken {
 		this.userId = userId;
 		this.userPwd = userPwd;
 	}
-	
+
     public WebAuthenticationToken(Collection<? extends GrantedAuthority> authorities) {
         super(authorities);
     }
@@ -29,5 +30,4 @@ public class WebAuthenticationToken extends AbstractAuthenticationToken {
 	public Object getPrincipal() {
 		return this.userId;
 	}
-
 }

@@ -7,17 +7,15 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
-/*
- * Querydsl을 사용하기 위해 선언
- */
+
 @Configuration
 public class QuerydslConfiguration {
-    
+
 	@PersistenceContext
     private EntityManager em;
-	
-	@Bean
-    public JPAQueryFactory jpaQueryFactory() {
+
+    @Bean
+    JPAQueryFactory jpaQueryFactory() {
         return new JPAQueryFactory(em);
     }
 }

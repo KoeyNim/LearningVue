@@ -11,5 +11,4 @@ public class MyvueApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(MyvueApplication.class, args);
 	}
-
 }

@@ -10,6 +10,11 @@ import com.project.vue.board.BoardRequest;
 
 public class SearchSpecification {
 
+	/**
+	 * Board 검색 조건
+	 * @param srch BoardRequest
+	 * @return Specification<BoardEntity>
+	 */
 	public static Specification<BoardEntity> searchBoardSpecification(BoardRequest srch) {
 		return Specification.<BoardEntity>where((root, query, builder) -> {
 			return builder.and(
@@ -21,6 +26,11 @@ public class SearchSpecification {
 		});
 	}
 
+	/**
+	 * Admin 검색 조건
+	 * @param srch AdminPostRequest
+	 * @return Specification<AdminPostEntity>
+	 */
 	public static Specification<AdminPostEntity> searchAdminPostSpecification(AdminPostRequest srch) {
 		return Specification.<AdminPostEntity>where((root, query, builder) -> {
 			if (StringUtils.isBlank(srch.getSrchVal())) return builder.conjunction();

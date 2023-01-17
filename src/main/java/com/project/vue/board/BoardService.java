@@ -94,13 +94,13 @@ public class BoardService {
 		entity.setContent(req.getContent());
 		entity.setUserId(SecurityContextHolder.getContext().getAuthentication().getName());
 		
-		/* 파일첨부 등록 **/
+		/** 파일첨부 등록 */
 		if(ObjectUtils.isNotEmpty(req.getFile())) { 
 			entity.setFileEntity(fileService.upld(req.getFile()));
 		}
 		boardRepository.save(entity);
 
-		/* 에디터 이미지 등록 **/
+		/** 에디터 이미지 등록 */
 		if(StringUtils.isNotBlank(req.getImgListJson())) {
 			try {
 				List<ImageTempResponse> deserializeList = Arrays.asList(
@@ -126,18 +126,18 @@ public class BoardService {
 		String userid = SecurityContextHolder.getContext().getAuthentication().getName();
 
 		if(!userid.equals(entity.getUserId())) {
-			throw new BizException("userid is not equals", ErrorCode.BAD_REQUEST);
+			throw new BizException("Userid Is Not Equals", ErrorCode.BAD_REQUEST);
 		}
 
 		entity.setTitle(req.getTitle());
 		entity.setContent(req.getContent());
 
-		/* 파일첨부 수정 **/
+		/** 파일첨부 수정 */
 		if(ObjectUtils.isNotEmpty(req.getFile())) {
 			entity.setFileEntity(fileService.upld(req.getFile()));
 		}
 
-		/* 에디터 이미지 수정 **/
+		/** 에디터 이미지 수정 */
 		if(StringUtils.isNotBlank(req.getImgListJson())) {
 			try {
 				List<ImageTempResponse> deserializeList = Arrays.asList(

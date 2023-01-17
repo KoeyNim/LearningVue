@@ -106,7 +106,7 @@ public class BoardController {
 	        String fileNm = excelService.create(bs);
 			return ResponseEntity.ok()
 					.contentType(MediaType.APPLICATION_OCTET_STREAM)
-					 //attachement = 로컬에 저장, filename = 파일 이름
+					 /** attachement = 로컬에 저장, filename = 파일 이름 */
 					.header(HttpHeaders.CONTENT_DISPOSITION, "attachement; filename=" + URLEncoder.encode(fileNm, "UTF-8").replaceAll("\\+", "%20"))
 					.body(os -> os.write(bs.toByteArray()));
 		} catch(IOException ex) {

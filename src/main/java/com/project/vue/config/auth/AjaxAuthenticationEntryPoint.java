@@ -14,6 +14,8 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.project.vue.common.exception.BizException;
+import com.project.vue.common.exception.CustomExceptionHandler.ErrorCode;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -24,6 +26,9 @@ public class AjaxAuthenticationEntryPoint extends LoginUrlAuthenticationEntryPoi
 		super(loginFormUrl);
 	}
 
+	/**
+	 * Ajax 사용시 로그인 데이터 감지
+	 */
 	@Override
 	public void commence(HttpServletRequest req, HttpServletResponse res, AuthenticationException exception) {
 		log.debug("@@ AjaxAuthenticationEntryPoint");
@@ -42,8 +47,8 @@ public class AjaxAuthenticationEntryPoint extends LoginUrlAuthenticationEntryPoi
 				return;
 			}
 			super.commence(req, res, exception);
-		} catch (ServletException | IOException e) {
-			throw new RuntimeException(e); // TODO Exception
+		} catch (ServletException | IOException ex) {
+			throw new BizException("AjaxAuthenticationEntryPoint Error", ex, ErrorCode.INTERNAL_SERVER_ERROR);
 		}
 	}
 }

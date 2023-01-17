@@ -26,18 +26,32 @@ public class ImageController {
 
 	private final ImageService imageService;
 
+	/**
+	 * Temp 이미지 파일 생성
+	 * @param img MultipartFile
+	 * @return ImageTempResponse
+	 */
 	@PostMapping("temp")
 	public ImageTempResponse temp(MultipartFile img) {
 		log.debug("api/v1/image/temp - posts - img : {}", img.getOriginalFilename());
 		return imageService.temp(img);
 	}
 
+	/**
+	 * 에디터에 미리보기로 보여줄 이미지 파일을 해당하는 경로에서 찾아 Resource로 반환
+	 * @param imgNm 이미지 파일명
+	 * @return Resource
+	 */
 	@GetMapping("find/{imgNm}")
 	public Resource find(@PathVariable String imgNm) {
 		log.debug("api/v1/image/find - gets - imgNm : {}", imgNm);
 		return new FileSystemResource(imageService.getPath(imgNm));
 	}
 	
+	/**
+	 * 파일 단일 및 다중 삭제
+	 * @param delImgList 이미지 파일명 리스트
+	 */
 	@DeleteMapping("delete")
 	public void delete(@RequestParam(value = "delImgList[]") List<String> delImgList) {
 		log.debug("api/v1/image/delete - delete - delImgList : {}", delImgList);

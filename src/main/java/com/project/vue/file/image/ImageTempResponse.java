@@ -16,10 +16,10 @@ import lombok.ToString;
 @AllArgsConstructor
 public class ImageTempResponse {
 
-	/* 파일명 **/
+	/** 파일명 */
 	private String imgNm;
-	/* 실제 파일명 **/
+	/** 실제 파일명 */
 	private String orignFileNm;
-	/* 파일 타입 **/
+	/** 파일 타입 */
 	private String contentType;
 }
