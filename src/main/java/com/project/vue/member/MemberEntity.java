@@ -11,6 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -34,10 +35,15 @@ import lombok.ToString;
 @Table(name = "member")
 @AllArgsConstructor
 @NoArgsConstructor
+@SequenceGenerator(
+		name = "MEMBER_SEQ_NO_01_GENERATOR",
+		sequenceName = "MEMBER_SEQ_NO_01",
+		initialValue = 1, allocationSize = 1
+)
 public class MemberEntity implements UserDetails {
 
-	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long memberId;
+	@Id @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "MEMBER_SEQ_NO_01_GENERATOR")
+	private Long memberSeqno;
 
 	@NotBlank
 	@Column(columnDefinition = "varchar(255)")

@@ -33,7 +33,7 @@ import lombok.ToString;
 @ExcelFileName(fileName = "게시판") // excel/annotation/ExcelFileName.java
 @DynamicUpdate
 @SequenceGenerator(
-		name = "BOARD_SEQ_NO_GENERATOR",
+		name = "BOARD_SEQ_NO_01_GENERATOR",
 		sequenceName = "BOARD_SEQ_NO_01",
 		initialValue = 1, allocationSize = 1
 )

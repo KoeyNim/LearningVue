@@ -17,6 +17,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.Data;
 
 @Entity
@@ -37,10 +39,12 @@ public class RoleEntity implements Serializable {
 
     @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
     @JoinColumn(name = "parent", referencedColumnName = "role_key")
+    @JsonIgnore
     /** 권한계층 부모 role 키 */
     private RoleEntity parent;
 
     @OneToMany(mappedBy = "parent", cascade = {CascadeType.ALL})
+    @JsonIgnore
     /** 권한계층 */
     private Set<RoleEntity> roleHierarchy = new HashSet<RoleEntity>();
 

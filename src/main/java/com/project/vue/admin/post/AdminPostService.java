@@ -40,14 +40,14 @@ public class AdminPostService {
 		QAdminPostEntity qAdminPostEntity = QAdminPostEntity.adminPostEntity;
 		queryFactory.update(qAdminPostEntity)
 					.set(qAdminPostEntity.count, qAdminPostEntity.count.add(1))
-					.where(qAdminPostEntity.boardSeqno.eq(id))
+					.where(qAdminPostEntity.id.eq(id))
 					.execute();
 	}
 	
 	@Transactional
 	public void save(AdminPostEntity post) {
-		if (ObjectUtils.isNotEmpty(post.getBoardSeqno())) { // post.id 값이 비어있지 않은지 확인 (비어있으면 등록상황이다.)
-			AdminPostEntity	findPost = adminPostRepository.findById(post.getBoardSeqno()).orElseThrow(); // 수정 전에 저장된 post 객체를 찾는다.
+		if (ObjectUtils.isNotEmpty(post.getId())) { // post.id 값이 비어있지 않은지 확인 (비어있으면 등록상황이다.)
+			AdminPostEntity	findPost = adminPostRepository.findById(post.getId()).orElseThrow(); // 수정 전에 저장된 post 객체를 찾는다.
 			if (ObjectUtils.isNotEmpty(findPost.getFileEntity()) // 수정전 post 객체의 파일이 비어있는지 확인
 					&& ObjectUtils.notEqual(post.getFileEntity().getFileSeqno(), // 저장할 파일과 저장 되어있는 파일의 id값 일치여부 확인
 							findPost.getFileEntity().getFileSeqno())) { 
@@ -73,7 +73,6 @@ public class AdminPostService {
     
     public AdminPostEntity findById(Long id, Authentication auth) {
     	AdminPostEntity adminPostEntity = adminPostRepository.findById(id).orElseThrow();
-    	adminPostEntity.setAuthUserId(auth.getPrincipal());
 		return adminPostEntity;
     }
     
