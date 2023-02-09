@@ -51,9 +51,9 @@ public class WebSecurityConfig {
         RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
         DefaultWebSecurityExpressionHandler securityExpressionHandler = new DefaultWebSecurityExpressionHandler();
 
-        /* 상위 권한 설정 **/
+        /** 상위 권한 설정 */
         roleHierarchy.setHierarchy(roleService.BuildRoleHierarchy());
-        /* 권한 계층 커스터마이징 **/
+        /** 권한 계층 커스터마이징 */
         securityExpressionHandler.setRoleHierarchy(roleHierarchy);
         return securityExpressionHandler;
     }

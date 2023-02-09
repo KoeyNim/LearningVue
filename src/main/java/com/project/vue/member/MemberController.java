@@ -25,7 +25,7 @@ public class MemberController {
 	@GetMapping("idchk")
 	public ResponseEntity<SimpleResponse> idChk(String userId) {
 		log.debug("api/v1/member/idchk - gets - userId : {}", userId);
-		return 	memberService.findByUserid(userId) ? ResponseEntity.status(HttpStatus.CONFLICT).body(SimpleResponse.builder()
+		return 	memberService.isUserId(userId) ? ResponseEntity.status(HttpStatus.CONFLICT).body(SimpleResponse.builder()
 				.success(false).message("이미 사용중인 ID 입니다.").statusCode(409).build())
 				: ResponseEntity.ok(SimpleResponse.builder().message("사용 가능한 ID 입니다.").build());
 	}

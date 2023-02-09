@@ -29,14 +29,13 @@ public class CookieCommon {
 	 * @param seqno 기본키
 	 */
 	public void readCountCookie(long seqno) {
-		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
-		HttpServletResponse response = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getResponse();
+		HttpServletRequest req = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+		HttpServletResponse res = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getResponse();
 
-		Cookie[] cookies = request.getCookies();
 		String cookieNm = "readCount";
 		String newCookieVal = "|" + seqno;
 		/** cookieNm 쿠키의 value를 가져옴, 없을시 쿠키 기본값 생성 */
-		String cookieVal = Arrays.stream(cookies)
+		String cookieVal = Arrays.stream(req.getCookies())
 				.filter(e -> StringUtils.equals(e.getName(), cookieNm))
 				.findAny()
 				.map(Cookie::getValue)
@@ -51,7 +50,7 @@ public class CookieCommon {
 			cookie.setComment("조회수 중복 체크");
 			/** 유효시간 설정 (초) */
 			cookie.setMaxAge(60 * 60 * 24);
-			response.addCookie(cookie);
+			res.addCookie(cookie);
 			boardRepository.updateCount(seqno);
 		}
 	}
