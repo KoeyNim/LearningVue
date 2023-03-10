@@ -10,10 +10,11 @@ import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.project.vue.api.covid.ConfirmedResponse;
+import com.project.vue.api.payload.ConfirmedResponse;
 import com.project.vue.common.Constants;
+import com.project.vue.common.exception.BizException;
+import com.project.vue.common.exception.CustomExceptionHandler.ErrorCode;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,19 +37,21 @@ public class ApiController {
 	 * 공공데이터 포털 사이트 
 	 * 코로나 확진자 데이터 조회 API
 	 * @return JSON String
-	 * @throws JsonMappingException
 	 * @throws JsonProcessingException
 	 */
 	@GetMapping("confirmed")
-	public ResponseEntity<ConfirmedResponse> findConfirmedJSON() throws JsonMappingException, JsonProcessingException {
+	public ResponseEntity<ConfirmedResponse> findConfirmedJSON() {
 		log.trace("api/v1/rest/confirmed - get");
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
 				.scheme("http")
 				.host("apis.data.go.kr")
 				.path("/1790387/covid19CurrentStatusConfirmations/covid19CurrentStatusConfirmationsJson")
 				.queryParam("serviceKey", serviceKey).build(false); // false -> Encoding 사용하지 않음
-
-		return ResponseEntity.ok(OM.readValue(
+		try {
+			return ResponseEntity.ok(OM.readValue(
 					restTemplate.getForObject(uriComponents.toUriString(), String.class), ConfirmedResponse.class));
+		} catch (JsonProcessingException ex) {
+			throw new BizException("JSON Deserialize Error", ex, ErrorCode.INTERNAL_SERVER_ERROR);
+		}
 	}
 }

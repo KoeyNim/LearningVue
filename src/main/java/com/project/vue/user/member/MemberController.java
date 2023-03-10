@@ -1,4 +1,4 @@
-package com.project.vue.member;
+package com.project.vue.user.member;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

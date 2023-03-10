@@ -1,4 +1,4 @@
-package com.project.vue.member;
+package com.project.vue.user.member;
 
 import lombok.Getter;
 import lombok.Setter;

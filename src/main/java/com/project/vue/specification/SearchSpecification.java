@@ -7,8 +7,8 @@ import com.project.vue.admin.member.AdminMemberEntity;
 import com.project.vue.admin.member.AdminMemberRequest;
 import com.project.vue.admin.post.AdminPostEntity;
 import com.project.vue.admin.post.AdminPostRequest;
-import com.project.vue.board.BoardEntity;
-import com.project.vue.board.BoardRequest;
+import com.project.vue.user.board.BoardEntity;
+import com.project.vue.user.board.BoardRequest;
 
 public class SearchSpecification {
 

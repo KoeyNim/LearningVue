@@ -1,4 +1,4 @@
-package com.project.vue.board;
+package com.project.vue.user.board;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

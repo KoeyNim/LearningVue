@@ -1,4 +1,4 @@
-package com.project.vue.board;
+package com.project.vue.user.board;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

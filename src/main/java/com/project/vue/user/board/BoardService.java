@@ -1,4 +1,4 @@
-package com.project.vue.board;
+package com.project.vue.user.board;
 
 import java.util.Arrays;
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.project.vue.api.covid;
+package com.project.vue.api.payload;
 
 import java.math.BigDecimal;
 import java.util.List;
