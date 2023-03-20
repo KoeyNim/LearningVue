@@ -1,4 +1,4 @@
-package com.project.vue.file.image;
+package com.project.vue.common.image;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 

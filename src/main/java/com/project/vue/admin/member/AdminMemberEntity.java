@@ -15,7 +15,7 @@ import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.vue.common.StringCryptoConverter;
-import com.project.vue.role.RoleEntity;
+import com.project.vue.user.role.RoleEntity;
 
 import lombok.Data;
 

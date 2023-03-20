@@ -20,10 +20,10 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.project.vue.common.Constants;
-import com.project.vue.config.auth.AjaxAuthenticationEntryPoint;
-import com.project.vue.config.auth.WebAuthenticationFailureHandler;
-import com.project.vue.config.auth.WebAuthenticationSucessHandler;
-import com.project.vue.role.RoleService;
+import com.project.vue.common.auth.AjaxAuthenticationEntryPoint;
+import com.project.vue.common.auth.WebAuthenticationFailureHandler;
+import com.project.vue.common.auth.WebAuthenticationSucessHandler;
+import com.project.vue.user.role.RoleService;
 
 import lombok.RequiredArgsConstructor;
 

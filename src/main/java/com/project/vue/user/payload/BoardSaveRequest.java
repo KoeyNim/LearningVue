@@ -1,4 +1,4 @@
-package com.project.vue.user.board;
+package com.project.vue.user.payload;
 
 import org.springframework.web.multipart.MultipartFile;
 

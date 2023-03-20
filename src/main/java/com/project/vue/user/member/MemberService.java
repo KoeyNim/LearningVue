@@ -7,8 +7,9 @@ import org.springframework.stereotype.Service;
 
 import com.project.vue.common.exception.BizException;
 import com.project.vue.common.exception.CustomExceptionHandler.ErrorCode;
-import com.project.vue.role.RoleEnum;
-import com.project.vue.role.RoleRepository;
+import com.project.vue.user.payload.MemberSignUpRequest;
+import com.project.vue.user.role.RoleEnum;
+import com.project.vue.user.role.RoleRepository;
 
 import lombok.RequiredArgsConstructor;
 

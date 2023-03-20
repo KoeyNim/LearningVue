@@ -1,4 +1,4 @@
-package com.project.vue.config.auth;
+package com.project.vue.common.auth;
 
 import java.io.IOException;
 import java.util.HashMap;

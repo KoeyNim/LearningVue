@@ -18,10 +18,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.vue.common.CookieCommon;
 import com.project.vue.common.exception.BizException;
 import com.project.vue.common.exception.CustomExceptionHandler.ErrorCode;
-import com.project.vue.file.FileService;
-import com.project.vue.file.image.ImageService;
-import com.project.vue.file.image.ImageTempResponse;
-import com.project.vue.specification.SearchSpecification;
+import com.project.vue.common.file.FileService;
+import com.project.vue.common.image.ImageService;
+import com.project.vue.common.image.ImageTempResponse;
+import com.project.vue.user.UserSearchSpecification;
+import com.project.vue.user.payload.BoardRequest;
+import com.project.vue.user.payload.BoardSaveRequest;
 
 import lombok.RequiredArgsConstructor;
 
@@ -65,7 +67,7 @@ public class BoardService {
 	 * @return Page<BoardEntity>
 	 */
 	public Page<BoardEntity> findAll(Pageable page, BoardRequest srch) {
-		return boardRepository.findAll(SearchSpecification.searchBoardSpecification(srch), page);
+		return boardRepository.findAll(UserSearchSpecification.searchBoardSpecification(srch), page);
 	}
 
 	/**

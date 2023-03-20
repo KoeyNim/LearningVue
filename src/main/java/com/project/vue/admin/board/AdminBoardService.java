@@ -14,8 +14,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import com.project.vue.file.FileRepository;
-import com.project.vue.specification.SearchSpecification;
+import com.project.vue.admin.AdminSearchSpecification;
+import com.project.vue.admin.payload.AdminBoardRequest;
+import com.project.vue.common.file.FileRepository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
@@ -23,17 +24,16 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class AdminBoardService {
-	
+
 	private final AdminBoardRepository adminPostRepository;
-	
 	private final FileRepository fileRepository;
-	
+
 	private final JPAQueryFactory queryFactory;
-	
+
 	/* application.yml file 경로 **/
 	@Value("${site.upload}")
 	private String FILE_UPLOAD_PATH;
-	
+
 	// 수정시간이 바뀌게되는 이슈로 인해 querydsl로 세부 조작
 	@Transactional
 	public void saveCount(Long id) {
@@ -43,7 +43,7 @@ public class AdminBoardService {
 					.where(qAdminPostEntity.id.eq(id))
 					.execute();
 	}
-	
+
 	@Transactional
 	public void save(AdminBoardEntity post) {
 		if (ObjectUtils.isNotEmpty(post.getId())) { // post.id 값이 비어있지 않은지 확인 (비어있으면 등록상황이다.)
@@ -58,24 +58,24 @@ public class AdminBoardService {
 		}
 		adminPostRepository.save(post);
 	}
-	
+
 	public Page<AdminBoardEntity> findAll(Pageable page, AdminBoardRequest srch) {
-		return adminPostRepository.findAll(SearchSpecification.searchAdminPostSpecification(srch), page);
+		return adminPostRepository.findAll(AdminSearchSpecification.searchAdminBoardSpecification(srch), page);
     }
-    
+
     public List<AdminBoardEntity> findAll() {
 		return adminPostRepository.findAll();
     }
-    
+
     public AdminBoardEntity findById(Long id) {
 		return adminPostRepository.findById(id).orElseThrow();
     }
-    
+
     public AdminBoardEntity findById(Long id, Authentication auth) {
     	AdminBoardEntity adminPostEntity = adminPostRepository.findById(id).orElseThrow();
 		return adminPostEntity;
     }
-    
+
     public void deleteById(Long id) {
     	AdminBoardEntity findPost = findById(id);
     	if(ObjectUtils.isNotEmpty(findPost.getFileEntity())) {
@@ -86,7 +86,7 @@ public class AdminBoardService {
     	}
     	adminPostRepository.deleteById(id);
     }
-    
+
     public void deleteAllByIdInBatch(Iterable<Long> ids) {
     	Iterable<AdminBoardEntity> findPost = adminPostRepository.findAllById(ids);
     	if (findPost.iterator().hasNext()) {

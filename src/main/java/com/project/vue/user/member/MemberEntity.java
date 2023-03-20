@@ -20,7 +20,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.project.vue.common.StringCryptoConverter;
-import com.project.vue.role.RoleEntity;
+import com.project.vue.user.role.RoleEntity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

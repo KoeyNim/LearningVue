@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.project.vue.admin.payload.AdminBoardRequest;
 import com.project.vue.common.SimpleResponse;
 
 import lombok.RequiredArgsConstructor;

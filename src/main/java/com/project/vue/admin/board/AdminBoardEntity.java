@@ -13,7 +13,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 
 import com.project.vue.common.TimeEntity;
-import com.project.vue.file.FileEntity;
+import com.project.vue.common.file.FileEntity;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;

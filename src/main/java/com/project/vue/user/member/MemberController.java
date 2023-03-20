@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.project.vue.common.Constants;
 import com.project.vue.common.SimpleResponse;
+import com.project.vue.user.payload.MemberSignUpRequest;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

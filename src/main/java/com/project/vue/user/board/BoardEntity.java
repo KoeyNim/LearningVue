@@ -19,7 +19,7 @@ import org.hibernate.annotations.DynamicUpdate;
 import com.project.vue.common.TimeEntity;
 import com.project.vue.common.excel.annotation.ExcelColumnOptions;
 import com.project.vue.common.excel.annotation.ExcelFileName;
-import com.project.vue.file.FileEntity;
+import com.project.vue.common.file.FileEntity;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
