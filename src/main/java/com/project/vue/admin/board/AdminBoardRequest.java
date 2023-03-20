@@ -1,4 +1,4 @@
-package com.project.vue.admin.post;
+package com.project.vue.admin.board;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -7,7 +7,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class AdminPostRequest {
+public class AdminBoardRequest {
 
 	/** 조회 키 */
 	private String srchKey;

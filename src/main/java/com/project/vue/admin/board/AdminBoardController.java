@@ -1,4 +1,4 @@
-package com.project.vue.admin.post;
+package com.project.vue.admin.board;
 
 import java.util.List;
 
@@ -21,11 +21,11 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Controller
-@RequestMapping("api/posts")
+@RequestMapping("api/board")
 @RequiredArgsConstructor
-public class AdminPostController {
+public class AdminBoardController {
 	
-	private final AdminPostService adminPostService;
+	private final AdminBoardService adminPostService;
 	
 //	@GetMapping
 //	public ResponseEntity<Page<AdminPostEntity>> postList(
@@ -39,25 +39,25 @@ public class AdminPostController {
 //	}
 
 	@GetMapping
-	public ResponseEntity<Page<AdminPostEntity>> findAll(Pageable page, AdminPostRequest srch) {
+	public ResponseEntity<Page<AdminBoardEntity>> findAll(Pageable page, AdminBoardRequest srch) {
 		log.debug("api/posts - get - page : {}, srch : {}", page, srch);
 		return ResponseEntity.ok(adminPostService.findAll(page, srch));
 	}
 	
 	@GetMapping("{id}")
-	public ResponseEntity<AdminPostEntity> findById(@PathVariable("id") Long id) {
+	public ResponseEntity<AdminBoardEntity> findById(@PathVariable("id") Long id) {
 		return ResponseEntity.ok(adminPostService.findById(id));
 	}
 
 	@PostMapping("create")
-	public ResponseEntity<SimpleResponse> create(@RequestBody AdminPostEntity post) {
+	public ResponseEntity<SimpleResponse> create(@RequestBody AdminBoardEntity post) {
 		log.debug("create post : {}",post);
 		adminPostService.save(post);
 		return ResponseEntity.ok(SimpleResponse.builder().message("글이 등록되었습니다.").build());
 	}
 
 	@PutMapping("update/{id}")
-	public ResponseEntity<SimpleResponse> update(@RequestBody AdminPostEntity post) {
+	public ResponseEntity<SimpleResponse> update(@RequestBody AdminBoardEntity post) {
 		log.debug("update post : {}",post);
 		adminPostService.save(post);
 		return ResponseEntity.ok(SimpleResponse.builder().message("글이 수정되었습니다.").build());

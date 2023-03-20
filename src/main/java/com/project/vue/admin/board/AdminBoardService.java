@@ -1,4 +1,4 @@
-package com.project.vue.admin.post;
+package com.project.vue.admin.board;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -22,9 +22,9 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class AdminPostService {
+public class AdminBoardService {
 	
-	private final AdminPostRepository adminPostRepository;
+	private final AdminBoardRepository adminPostRepository;
 	
 	private final FileRepository fileRepository;
 	
@@ -37,7 +37,7 @@ public class AdminPostService {
 	// 수정시간이 바뀌게되는 이슈로 인해 querydsl로 세부 조작
 	@Transactional
 	public void saveCount(Long id) {
-		QAdminPostEntity qAdminPostEntity = QAdminPostEntity.adminPostEntity;
+		QAdminBoardEntity qAdminPostEntity = QAdminBoardEntity.adminBoardEntity;
 		queryFactory.update(qAdminPostEntity)
 					.set(qAdminPostEntity.count, qAdminPostEntity.count.add(1))
 					.where(qAdminPostEntity.id.eq(id))
@@ -45,9 +45,9 @@ public class AdminPostService {
 	}
 	
 	@Transactional
-	public void save(AdminPostEntity post) {
+	public void save(AdminBoardEntity post) {
 		if (ObjectUtils.isNotEmpty(post.getId())) { // post.id 값이 비어있지 않은지 확인 (비어있으면 등록상황이다.)
-			AdminPostEntity	findPost = adminPostRepository.findById(post.getId()).orElseThrow(); // 수정 전에 저장된 post 객체를 찾는다.
+			AdminBoardEntity	findPost = adminPostRepository.findById(post.getId()).orElseThrow(); // 수정 전에 저장된 post 객체를 찾는다.
 			if (ObjectUtils.isNotEmpty(findPost.getFileEntity()) // 수정전 post 객체의 파일이 비어있는지 확인
 					&& ObjectUtils.notEqual(post.getFileEntity().getFileSeqno(), // 저장할 파일과 저장 되어있는 파일의 id값 일치여부 확인
 							findPost.getFileEntity().getFileSeqno())) { 
@@ -59,25 +59,25 @@ public class AdminPostService {
 		adminPostRepository.save(post);
 	}
 	
-	public Page<AdminPostEntity> findAll(Pageable page, AdminPostRequest srch) {
+	public Page<AdminBoardEntity> findAll(Pageable page, AdminBoardRequest srch) {
 		return adminPostRepository.findAll(SearchSpecification.searchAdminPostSpecification(srch), page);
     }
     
-    public List<AdminPostEntity> findAll() {
+    public List<AdminBoardEntity> findAll() {
 		return adminPostRepository.findAll();
     }
     
-    public AdminPostEntity findById(Long id) {
+    public AdminBoardEntity findById(Long id) {
 		return adminPostRepository.findById(id).orElseThrow();
     }
     
-    public AdminPostEntity findById(Long id, Authentication auth) {
-    	AdminPostEntity adminPostEntity = adminPostRepository.findById(id).orElseThrow();
+    public AdminBoardEntity findById(Long id, Authentication auth) {
+    	AdminBoardEntity adminPostEntity = adminPostRepository.findById(id).orElseThrow();
 		return adminPostEntity;
     }
     
     public void deleteById(Long id) {
-    	AdminPostEntity findPost = findById(id);
+    	AdminBoardEntity findPost = findById(id);
     	if(ObjectUtils.isNotEmpty(findPost.getFileEntity())) {
     		Path path = Paths.get(FILE_UPLOAD_PATH).resolve(findPost.getFileEntity().getFileNm());
 //        	if (file.exists()) {
@@ -88,7 +88,7 @@ public class AdminPostService {
     }
     
     public void deleteAllByIdInBatch(Iterable<Long> ids) {
-    	Iterable<AdminPostEntity> findPost = adminPostRepository.findAllById(ids);
+    	Iterable<AdminBoardEntity> findPost = adminPostRepository.findAllById(ids);
     	if (findPost.iterator().hasNext()) {
     		if(ObjectUtils.isNotEmpty(findPost.iterator().next().getFileEntity())) {
     			Path path = Paths.get(FILE_UPLOAD_PATH).resolve(findPost.iterator().next().getFileEntity().getFileNm());

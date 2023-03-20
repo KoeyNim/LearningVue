@@ -1,4 +1,4 @@
-package com.project.vue.admin.post;
+package com.project.vue.admin.board;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -27,7 +27,7 @@ import lombok.EqualsAndHashCode;
 		sequenceName = "BOARD_SEQ_NO_01",
 		initialValue = 1, allocationSize = 1
 )
-public class AdminPostEntity extends TimeEntity {
+public class AdminBoardEntity extends TimeEntity {
 
 	@Id @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "BOARD_SEQ_NO_01_GENERATOR")
 	@Column(name = "boardSeqno")

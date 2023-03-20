@@ -3,10 +3,10 @@ package com.project.vue.specification;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.jpa.domain.Specification;
 
+import com.project.vue.admin.board.AdminBoardEntity;
+import com.project.vue.admin.board.AdminBoardRequest;
 import com.project.vue.admin.member.AdminMemberEntity;
 import com.project.vue.admin.member.AdminMemberRequest;
-import com.project.vue.admin.post.AdminPostEntity;
-import com.project.vue.admin.post.AdminPostRequest;
 import com.project.vue.user.board.BoardEntity;
 import com.project.vue.user.board.BoardRequest;
 
@@ -33,8 +33,8 @@ public class SearchSpecification {
 	 * @param srch AdminPostRequest
 	 * @return Specification<AdminPostEntity>
 	 */
-	public static Specification<AdminPostEntity> searchAdminPostSpecification(AdminPostRequest srch) {
-		return Specification.<AdminPostEntity>where((root, query, builder) -> {
+	public static Specification<AdminBoardEntity> searchAdminPostSpecification(AdminBoardRequest srch) {
+		return Specification.<AdminBoardEntity>where((root, query, builder) -> {
 			if (StringUtils.isBlank(srch.getSrchVal())) return builder.conjunction();
 			if (StringUtils.isBlank(srch.getSrchKey()))
 				return builder.or( builder.like(root.get("title"), "%" + srch.getSrchVal() + "%"),
