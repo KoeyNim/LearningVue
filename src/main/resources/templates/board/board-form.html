@@ -1,18 +1,8 @@
 <!DOCTYPE html>
 <html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	layout:decorate="~{layout/layout}">
-<head>
-    <script th:src="@{/static/scripts/summernote/summernote-lite.min.js}"></script>
-    <script th:src="@{/static/scripts/summernote/lang/summernote-ko-KR.min.js}"></script>
-    <link th:href="@{/static/style/summernote/summernote-lite.min.css}" rel="stylesheet">
-    
-    <script th:src="@{/static/scripts/ck-editor/vue/ckeditor.js}"></script>
-    <script th:src="@{/static/scripts/ck-editor/ckeditor.js}"></script>
-    <script th:src="@{/static/scripts/ck-editor/upload-adpater.js}"></script>
-    <script th:src="@{/static/scripts/ck-editor/lang/ko.js}"></script>
-    <link th:href="@{/static/style/ck-editor/ck-editor.css}" rel="stylesheet">
-    
-    <script th:src="@{/static/js/board/board-form.js}"></script>	
+<head th:with="page='form'">
+    <script th:src="@{/static/js/board/board-form.js}"></script>
 </head>
 <body>
 	<div id="page" layout:fragment="content">

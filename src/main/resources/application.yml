@@ -52,5 +52,5 @@ site:
   temp-image: D:/W/bin/temp/image/
   secretKey: y/B?E(G+KbPeShVm
 api:
-  covid:
-     confirmedServiceKey: Ah33nedGlORpg%2B8WYnFa3d%2BnzJ5PLyV5323uW%2FIYyy4uMvSMp7L%2Bk0hjW9%2BHn5ox11R06p2SWNQ8ENblZyrfkA%3D%3D
+  publicData:
+     ServiceKey: Ah33nedGlORpg%2B8WYnFa3d%2BnzJ5PLyV5323uW%2FIYyy4uMvSMp7L%2Bk0hjW9%2BHn5ox11R06p2SWNQ8ENblZyrfkA%3D%3D

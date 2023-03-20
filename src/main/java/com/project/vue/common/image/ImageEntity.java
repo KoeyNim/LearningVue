@@ -7,13 +7,17 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @Builder
 @Entity
 @Table(name = "image")
+@AllArgsConstructor
+@NoArgsConstructor
 public class ImageEntity {
 
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
