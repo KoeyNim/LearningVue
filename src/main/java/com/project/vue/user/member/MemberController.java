@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.project.vue.common.Constants;
+import com.project.vue.common.PathConstants;
 import com.project.vue.common.SimpleResponse;
 import com.project.vue.user.payload.MemberSignUpRequest;
 
@@ -17,13 +18,13 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController
-@RequestMapping(Constants.REQUEST_MAPPING_PREFIX+"/member")
+@RequestMapping(Constants.REQUEST_MAPPING_PREFIX+ "/" + PathConstants.API_MEMBER)
 @RequiredArgsConstructor
 public class MemberController {
 
 	private final MemberService memberService;
 
-	@GetMapping("idchk")
+	@GetMapping(PathConstants.API_USER_ID_CHECK)
 	public ResponseEntity<SimpleResponse> idChk(String userId) {
 		log.debug("api/v1/member/idchk - gets - userId : {}", userId);
 		return 	memberService.isUserId(userId) ? ResponseEntity.status(HttpStatus.CONFLICT).body(SimpleResponse.builder()
@@ -31,7 +32,7 @@ public class MemberController {
 				: ResponseEntity.ok(SimpleResponse.builder().message("사용 가능한 ID 입니다.").build());
 	}
 
-	@PostMapping("signup")
+	@PostMapping(PathConstants.API_USER_SIGNUP)
 	public ResponseEntity<SimpleResponse> signUp(@RequestBody MemberSignUpRequest req) {
 		log.debug("api/v1/member/signup - posts - req : {}", req);
 		memberService.save(req);

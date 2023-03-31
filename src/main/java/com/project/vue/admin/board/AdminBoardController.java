@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.project.vue.admin.payload.AdminBoardRequest;
+import com.project.vue.common.PathConstants;
 import com.project.vue.common.SimpleResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -22,52 +23,53 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Controller
-@RequestMapping("api/board")
+@RequestMapping("api/" + PathConstants.API_BOARD)
 @RequiredArgsConstructor
 public class AdminBoardController {
-	
-	private final AdminBoardService adminPostService;
-	
-//	@GetMapping
-//	public ResponseEntity<Page<AdminPostEntity>> postList(
-//			@RequestParam int pageIndex, 
-//			@RequestParam int pageSize,
-//			@RequestParam(required = false) String sortKey,
-//			@RequestParam(required = false) String order,
-//			@RequestParam(required = false) String srchKey,
-//			@RequestParam(required = false) String srchVal) {
-//		return ResponseEntity.ok(adminPostService.findAll(pageIndex, pageSize, sortKey, order, srchKey, srchVal));
-//	}
 
+	private final AdminBoardService adminBoardService;
+
+	/**
+	 * 조건별 전체 조회
+	 * @param page 페이지 데이터
+	 * @param srch 검색 데이터
+	 * @return Page<AdminBoardEntity>
+	 */
 	@GetMapping
 	public ResponseEntity<Page<AdminBoardEntity>> findAll(Pageable page, AdminBoardRequest srch) {
-		log.debug("api/posts - get - page : {}, srch : {}", page, srch);
-		return ResponseEntity.ok(adminPostService.findAll(page, srch));
+		log.debug("api/board - get - page : {}, srch : {}", page, srch);
+		return ResponseEntity.ok(adminBoardService.findAll(page, srch));
 	}
-	
-	@GetMapping("{id}")
-	public ResponseEntity<AdminBoardEntity> findById(@PathVariable("id") Long id) {
-		return ResponseEntity.ok(adminPostService.findById(id));
+
+	/**
+	 * 상세 조회
+	 * @param boardSeqno 키값
+	 * @return AdminBoardEntity
+	 */
+	@GetMapping(PathConstants.API_DETAIL)
+	public ResponseEntity<AdminBoardEntity> findById(long boardSeqno) {
+		log.debug("api/detail - gets - boardSeqno : {}", boardSeqno);
+		return ResponseEntity.ok(adminBoardService.findById(boardSeqno));
 	}
 
 	@PostMapping("create")
 	public ResponseEntity<SimpleResponse> create(@RequestBody AdminBoardEntity post) {
 		log.debug("create post : {}",post);
-		adminPostService.save(post);
+		adminBoardService.save(post);
 		return ResponseEntity.ok(SimpleResponse.builder().message("글이 등록되었습니다.").build());
 	}
 
 	@PutMapping("update/{id}")
 	public ResponseEntity<SimpleResponse> update(@RequestBody AdminBoardEntity post) {
 		log.debug("update post : {}",post);
-		adminPostService.save(post);
+		adminBoardService.save(post);
 		return ResponseEntity.ok(SimpleResponse.builder().message("글이 수정되었습니다.").build());
 	}
 	
 	@DeleteMapping("delete/{id}")
 	public ResponseEntity<SimpleResponse> delete(@PathVariable("id") Long id) {
 		log.debug("delete post id : {}",id);
-		adminPostService.deleteById(id);
+		adminBoardService.deleteById(id);
 		return ResponseEntity.ok(SimpleResponse.builder().message("글이 삭제되었습니다.").build());
 	}
 	
@@ -75,10 +77,10 @@ public class AdminBoardController {
 	public ResponseEntity<SimpleResponse> deleteMany(@RequestBody List<Long> ids) {
 		log.debug("delete many post ids : {}",ids);
 //		List<Long> longCasting = ids.stream().map(Long::parseLong).collect(Collectors.toList());
-		adminPostService.deleteAllByIdInBatch(ids);
+		adminBoardService.deleteAllByIdInBatch(ids);
 		return ResponseEntity.ok(SimpleResponse.builder().message("글이 삭제되었습니다.").build());
 	}
-	
+
 	//TODO ...
 //	@GetMapping("excel")
 //	public ResponseEntity<ByteArrayResource> excel() {

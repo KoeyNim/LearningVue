@@ -24,7 +24,7 @@ $(() => {
                 console.log('fnLoad', arguments);
                 if(!!URLSearch.get('expire')) {
                     alert('새로운 곳에서 로그인이 시도되었습니다.');
-                    location.href = '/login';
+                    location.href = '/member-login';
                 }
             },
             fnLogin(e) {

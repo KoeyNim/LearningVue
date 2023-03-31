@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 
 import com.project.vue.admin.AdminSearchSpecification;
 import com.project.vue.admin.payload.AdminBoardRequest;
+import com.project.vue.common.exception.BizException;
+import com.project.vue.common.exception.CustomExceptionHandler.ErrorCode;
 import com.project.vue.common.file.FileRepository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
@@ -67,8 +69,9 @@ public class AdminBoardService {
 		return adminPostRepository.findAll();
     }
 
-    public AdminBoardEntity findById(Long id) {
-		return adminPostRepository.findById(id).orElseThrow();
+    public AdminBoardEntity findById(long boardSeqno) {
+		return adminPostRepository.findById(boardSeqno)
+				.orElseThrow(() -> new BizException("Data is Not Found", ErrorCode.NOT_FOUND));
     }
 
     public AdminBoardEntity findById(Long id, Authentication auth) {
