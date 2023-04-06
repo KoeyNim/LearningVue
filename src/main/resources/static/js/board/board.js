@@ -91,9 +91,3 @@ $(() => {
         }
     });
 });
-
-// 사용하지 않는 에러 처리
-/*$(document).ajaxError((event, response) => {
-    console.log('common error', event, response);
-    alert(response.responseJSON.message);
-});*/

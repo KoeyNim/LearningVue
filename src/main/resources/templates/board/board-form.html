@@ -14,9 +14,11 @@
 		</div>
         <span>{{ errors.first('content') }}</span>
 		<span class="form-label">내용​ *</span>
-		<div class="form-field">
-			<textarea name="content" id="summernote" v-model="result.content"></textarea>
-			<!-- <ckeditor :editor="editor" @ready="onReady" id="content" name="content" v-model="result.content" :config="editorConfig" tag-name="textarea" v-validate="'required'"></ckeditor> -->
+		    <button type="button" class="btn solidbtn md mo-full sm-h blue" value='ck-editor' @click.prevent="fnEditor">ck-editor</button>
+		    <my-component></my-component>
+		<div class="form-field editor-field">
+			<div id="summernote"></div>
+			<ckeditor v-if="isEditor == 'C'" :editor="editor" @ready="onReady" id="ckeditor" name="content" v-model="result.content" :config="editorConfig" tag-name="textarea" v-validate="'required'"></ckeditor>
 		</div>
 		<div v-if="result.fileEntity">
 			<span class="form-label">파일</span>
