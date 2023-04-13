@@ -4,20 +4,21 @@ class UploadAdapter {
         this.editor = editor;
     }
     upload() {
-        const me = this;
-        return this.loader.file.then(file => new Promise(((resolve, reject) => {
+        let me = this;
+        return me.loader.file.then(img => new Promise(((resolve, reject) => {
         const formData = new FormData();
-        const options = {
+        formData.append('img', img);
+        $ajax.api({
+            url: API_VERSION + '/image/temp',
+            type: 'POST',
+            data: formData,
             enctype : 'multipart/form-data',
             contentType : false,
             processData : false,
             cache : false,
-        }
-        formData.append('image', file);
-        ajaxAPI("POST", API_VERSION + '/imageupload', formData, options
-        ).done(function(url) {
-            console.log(url);
-            me.editor.execute( 'insertImage', { source: url } );
+        }).done((res) => {
+            console.log('done', arguments);
+            me.editor.execute('insertImage', { source: API_VERSION + '/image/find/'+ res.imgNm });
         }).fail((jqXHR, stat, err) => {
             console.log(stat+':'+err);
         });

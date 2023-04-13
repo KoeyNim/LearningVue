@@ -183,7 +183,7 @@ function summernoteOptions(me) {
         callbacks : {
             /** 에디터 이미지 업로드 기능 사용시 호출 */
             onImageUpload : (images) => {
-                me.fnUploadImage(images[0]);
+                for(const image of images) me.fnUploadImage(image);
             },
             /** 에디터 내부 content 변경시 호출 */
             onChange : (contents) => {
@@ -192,11 +192,7 @@ function summernoteOptions(me) {
             /** 에디터 이미지 삭제버튼 클릭시 호출 */
             onMediaDelete : (selectImg) => {
                 let selectImgNm = selectImg[0].attributes.getNamedItem('img-name').value;
-                if(!!boardSeqno) {
-                    me.delImgList.push(selectImgNm);
-                } else {
-                    me.result.imgList = me.result.imgList.filter((el) => {return el.imgNm !== selectImgNm;});
-                }
+                !!boardSeqno ? me.delImgList.push(selectImgNm) : me.result.imgList = me.result.imgList.filter((el) => {return el.imgNm !== selectImgNm;});
             }
         }
     }

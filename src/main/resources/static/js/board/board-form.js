@@ -33,10 +33,12 @@ $(() => {
           let isBoardSeqno = !!boardSeqno;
           me.$validator.validateAll().then((success) => {
               if(success) {
-//                  if ($('#summernote').summernote('isEmpty')) {
-//                      alert('내용을 입력해주세요.');
-//                      return;
-//                  }
+                  if (me.isEditor == 'S') {
+                      if ($('#summernote').summernote('isEmpty')) {
+                          alert('내용을 입력해주세요.');
+                          return;
+                      }
+                  }
 
                   const formData = new FormData();
                   formData.append('title', me.result.title);
