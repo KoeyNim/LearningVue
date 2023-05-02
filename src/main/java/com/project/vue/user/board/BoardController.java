@@ -31,7 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController
-@RequestMapping(Constants.REQUEST_MAPPING_PREFIX + "/" + PathConstants.API_BOARD)
+@RequestMapping(Constants.REQUEST_MAPPING_PREFIX + "/" + PathConstants.BOARD)
 @RequiredArgsConstructor
 public class BoardController {
 
@@ -54,7 +54,7 @@ public class BoardController {
 	 * @param boardSeqno 키값
 	 * @return BoardEntity
 	 */
-	@GetMapping(PathConstants.API_DETAIL)
+	@GetMapping(PathConstants.DETAIL)
 	public BoardEntity findById(long boardSeqno) {
 		log.debug("api/v1/detail/ - gets - boardSeqno : {}", boardSeqno);
 		return boardService.findById(boardSeqno);
@@ -65,7 +65,7 @@ public class BoardController {
 	 * @param req 등록 데이터
 	 * @return ResponseEntity<SimpleResponse>
 	 */
-	@PostMapping(PathConstants.API_CREATE)
+	@PostMapping(PathConstants.CREATE)
 	public ResponseEntity<SimpleResponse> create(BoardSaveRequest req) {
 		log.debug("api/v1/create/ - posts - req : {}", req);
 		boardService.save(req);
@@ -78,7 +78,7 @@ public class BoardController {
 	 * @param req 수정 데이터
 	 * @return ResponseEntity<SimpleResponse>
 	 */
-	@PutMapping(PathConstants.API_UPDATE)
+	@PutMapping(PathConstants.UPDATE)
 	public ResponseEntity<SimpleResponse> update(long boardSeqno, BoardSaveRequest req) {
 		log.debug("api/v1/update/ - puts - boardSeqno : {}, req : {}", boardSeqno, req);
 		boardService.save(boardSeqno, req);
@@ -90,7 +90,7 @@ public class BoardController {
 	 * @param boardSeqno 키값
 	 * @return ResponseEntity<SimpleResponse>
 	 */
-	@DeleteMapping(PathConstants.API_DELETE)
+	@DeleteMapping(PathConstants.DELETE)
 	public ResponseEntity<SimpleResponse> delete(long boardSeqno) {
 		log.debug("api/v1/delete/ - delete - boardSeqno : {}", boardSeqno);
 		boardService.deleteById(boardSeqno);
@@ -101,7 +101,7 @@ public class BoardController {
 	 * 엑셀 다운로드
 	 * @return ResponseEntity<StreamingResponseBody>
 	 */
-	@GetMapping(PathConstants.API_EXCEL)
+	@GetMapping(PathConstants.EXCEL)
 	public ResponseEntity<StreamingResponseBody> dwldExcel() {
 		log.debug("api/v1/excel/ - gets - dwldExcel");
 		try (ByteArrayOutputStream bs = new ByteArrayOutputStream()) {

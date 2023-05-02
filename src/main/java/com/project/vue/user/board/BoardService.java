@@ -95,9 +95,9 @@ public class BoardService {
 		entity.setTitle(req.getTitle());
 		entity.setContent(req.getContent());
 		entity.setUserId(SecurityContextHolder.getContext().getAuthentication().getName());
-		
+
 		/** 파일첨부 등록 */
-		if(ObjectUtils.isNotEmpty(req.getFile())) { 
+		if(ObjectUtils.isNotEmpty(req.getFile())) {
 			entity.setFileEntity(fileService.upld(req.getFile()));
 		}
 		boardRepository.save(entity);

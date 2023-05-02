@@ -157,7 +157,7 @@ public class WebSecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfiguration())) // CORS 설정
                 .authorizeRequests(auth -> auth
                         .antMatchers(HttpMethod.GET, "/**").permitAll() // 모든 GET 요청에 대해 로그인을 요구하지 않음
-                        .antMatchers(Constants.REQUEST_MAPPING_PREFIX + "/" + PathConstants.API_MEMBER + "/**").permitAll() // 해당하는 URL 접근에 대해 로그인을 요구하지 않음
+                        .antMatchers(Constants.REQUEST_MAPPING_PREFIX + "/" + PathConstants.MEMBER + "/**").permitAll() // 해당하는 URL 접근에 대해 로그인을 요구하지 않음
                         .expressionHandler(expressionHandler()) // 권한 계층 커스텀 Handler
                         .anyRequest().authenticated()) // 지정하지 않은 모든 요청에 로그인을 요구 (화이트 리스트)
 //                		.anyRequest().permitAll() //  지정하지 않은 모든 요청에 로그인을 요구 하지 않음 (블랙 리스트)

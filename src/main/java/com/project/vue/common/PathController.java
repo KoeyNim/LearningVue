@@ -36,16 +36,9 @@ public class PathController {
 	@GetMapping("{page}")
 	public String page(@PathVariable String page) {
 		log.debug("page: {}", page);
-		String view = null;
+		String view = getView(page);
 
-		if (page.contains("board")) {
-			view = "board/" + page;
-		}
-
-		if (page.contains("member")) {
-			view = "member/" + page;
-		}
-
+		/** resource 경로 */
 		Resource resource = resourceLoader.getResource(
 				thymeleafProperties.getPrefix() + view + thymeleafProperties.getSuffix());
 		log.trace("{}", resource.getDescription());
@@ -58,5 +51,15 @@ public class PathController {
 			view = "redirect:board";
 		}
 		return view;
+	}
+
+	/**
+	 * @param page 페이지 경로
+	 * @return String view
+	 */
+	private String getView(String page) {
+		if (page.contains(PathConstants.BOARD)) return PathConstants.BOARD + "/" + page;
+		if (page.contains(PathConstants.MEMBER)) return PathConstants.MEMBER + "/" + page;
+		return null;
 	}
 }

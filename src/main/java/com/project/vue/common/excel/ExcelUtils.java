@@ -28,7 +28,7 @@ public class ExcelUtils {
 		List<String> colList = new ArrayList<>();
 		List<BorderStyle> colStyle = new ArrayList<>();
 
-		/** ExcelColumnOptions의 데이터 추출 (Super Class 포함) **/
+		/** ExcelColumnOptions의 데이터 추출 (Super Class 포함) */
 		ReflectionUtils.doWithFields(cls, field -> {
 			if (field.isAnnotationPresent(ExcelColumnOptions.class)) {
 	            headerList.add(field.getAnnotation(ExcelColumnOptions.class).headerName());

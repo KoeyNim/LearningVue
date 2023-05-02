@@ -1,7 +1,7 @@
 /** ajax API */
 const $ajax = {
     api: (options) => {
-        /* GET Type은 csrf 미적용 **/
+        /** GET Type은 csrf 미적용 */
         if (!!options.type) {
             let csrf = {
                 beforeSend(xhr) {

@@ -23,7 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Controller
-@RequestMapping("api/" + PathConstants.API_BOARD)
+@RequestMapping("api/" + PathConstants.BOARD)
 @RequiredArgsConstructor
 public class AdminBoardController {
 
@@ -46,7 +46,7 @@ public class AdminBoardController {
 	 * @param boardSeqno 키값
 	 * @return AdminBoardEntity
 	 */
-	@GetMapping(PathConstants.API_DETAIL)
+	@GetMapping(PathConstants.DETAIL)
 	public ResponseEntity<AdminBoardEntity> findById(long boardSeqno) {
 		log.debug("api/detail - gets - boardSeqno : {}", boardSeqno);
 		return ResponseEntity.ok(adminBoardService.findById(boardSeqno));

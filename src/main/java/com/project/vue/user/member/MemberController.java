@@ -18,13 +18,13 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController
-@RequestMapping(Constants.REQUEST_MAPPING_PREFIX+ "/" + PathConstants.API_MEMBER)
+@RequestMapping(Constants.REQUEST_MAPPING_PREFIX+ "/" + PathConstants.MEMBER)
 @RequiredArgsConstructor
 public class MemberController {
 
 	private final MemberService memberService;
 
-	@GetMapping(PathConstants.API_USER_ID_CHECK)
+	@GetMapping("idchk")
 	public ResponseEntity<SimpleResponse> idChk(String userId) {
 		log.debug("api/v1/member/idchk - gets - userId : {}", userId);
 		return 	memberService.isUserId(userId) ? ResponseEntity.status(HttpStatus.CONFLICT).body(SimpleResponse.builder()
@@ -32,7 +32,7 @@ public class MemberController {
 				: ResponseEntity.ok(SimpleResponse.builder().message("사용 가능한 ID 입니다.").build());
 	}
 
-	@PostMapping(PathConstants.API_USER_SIGNUP)
+	@PostMapping("signup")
 	public ResponseEntity<SimpleResponse> signUp(@RequestBody MemberSignUpRequest req) {
 		log.debug("api/v1/member/signup - posts - req : {}", req);
 		memberService.save(req);

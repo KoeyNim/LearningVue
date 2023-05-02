@@ -65,7 +65,7 @@ public class FileService {
 	 */
 	public String dwld(long id, OutputStream os) {
 		FileEntity entity = fileRepository.findById(id)
-				.orElseThrow(() -> new BizException("Data is Not Found", ErrorCode.NOT_FOUND));
+				.orElseThrow(() -> new BizException("File Data is Not Found", ErrorCode.NOT_FOUND));
 		Path path = Paths.get(FILE_UPLOAD_PATH).resolve(entity.getFileNm());
 		try {
 			os.write(Files.readAllBytes(path));

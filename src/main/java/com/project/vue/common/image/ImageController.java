@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.project.vue.common.Constants;
+import com.project.vue.common.PathConstants;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -52,7 +53,7 @@ public class ImageController {
 	 * 파일 단일 및 다중 삭제
 	 * @param delImgList 이미지 파일명 리스트
 	 */
-	@DeleteMapping("delete")
+	@DeleteMapping(PathConstants.DELETE)
 	public void delete(@RequestParam(value = "delImgList[]") List<String> delImgList) {
 		log.debug("api/v1/image/delete - delete - delImgList : {}", delImgList);
 		imageService.delete(delImgList);
