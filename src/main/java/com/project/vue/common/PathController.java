@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import com.project.vue.common.exception.BizException;
-import com.project.vue.common.exception.CustomExceptionHandler.ErrorCode;
+import com.project.vue.common.exception.BizException.ErrorCode;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

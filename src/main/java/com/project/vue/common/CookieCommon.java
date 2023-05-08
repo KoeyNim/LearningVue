@@ -37,7 +37,7 @@ public class CookieCommon {
 		/** cookieNm 쿠키의 value를 가져옴, 없을시 쿠키 기본값 생성 */
 		String cookieVal = Arrays.stream(req.getCookies())
 				.filter(e -> StringUtils.equals(e.getName(), cookieNm))
-				.findAny()
+				.findFirst()
 				.map(Cookie::getValue)
 				.orElse(UUID.randomUUID().toString().replaceAll("-", ""));
 		log.debug("cookieVal : {}", cookieVal);

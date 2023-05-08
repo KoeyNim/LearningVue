@@ -14,7 +14,7 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 
 import com.project.vue.common.Constants;
 import com.project.vue.common.exception.BizException;
-import com.project.vue.common.exception.CustomExceptionHandler.ErrorCode;
+import com.project.vue.common.exception.BizException.ErrorCode;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

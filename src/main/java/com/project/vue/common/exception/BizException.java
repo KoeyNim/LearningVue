@@ -1,8 +1,10 @@
 package com.project.vue.common.exception;
 
-import com.project.vue.common.exception.CustomExceptionHandler.ErrorCode;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonFormat.Shape;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 @Getter
 public class BizException extends RuntimeException {
@@ -19,4 +21,24 @@ public class BizException extends RuntimeException {
 		super(message, cause);
 	    this.errorCode = errorCode;
 	}
+
+    /**
+     * Error Code Enum
+     * @author KoeyNim-이민혁
+     */
+    @Getter
+    @JsonFormat(shape = Shape.OBJECT)
+    @RequiredArgsConstructor
+    public enum ErrorCode {
+
+    	BAD_REQUEST(400, "Bad Request"),
+    	UNAUTHORIZED(401, "Unauthorized"),
+    	NOT_FOUND(404, "Not Found"),
+    	INTERNAL_SERVER_ERROR(500, "Internal Server Error"),
+    	SERVICE_UNAVAILABLE(503, "Service Unavailable");
+
+    	private final int status;
+    	private final String error;
+    	
+    }
 }

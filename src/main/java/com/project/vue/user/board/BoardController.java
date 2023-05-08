@@ -22,7 +22,7 @@ import com.project.vue.common.PathConstants;
 import com.project.vue.common.SimpleResponse;
 import com.project.vue.common.excel.ExcelService;
 import com.project.vue.common.exception.BizException;
-import com.project.vue.common.exception.CustomExceptionHandler.ErrorCode;
+import com.project.vue.common.exception.BizException.ErrorCode;
 import com.project.vue.user.payload.BoardRequest;
 import com.project.vue.user.payload.BoardSaveRequest;
 

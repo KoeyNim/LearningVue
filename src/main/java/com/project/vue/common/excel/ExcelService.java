@@ -23,7 +23,7 @@ import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.springframework.stereotype.Component;
 
 import com.project.vue.common.exception.BizException;
-import com.project.vue.common.exception.CustomExceptionHandler.ErrorCode;
+import com.project.vue.common.exception.BizException.ErrorCode;
 
 import lombok.RequiredArgsConstructor;
 
