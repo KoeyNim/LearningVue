@@ -1,13 +1,18 @@
 <!DOCTYPE html>
 <html>
 <body>
-	<div class="error-info">
-		<ul>
-			<li>
-				400 ERROR
-				<em>잘못된 접근입니다.</em>
-			</li>
-		</ul>
-	</div>
+  <div class="error-info">
+    <ul>
+      <li>
+        400 ERROR
+        <em>잘못된 접근입니다.</em>
+      </li>
+        <li th:text="${errorResponse.timestamp}"></li>
+        <li th:text="${errorResponse.status}"></li>
+        <li th:text="${errorResponse.error}"></li>
+        <li th:text="${errorResponse.message}"></li>
+        <li th:text="${errorResponse.path}"></li>
+    </ul>
+  </div>
 </body>
 </html>

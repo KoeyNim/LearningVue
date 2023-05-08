@@ -41,7 +41,7 @@ public class PathController {
 		/** resource 경로 */
 		Resource resource = resourceLoader.getResource(
 				thymeleafProperties.getPrefix() + view + thymeleafProperties.getSuffix());
-		log.trace("{}", resource.getDescription());
+		log.trace("@@ PathController resource: {}", resource.getDescription());
 
 		if(!resource.exists()) {
 			throw new BizException("Not Found page : " + page, ErrorCode.NOT_FOUND);

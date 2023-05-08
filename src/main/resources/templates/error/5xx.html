@@ -1,13 +1,18 @@
 <!DOCTYPE html>
 <html>
 <body>
-	<div class="error-info">
-		<ul>
-			<li>
-				5xx ERROR
-				<em>내부 서버 오류가 발생했습니다.</em>
-			</li>
-		</ul>
-	</div>
+  <div class="error-info">
+    <ul>
+      <li>
+        5xx ERROR
+        <em>내부 서버 오류가 발생했습니다.</em>
+      </li>
+        <li th:text="${errorResponse.timestamp}"></li>
+        <li th:text="${errorResponse.status}"></li>
+        <li th:text="${errorResponse.error}"></li>
+        <li th:text="${errorResponse.message}"></li>
+        <li th:text="${errorResponse.path}"></li>
+    </ul>
+  </div>
 </body>
 </html>

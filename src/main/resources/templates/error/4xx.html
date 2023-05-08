@@ -1,11 +1,16 @@
 <!DOCTYPE html>
 <html>
 <body>
-	<div class="error-info">
+  <div class="error-info">
 		<ul>
 			<li>
-				4xx ERROR
+			 4xx ERROR
 			</li>
+	      <li th:text="${errorResponse.timestamp}"></li>
+	      <li th:text="${errorResponse.status}"></li>
+	      <li th:text="${errorResponse.error}"></li>
+	      <li th:text="${errorResponse.message}"></li>
+	      <li th:text="${errorResponse.path}"></li>
 		</ul>
 	</div>
 </body>

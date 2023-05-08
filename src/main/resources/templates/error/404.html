@@ -1,13 +1,18 @@
 <!DOCTYPE html>
 <html>
 <body>
-	<div class="error-info">
-		<ul>
-			<li>
-				404 ERROR
-				<em>페이지를 찾을 수 없습니다.</em>
-			</li>
-		</ul>
-	</div>
+  <div class="error-info">
+    <ul>
+      <li>
+        404 ERROR
+        <em>페이지를 찾을 수 없습니다.</em>
+      </li>
+        <li th:text="${errorResponse.timestamp}"></li>
+        <li th:text="${errorResponse.status}"></li>
+        <li th:text="${errorResponse.error}"></li>
+        <li th:text="${errorResponse.message}"></li>
+        <li th:text="${errorResponse.path}"></li>
+    </ul>
+  </div>
 </body>
 </html>
