@@ -11,5 +11,6 @@ import org.apache.poi.ss.usermodel.BorderStyle;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ExcelColumnOptions {
 	String headerName() default "";
-	BorderStyle ColumnStyle() default BorderStyle.THIN;
+	BorderStyle columnStyle() default BorderStyle.THIN;
+	int columnWidth() default 6000;
 }

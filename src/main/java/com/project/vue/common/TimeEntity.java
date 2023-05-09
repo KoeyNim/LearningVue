@@ -23,12 +23,12 @@ import lombok.Getter;
 public abstract class TimeEntity {
 
 	@CreatedDate
-	@ExcelColumnOptions(headerName = "작성일", ColumnStyle = BorderStyle.DASH_DOT)
+	@ExcelColumnOptions(headerName = "작성일", columnStyle = BorderStyle.DASH_DOT, columnWidth = 8000)
 	/** 작성일 */
 	private String registDate;
 
 	@LastModifiedDate
-	@ExcelColumnOptions(headerName = "수정일", ColumnStyle = BorderStyle.DASH_DOT)
+	@ExcelColumnOptions(headerName = "수정일", columnStyle = BorderStyle.DASH_DOT)
 	/** 수정일 */
 	private String modifyDate;
 

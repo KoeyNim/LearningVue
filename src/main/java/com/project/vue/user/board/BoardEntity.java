@@ -40,29 +40,29 @@ import lombok.ToString;
 public class BoardEntity extends TimeEntity {
 
 	@Id @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "BOARD_SEQ_NO_01_GENERATOR")
-	@ExcelColumnOptions(headerName = "No", ColumnStyle = BorderStyle.DASH_DOT)
+	@ExcelColumnOptions(headerName = "No", columnStyle = BorderStyle.DASH_DOT, columnWidth = 10000)
 	/** 게시글 기본키 */
 	private Long boardSeqno;
 
 	@NotBlank
-	@ExcelColumnOptions(headerName = "제목", ColumnStyle = BorderStyle.DOUBLE)
+	@ExcelColumnOptions(headerName = "제목", columnStyle = BorderStyle.DOUBLE, columnWidth = 10000)
 	/** 제목 */
 	private String title;
 
 	@NotBlank
 	@Column(columnDefinition = "LONGTEXT")
-	@ExcelColumnOptions(headerName = "내용", ColumnStyle = BorderStyle.MEDIUM_DASHED)
+	@ExcelColumnOptions(headerName = "내용", columnStyle = BorderStyle.MEDIUM_DASHED, columnWidth = 10000)
 	/** 내용 */
 	private String content;
 
 	@NotBlank
 	@Column(columnDefinition = "varchar(32)")
-	@ExcelColumnOptions(headerName = "작성자", ColumnStyle = BorderStyle.THICK)
+	@ExcelColumnOptions(headerName = "작성자", columnStyle = BorderStyle.THICK, columnWidth = 5000)
 	/** 작성자 */
 	private String userId;
 
 	@Column(columnDefinition = "BIGINT default 0")
-	@ExcelColumnOptions(headerName = "조회수", ColumnStyle = BorderStyle.DOTTED)
+	@ExcelColumnOptions(headerName = "조회수", columnStyle = BorderStyle.DOTTED, columnWidth = 5000)
 	/** 조회수 */
 	private Integer count = 0;
 

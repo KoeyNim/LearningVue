@@ -22,6 +22,7 @@ import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.springframework.stereotype.Component;
 
+import com.project.vue.common.excel.annotation.ExcelFileName;
 import com.project.vue.common.exception.BizException;
 import com.project.vue.common.exception.BizException.ErrorCode;
 
@@ -32,18 +33,22 @@ import lombok.RequiredArgsConstructor;
 public class ExcelService<T> {
 
 	private SXSSFWorkbook wb; // 쓰기전용이며 읽기 불가능
-	private ExcelDTO resource;
+	private List<ExcelDTO> resources;
 	private SXSSFSheet sheet;
-	private List<T> dataList;
+	private String excelNm;
+	private List<T> excelData;
 	private int rowNo;
 
 	/**
-	 *  생성자
+	 * Constructor
+	 * @param data 실 데이터 리스트
+	 * @param cls 클래스 타입
 	 */
-	public ExcelService(List<T> dataList, Class<T> type) {
+	public ExcelService(List<T> data, Class<T> cls) {
 		this.wb = new SXSSFWorkbook(100); // flush 범위 (기본값 100, -1 일 경우 제한 없음)
-		this.resource = ExcelUtils.getResource(type);
-		this.dataList = dataList;
+		this.resources = ExcelUtils.getResources(cls);
+		this.excelData = data;
+		this.excelNm = cls.getAnnotation(ExcelFileName.class).fileName();
 	}
 
 
@@ -55,18 +60,16 @@ public class ExcelService<T> {
 	 */
 	public String create(OutputStream os) throws IOException {
 		rowNo = 0;
-		sheet = wb.createSheet(resource.getExcelNm());
+		sheet = wb.createSheet(excelNm);
 
-		renderHeaderRow(resource.getHeaderList());
-		renderDataRow(dataList, resource.getColList(), resource.getColStyle());
-		renderColimnSize(resource.getColList().size());
+		renderExcel(excelData, resources);
 
 		wb.write(os);
 		wb.dispose();
 		wb.close();
 
 		StringBuilder fileNm = new StringBuilder();
-		fileNm.append(resource.getExcelNm());
+		fileNm.append(excelNm);
 		fileNm.append("_");
 		fileNm.append(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy.MM.dd")));
 		fileNm.append(FilenameUtils.EXTENSION_SEPARATOR + "xlsx");
@@ -75,66 +78,68 @@ public class ExcelService<T> {
 	}
 
 	/**
-	 * 헤더 Row
-	 * @param headerList 헤더 리스트
+	 * 엑셀 렌더링
+	 * @param excelData 실 데이터 리스트
+	 * @param resources 옵션 데이터 리스트
 	 */
-	private void renderHeaderRow(List<String> headerList) {
+	private void renderExcel(List<T> excelData, List<ExcelDTO> resources) {
 		SXSSFRow headerRow = sheet.createRow(rowNo++);
+		List<String> colsNm = resources.stream()
+				.map(ExcelDTO::getColNm).collect(Collectors.toList());
+		List<Integer> colsWidth = resources.stream()
+				.map(ExcelDTO::getColWidth).collect(Collectors.toList());
+		List<CellStyle> dataCellStyles = resources.stream()
+				.map(resource -> dataCellStyle(resource.getColStyle())).collect(Collectors.toList());
+
 		int cellIdx = 0;
-		for (String header : headerList) {
-			SXSSFCell cell = headerRow.createCell(cellIdx++, CellType.STRING);
-			cell.setCellValue(header);
-			cell.setCellStyle(makeHeaderCellStyle());
+		/** header cell 세팅 */
+		for (var resource : resources) {
+			SXSSFCell headerCell = headerRow.createCell(cellIdx++, CellType.STRING);
+			headerCell.setCellValue(resource.getHeaderNm());
+			headerCell.setCellStyle(headerCellStyle());
 		}
-	}
 
-	/**
-	 * 데이터 Row
-	 * @param dataList data 리스트
-	 * @param colList column 리스트
-	 * @param colStyle column style 리스트
-	 */
-	private void renderDataRow(List<T> dataList, List<String> colList, List<BorderStyle> colStyle) {
-		List<CellStyle> cellStyleList = colStyle.stream()
-				.map(cellStyle -> makeDataCellStyle(cellStyle)).collect(Collectors.toList());
-
-		for (T data : dataList) {
-			SXSSFRow row = sheet.createRow(rowNo++);
-			for ( int columnIdx = 0 ; columnIdx < colList.size(); columnIdx++ ) {
-				renderDataCell(row, columnIdx, data, colList, cellStyleList);
+		/** data row, cell 세팅 */
+		for (var data : excelData) {
+			SXSSFRow dataRow = sheet.createRow(rowNo++);
+			for ( int colIdx = 0 ; colIdx < resources.size(); colIdx++ ) {
+				renderDataCell(dataRow, colIdx, data, colsNm, dataCellStyles);
+				if (sheet.getPhysicalNumberOfRows() > 0) {
+					sheet.setColumnWidth(colIdx, colsWidth.get(colIdx));
+				}
 			}
 		}
 	}
 
 	/**
 	 * 데이터 Cell 매핑
-	 * @param row row
-	 * @param columnIdx column id
-	 * @param data data
-	 * @param colList column 리스트
-	 * @param cellStyleList cell style 리스트
+	 * @param dataRow dataRow
+	 * @param colIdx column index
+	 * @param data 실 데이터
+	 * @param cols column 리스트
+	 * @param cellStyles cell style 리스트
 	 */
-	private void renderDataCell(SXSSFRow row, int columnIdx, T data, List<String> colList, List<CellStyle> cellStyleList) {
-		SXSSFCell cell = row.createCell(columnIdx);
+	private void renderDataCell(SXSSFRow dataRow, int colIdx, T data, List<String> colsNm, List<CellStyle> cellStyles) {
+		SXSSFCell cell = dataRow.createCell(colIdx);
 		try {
 			// 해당하는 method를 찾음
-			Method method = data.getClass().getMethod("get" + colList.get(columnIdx));
+			Method method = data.getClass().getMethod("get" + colsNm.get(colIdx));
 			// method 실행
 			Object methodValue = method.invoke(data);
 
 			if (methodValue instanceof Integer) {
 				cell.setCellValue((Integer)methodValue);
-				cell.setCellStyle(cellStyleList.get(columnIdx));
+				cell.setCellStyle(cellStyles.get(colIdx));
 				return;
 			}
 
 			if (methodValue instanceof Long) {
 				cell.setCellValue((Long)methodValue);
-				cell.setCellStyle(cellStyleList.get(columnIdx));
+				cell.setCellStyle(cellStyles.get(colIdx));
 				return;
 			}
 			cell.setCellValue(ObjectUtils.isEmpty(methodValue) ? "" : methodValue.toString());
-			cell.setCellStyle(cellStyleList.get(columnIdx));
+			cell.setCellStyle(cellStyles.get(colIdx));
 		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
 			throw new BizException("Excel Cell Mapping Error", ex, ErrorCode.INTERNAL_SERVER_ERROR);
 		}
@@ -144,7 +149,7 @@ public class ExcelService<T> {
 	 * 헤더 Cell 스타일
 	 * @return CellStyle
 	 */
-	private CellStyle makeHeaderCellStyle() {
+	private CellStyle headerCellStyle() {
 		CellStyle headerCellStyle = wb.createCellStyle();
 		Font font = wb.createFont();
 
@@ -166,7 +171,7 @@ public class ExcelService<T> {
 	 * @param style 셀 테두리 스타일
 	 * @return CellStyle
 	 */
-	private CellStyle makeDataCellStyle(BorderStyle style) {
+	private CellStyle dataCellStyle(BorderStyle style) {
 		CellStyle dataCellStyle = wb.createCellStyle();
 		Font font = wb.createFont();
 
@@ -178,18 +183,5 @@ public class ExcelService<T> {
 		dataCellStyle.setFont(font);
 
 		return dataCellStyle;
-	}
-
-	/**
-	 * Column 사이즈 지정
-	 * @param colListSize List 최대길이
-	 */
-	private void renderColimnSize(int colListSize) {
-		if (sheet.getPhysicalNumberOfRows() > 0) {
-			for (int i = 0 ; i <= colListSize ; i++) {
-				int currentColumnWidth = sheet.getColumnWidth(i);
-				sheet.setColumnWidth(i, (currentColumnWidth + 2500));
-			}
-		}
 	}
 }
