@@ -24,7 +24,7 @@ import org.springframework.stereotype.Component;
 
 import com.project.vue.common.excel.annotation.ExcelFileName;
 import com.project.vue.common.exception.BizException;
-import com.project.vue.common.exception.BizException.ErrorCode;
+import com.project.vue.common.exception.ErrorCode;
 
 import lombok.RequiredArgsConstructor;
 

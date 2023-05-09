@@ -17,7 +17,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.vue.common.CookieCommon;
 import com.project.vue.common.exception.BizException;
-import com.project.vue.common.exception.BizException.ErrorCode;
+import com.project.vue.common.exception.ErrorCode;
 import com.project.vue.common.file.FileService;
 import com.project.vue.common.image.ImageService;
 import com.project.vue.common.image.ImageTempResponse;

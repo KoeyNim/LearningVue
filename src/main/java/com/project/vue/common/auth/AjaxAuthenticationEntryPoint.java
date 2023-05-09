@@ -15,7 +15,7 @@ import org.springframework.security.web.authentication.LoginUrlAuthenticationEnt
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.vue.common.exception.BizException;
-import com.project.vue.common.exception.BizException.ErrorCode;
+import com.project.vue.common.exception.ErrorCode;
 
 import lombok.extern.slf4j.Slf4j;
 

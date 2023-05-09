@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.codec.Hex;
 
 import com.project.vue.common.exception.BizException;
-import com.project.vue.common.exception.BizException.ErrorCode;
+import com.project.vue.common.exception.ErrorCode;
 
 import lombok.extern.slf4j.Slf4j;
 

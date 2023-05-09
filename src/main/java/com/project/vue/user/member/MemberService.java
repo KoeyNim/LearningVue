@@ -6,7 +6,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.project.vue.common.exception.BizException;
-import com.project.vue.common.exception.BizException.ErrorCode;
+import com.project.vue.common.exception.ErrorCode;
 import com.project.vue.user.payload.MemberSignUpRequest;
 import com.project.vue.user.role.RoleEnum;
 import com.project.vue.user.role.RoleRepository;
@@ -20,7 +20,7 @@ public class MemberService {
 	private final MemberRepository memberRepository;
 	private final RoleRepository roleRepository;
 	private final BCryptPasswordEncoder passwordEncoder;
-	
+
 	@Transactional
     public void save(MemberSignUpRequest req) {
 		if (isUserId(req.getUserId())) {

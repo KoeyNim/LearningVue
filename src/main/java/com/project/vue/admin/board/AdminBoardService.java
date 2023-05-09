@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 import com.project.vue.admin.AdminSearchSpecification;
 import com.project.vue.admin.payload.AdminBoardRequest;
 import com.project.vue.common.exception.BizException;
-import com.project.vue.common.exception.BizException.ErrorCode;
+import com.project.vue.common.exception.ErrorCode;
 import com.project.vue.common.file.FileRepository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 

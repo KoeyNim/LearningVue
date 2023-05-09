@@ -17,7 +17,7 @@ import com.project.vue.api.payload.VilageFcstInfoRequest;
 import com.project.vue.api.payload.VilageFcstInfoResponse;
 import com.project.vue.common.Constants;
 import com.project.vue.common.exception.BizException;
-import com.project.vue.common.exception.BizException.ErrorCode;
+import com.project.vue.common.exception.ErrorCode;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
