@@ -51,7 +51,6 @@ public class ExcelService<T> {
 		this.excelNm = cls.getAnnotation(ExcelFileName.class).fileName();
 	}
 
-
 	/**
 	 * 엑셀 생성
 	 * @param os OutputStream
@@ -145,7 +144,7 @@ public class ExcelService<T> {
 		}
 	}
 
-	/** 
+	/**
 	 * 헤더 Cell 스타일
 	 * @return CellStyle
 	 */
