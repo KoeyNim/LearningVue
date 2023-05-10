@@ -15,16 +15,14 @@ import org.springframework.security.crypto.codec.Hex;
 import com.project.vue.common.exception.BizException;
 import com.project.vue.common.exception.ErrorCode;
 
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
 @Convert
 public class StringCryptoConverter implements AttributeConverter<String, String> {
-	
+
 	/** 시크릿 키 */
 	@Value("${site.secretKey}")
-	private String Secret_KEY;
+	private String secretKey;
 
+	private Key key = new SecretKeySpec(secretKey.getBytes(), "AES");
 	private static final String ALGORITHM = "AES/ECB/PKCS5Padding";
 
 	/**
@@ -32,15 +30,15 @@ public class StringCryptoConverter implements AttributeConverter<String, String>
 	 */
 	@Override
 	public String convertToDatabaseColumn(String attribute) {
-		if (StringUtils.isBlank(attribute)) {
-			throw new BizException("Null" + attribute, ErrorCode.INTERNAL_SERVER_ERROR);
-		}
-		Key key = new SecretKeySpec(Secret_KEY.getBytes(), "AES");
+		if (StringUtils.isBlank(attribute)) throw new BizException("Null" + attribute, ErrorCode.INTERNAL_SERVER_ERROR);
+
 		try {
 			Cipher cipher = Cipher.getInstance(ALGORITHM);
 			cipher.init(Cipher.ENCRYPT_MODE, key);
 			return new String(Hex.encode(cipher.doFinal(attribute.getBytes("UTF-8"))));
 //			return new String(Base64Utils.encode(cipher.doFinal(attribute.getBytes("UTF-8"))));
+		} catch (BadPaddingException ex) {
+			throw new BizException("Incorrect Secret Key", ex, ErrorCode.INTERNAL_SERVER_ERROR);
 		} catch (Exception ex) {
 			throw new BizException("Convert To Database Column Error", ex, ErrorCode.INTERNAL_SERVER_ERROR);
 		} 
@@ -51,15 +49,13 @@ public class StringCryptoConverter implements AttributeConverter<String, String>
 	 */
 	@Override
 	public String convertToEntityAttribute(String dbData) {
-		Key key = new SecretKeySpec(Secret_KEY.getBytes(), "AES");
 		try {
 			Cipher cipher = Cipher.getInstance(ALGORITHM);
 			cipher.init(Cipher.DECRYPT_MODE, key);
 			return new String(cipher.doFinal(Hex.decode(dbData)), "UTF-8");
 //			return new String(cipher.doFinal(Base64Utils.decode(dbData.getBytes("UTF-8"))));
-		} catch (BadPaddingException e) {
-			log.info("Incorrect secret key");
-			return null;
+		} catch (BadPaddingException ex) {
+			throw new BizException("Incorrect Secret Key", ex, ErrorCode.INTERNAL_SERVER_ERROR);
 		} catch (Exception ex) {
 			throw new BizException("Convert To Entity Attribute Error", ex, ErrorCode.INTERNAL_SERVER_ERROR);
 		} 
