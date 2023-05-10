@@ -5,7 +5,7 @@
     <script th:src="@{/static/js/board/board-form.js}"></script>
 </head>
 <body>
-	<div id="page" layout:fragment="content">
+	<div id="content" layout:fragment="content">
 		<span class="pagetit">{{ result.boardSeqno ? '게시글 수정' : '게시글 등록' }}</span>
 		<span>{{ errors.first('title') }}</span>
 		<span class="form-label">제목 *</span>
@@ -21,11 +21,11 @@
 		</div>
 		<div v-if="result.fileEntity">
 			<span class="form-label">파일</span>
-	        <div class="form-field">
-	            <input type="text" class="form-input full" id="fileName" name="fileName" 
-	            maxlength="20" v-model="result.fileEntity.orignFileNm" disabled="disabled"/>
-	        </div>
-        </div>
+      <div class="form-field">
+          <input type="text" class="form-input full" id="fileName" name="fileName" 
+          maxlength="20" v-model="result.fileEntity.orignFileNm" disabled="disabled"/>
+      </div>
+     </div>
 		<div class="input-container"> 
 		    <input type="file" ref="file" /> 
 		</div>

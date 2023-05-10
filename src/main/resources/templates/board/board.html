@@ -1,64 +1,62 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	layout:decorate="~{layout/layout}">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/layout}">
 <head>
 <script th:src="@{/static/js/board/board.js}"></script>
 </head>
 <body>
-	<div id="contents" layout:fragment="content">
-        <div class="tbl-sort-box flex-box flex-spc-btw">
-			<span class="pagetit">게시글 리스트</span>
-                <select class="form-select" v-model="srch.srchKey">
-                    <option v-for="data in srchOptions" :value="data.value">
-                       {{ data.text }}
-                    </option>
-                </select>
-                <span class="form-search">
-                    <input type="text" class="form-input" :maxlength="20" v-model="srch.srchVal" @keydown.enter.prevent="fnSrch" />
-                    <button class="btn" @click.prevent="fnSrch"></button>
-                </span>
-				<select class="form-select" id="pageSizeSelector" v-model="srch.size" @change="fnSrch">
-					<option v-for="data in options" :value="data">
-					   {{ data }}개씩
-					</option>
-				</select>
-		</div>
-		<table class="list-tbl">
-			<tr>
-				<th>No</th>
-				<th>제목</th>
-				<!--<th>내용</th>-->
-				<th>작성자</th>
-				<th>작성일</th>
-				<th>조회수</th>
-			</tr>
-			<tbody v-if="page.empty">
-				<tr>
-					<td colspan="15" class="fs16 fc-lightgrey" style="text-align: center;">조회된 내용이 없습니다.</td>
-				</tr>
-			</tbody>
-			<tbody class="list" v-else>
-				<tr v-for="(data, index) in page.content" @click="fnDetail($event, data.boardSeqno)">
-					<td class="efw500">{{page.totalElements - index - (page.pageable.pageNumber * page.pageable.pageSize)}}</td>
-					<td>{{data.title}}</td>
-					<!--/**<td style="text-overflow: ellipsis; overflow: hidden">{{data.content.replace(/(<([^>]+)>)/ig,"")}}</td>**/-->
-					<td>{{data.userId}}</td>
-					<td>{{dayjs(data.registDate).format('YYYY.MM.DD HH:mm')}}</td>
-					<td class="efw500">{{data.count}}</td>
-				</tr>
-			</tbody>
-		</table>
-		<!-- start paginate -->
-    <th:block th:replace="frags/paginate :: paginate"></th:block>
-    <!-- end paginate -->
-		<div class="card-btn-box noline flex-box flex-spc-btw">
-			<div class="lt"></div>
-			<div class="rt">
-                <a class="blue btn md sm-h solidbtn" @click.prevent="fnDwldExcel($event)">엑셀 다운로드</a>
-				<button type="button" class="btn solidbtn md mo-full sm-h pink" @click.prevent="fnRegist($event)">등록</button>
-				<button type="button" class="btn solidbtn md mo-full sm-h lightblue" @click.prevent="location.href='/'">이전</button>
-			</div>
+<div id="content" layout:fragment="content">
+	<div class="tbl-sort-box flex-box flex-spc-btw">
+		<span class="pagetit">게시글 리스트</span>
+
+		<select class="form-select" v-model="srch.srchKey">
+			<option v-for="data in srchOptions" :value="data.value">{{ data.text }}</option>
+		</select>
+
+		<span class="form-search">
+		  <input type="text" class="form-input" :maxlength="20" v-model="srch.srchVal" @keydown.enter.prevent="fnSrch" />
+		  <button class="btn" @click.prevent="fnSrch"></button>
+		</span>
+
+		<select class="form-select" id="pageSizeSelector" v-model="srch.size" @change="fnSrch">
+			<option v-for="data in options" :value="data">{{ data }}개씩</option>
+		</select>
+	</div>
+	<table class="list-tbl">
+		<tr>
+			<th>No</th>
+			<th>제목</th>
+			<!--<th>내용</th>-->
+			<th>작성자</th>
+			<th>작성일</th>
+			<th>조회수</th>
+		</tr>
+	<tbody v-if="page.empty">
+		<tr>
+		 <td colspan="15" class="fs16 fc-lightgrey" style="text-align: center;">조회된 내용이 없습니다.</td>
+		</tr>
+	</tbody>
+	<tbody class="list" v-else>
+		<tr v-for="(data, index) in page.content" @click="fnDetail($event, data.boardSeqno)">
+			<td class="efw500">{{page.totalElements - index - (page.pageable.pageNumber * page.pageable.pageSize)}}</td>
+			<td>{{data.title}}</td>
+			<!--/**<td style="text-overflow: ellipsis; overflow: hidden">{{data.content.replace(/(<([^>]+)>)/ig,"")}}</td>**/-->
+			<td>{{data.userId}}</td>
+			<td>{{dayjs(data.registDate).format('YYYY.MM.DD HH:mm')}}</td>
+			<td class="efw500">{{data.count}}</td>
+		</tr>
+	</tbody>
+	</table>
+	<!-- start paginate -->
+	<th:block th:replace="frags/paginate :: paginate"></th:block>
+	<!-- end paginate -->
+	<div class="card-btn-box noline flex-box flex-spc-btw">
+		<div class="lt"></div>
+		<div class="rt">
+		  <a class="blue btn md sm-h solidbtn" @click.prevent="fnDwldExcel($event)">엑셀 다운로드</a>
+		  <button type="button" class="btn solidbtn md mo-full sm-h pink" @click.prevent="fnRegist($event)">등록</button>
+		  <button type="button" class="btn solidbtn md mo-full sm-h lightblue" @click.prevent="location.href='/'">이전</button>
 		</div>
 	</div>
+</div>
 </body>
 </html>

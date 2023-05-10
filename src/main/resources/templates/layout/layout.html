@@ -35,12 +35,40 @@
     <script th:src="@{/static/scripts/common.js}"></script>
 </head>
 <body>
-<div layout:fragment="content"> 공통 레이아웃 </div>
+<th:block layout:fragment="header">
+  <nav class="nav2">
+    <a th:href="@{/}">LOGO</a>
 
+    <ul>
+      <li><a th:href="@{/board}">게시판</a></li>
+      <li><a th:href="@{#}">네비1</a></li>
+      <li><a th:href="@{#}">네비2</a></li>
+      <li><a th:href="@{#}">네비3</a></li>
+      <li><a th:href="@{#}">네비4</a></li>
+    </ul>
+
+		<select>
+		  <option>=test=</option>
+		  <option>=test=</option>
+		  <option>=test=</option>
+		</select>
+  </nav>
+
+  <h2 th:text="${userId}"></h2>
+  <a th:if="${userId == 'anonymousUser'}" th:href="@{/member-login}">로그인</a>
+  <form th:unless="${userId == 'anonymousUser'}" method="post" th:action="@{/logout}">
+      <!-- @click : List sessionStorage option 삭제 -->
+      <button type="submit" @click="sessionStorage.removeItem('pageOptions');">로그아웃</button>
+  </form>
+  <a th:if="${userId == 'anonymousUser'}" th:href="@{/member-signup}">회원가입</a>
+</th:block>
+
+<th:block layout:fragment="content"> 공통 content </th:block>
 <script type="text/javascript">
-$(document).ready(function () {
-    document.title = $('.pagetit').text() || $('.login-tit').text();
-});
+$().ready(() => document.title = $('.pagetit').text() || $('.login-tit').text());
 </script>
 </body>
+<th:block layout:fragment="footer">
+  <div>공통 footer</div>
+</th:block>
 </html>

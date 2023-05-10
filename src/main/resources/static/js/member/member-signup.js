@@ -1,7 +1,7 @@
 let vu;
 $(() => {
     vu = new Vue({
-        el: '#page',
+        el: '#content',
         data: {
             member: {},
             change: true

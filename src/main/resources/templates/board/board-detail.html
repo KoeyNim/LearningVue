@@ -6,19 +6,19 @@
 <script th:src="@{/static/js/board/board-detail.js}"></script>
 </head>
 <body>
-	<div id="page" layout:fragment="content">
+	<div id="content" layout:fragment="content">
 		<span class="pagetit">게시글 상세</span></br>
 		<div class="mt0 card-wrap">
 			<div class="card">
 				<fieldset class="mt10">
 					<div class="form-wrap">
-                       <div class="form-row">
-                            <span class="pt0 form-label">조회수​</span>
-                            <div class="form-field">
-                                <p class="form-txt">{{result.count}}​</p>
-                            </div>
-                        </div>
-                        <span class="card-hr"></span>
+           <div class="form-row">
+	           <span class="pt0 form-label">조회수​</span>
+	           <div class="form-field">
+	               <p class="form-txt">{{result.count}}​</p>
+	           </div>
+            </div>
+            <span class="card-hr"></span>
 						<div class="form-row">
 							<span class="pt0 form-label">아이디​</span>
 							<div class="form-field">
@@ -56,13 +56,13 @@
 							</div>
 						</div>
              <div v-if="result.fileEntity">
-                 <span class="card-hr"></span>
-                 <div class="form-row">
-                     <span class="pt0 form-label">파일 다운로드</span>
-                     <div class="form-field">
-                         <a :href="filePath"><p class="form-txt">{{result.fileEntity.orignFileNm}}</p></a>
-                     </div>
-                 </div>
+	             <span class="card-hr"></span>
+	             <div class="form-row">
+	               <span class="pt0 form-label">파일 다운로드</span>
+	               <div class="form-field">
+                  <a :href="filePath"><p class="form-txt">{{result.fileEntity.orignFileNm}}</p></a>
+	               </div>
+	             </div>
              </div>
 					</div>
 				</fieldset>

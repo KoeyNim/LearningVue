@@ -3,7 +3,7 @@ $(() => {
     const saveid = localStorage.getItem('saveid');
 
     vu = new Vue({
-        el: '#page',
+        el: '#content',
         data: {
             member:{
                 userId : !!saveid ? saveid : undefined

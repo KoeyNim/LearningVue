@@ -6,7 +6,7 @@ $(() => {
     }
 
     vu = new Vue({
-        el: '#contents',
+        el: '#content',
         data: {
             srch: !!history.state ? history.state.srch : {
             	page:0,

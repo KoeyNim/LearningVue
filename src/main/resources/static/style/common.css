@@ -98,3 +98,38 @@ html {
 .form-field label {
   cursor: pointer;
 }
+
+.nav2 {
+  width: 100%;
+  position: relative;
+  text-align: center;
+}
+.nav2 > a {
+  line-height: 80px;
+  display: block;
+  font-size: 30px;
+  font-weight: 900;
+  position: absolute;
+  left: 30px;
+}
+.nav2 > select {
+  padding: 0 20px;
+  height: 30px;
+  background-color: #1b2035;
+  color: #fff;
+  position: absolute;
+  right: 30px;
+  top: 50%;
+  transform: translateY(-15px);
+  border: 2px solid #fff;
+  border-radius: 30px;
+}
+.nav2 > ul {
+  display: inline-block;
+}
+.nav2 > ul li {
+  float: left;
+  list-style: none;
+  line-height: 80px;
+  padding: 0 30px;
+}

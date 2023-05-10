@@ -3,7 +3,7 @@ $(() => {
   const boardSeqno = URLSearch.get('boardSeqno');;
 
   vu = new Vue({
-    el: '#page',
+    el: '#content',
     mixins: [textEditorMixin],
     data: {},
     created() {

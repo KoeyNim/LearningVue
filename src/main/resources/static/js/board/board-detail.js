@@ -3,7 +3,7 @@ $(() => {
     const boardSeqno = sessionStorage.getItem('boardSeqno');
 
     vu = new Vue({
-        el: '#page',
+        el: '#content',
         data: {
             result: {},
             filePath: undefined,
