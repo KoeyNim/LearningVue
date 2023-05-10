@@ -22,7 +22,6 @@ public class StringCryptoConverter implements AttributeConverter<String, String>
 	@Value("${site.secretKey}")
 	private String secretKey;
 
-	private Key key = new SecretKeySpec(secretKey.getBytes(), "AES");
 	private static final String ALGORITHM = "AES/ECB/PKCS5Padding";
 
 	/**
@@ -33,6 +32,7 @@ public class StringCryptoConverter implements AttributeConverter<String, String>
 		if (StringUtils.isBlank(attribute)) throw new BizException("Null" + attribute, ErrorCode.INTERNAL_SERVER_ERROR);
 
 		try {
+			Key key = new SecretKeySpec(secretKey.getBytes(), "AES");
 			Cipher cipher = Cipher.getInstance(ALGORITHM);
 			cipher.init(Cipher.ENCRYPT_MODE, key);
 			return new String(Hex.encode(cipher.doFinal(attribute.getBytes("UTF-8"))));
@@ -50,6 +50,7 @@ public class StringCryptoConverter implements AttributeConverter<String, String>
 	@Override
 	public String convertToEntityAttribute(String dbData) {
 		try {
+			Key key = new SecretKeySpec(secretKey.getBytes(), "AES");
 			Cipher cipher = Cipher.getInstance(ALGORITHM);
 			cipher.init(Cipher.DECRYPT_MODE, key);
 			return new String(cipher.doFinal(Hex.decode(dbData)), "UTF-8");
