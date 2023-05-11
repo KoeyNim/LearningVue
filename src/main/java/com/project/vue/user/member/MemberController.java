@@ -24,14 +24,24 @@ public class MemberController {
 
 	private final MemberService memberService;
 
+	/**
+	 * 유저 ID 체크
+	 * @param userId 유저 ID
+	 * @return ResponseEntity<SimpleResponse>
+	 */
 	@GetMapping("idchk")
 	public ResponseEntity<SimpleResponse> idChk(String userId) {
 		log.debug("api/v1/member/idchk - gets - userId : {}", userId);
-		return 	memberService.isUserId(userId) ? ResponseEntity.status(HttpStatus.CONFLICT).body(SimpleResponse.builder()
-				.success(false).message("이미 사용중인 ID 입니다.").statusCode(409).build())
+		return 	memberService.isUserId(userId) ? ResponseEntity.status(HttpStatus.CONFLICT).body(
+				SimpleResponse.builder().success(false).message("이미 사용중인 ID 입니다.").statusCode(HttpStatus.CONFLICT.value()).build())
 				: ResponseEntity.ok(SimpleResponse.builder().message("사용 가능한 ID 입니다.").build());
 	}
 
+	/**
+	 * 유저 회원가입
+	 * @param req MemberSignUpRequest
+	 * @return ResponseEntity<SimpleResponse>
+	 */
 	@PostMapping("signup")
 	public ResponseEntity<SimpleResponse> signUp(@RequestBody MemberSignUpRequest req) {
 		log.debug("api/v1/member/signup - posts - req : {}", req);

@@ -12,6 +12,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.annotation.web.configurers.RequestCacheConfigurer;
+import org.springframework.security.core.session.SessionRegistry;
+import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler;
@@ -39,13 +41,13 @@ public class WebSecurityConfig {
 	private final RoleService roleService;
 
 	/**
-	 * 관리자 URL 
+	 * 관리자 URL
 	 */
 	@Value("${admin.url}")
 	private String adminURL;
 
     /**
-     * 비밀번호 암호화를 위한 Encoder 설정 
+     * 유저 비밀번호 암호화 Bean
      */
     @Bean
     BCryptPasswordEncoder bCryptPasswordEncoder() {
@@ -53,7 +55,15 @@ public class WebSecurityConfig {
     }
 
     /**
-     * 권한 계층 설정
+     * 세션 레지스트리 관련 Bean
+     */
+    @Bean
+    public SessionRegistry sessionRegistry() {
+        return new SessionRegistryImpl();
+    }
+
+    /**
+     * 권한 계층 Handler Bean
      * @return {@link DefaultWebSecurityExpressionHandler}
      */
     @Bean
@@ -67,7 +77,7 @@ public class WebSecurityConfig {
     }
 
     /**
-     * CORS 설정 (응답 서버에서만 설정)
+     * CORS (응답 서버에서만 설정) Bean
      * @return {@link CorsConfigurationSource}
      */
     @Bean
@@ -102,6 +112,13 @@ public class WebSecurityConfig {
         return source;
     }
 
+    /**
+     * 정적 데이터(resources) 관련 설정 Bean
+     * Order -> 실행 우선순위
+     * @param http HttpSecurity
+     * @return SecurityFilterChain
+     * @throws Exception
+     */
     @Bean
     @Order(0)
     SecurityFilterChain resources(HttpSecurity http) throws Exception {
@@ -129,6 +146,12 @@ public class WebSecurityConfig {
                 .build();
     }
 
+    /**
+     * 각종 Security 설정 Bean
+     * @param http HttpSecurity
+     * @return SecurityFilterChain
+     * @throws Exception
+     */
     @Bean
     SecurityFilterChain security(HttpSecurity http) throws Exception {
         return http

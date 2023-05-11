@@ -4,6 +4,26 @@ html {
   font-size: 18px;
 }
 
+.test {
+  bottom: 8px;
+  right: 16px;
+  text-align: right;
+}
+
+.logo {
+  width: 100px;
+  height: 100px;
+  margin: 60px auto;
+  background:#f8f8f8 url('../images/common/logo.png') no-repeat center center;
+  background-size: cover; /** 크기 자동 맞춤 */
+  transition: all ease 1s;
+}
+
+/** mouse hover시 회전 */
+.logo:hover {
+  transform: rotate( 360deg ); 
+}
+
 .pagetit {
 	font-weight: 500;
 	font-size: 1.5rem;
@@ -39,12 +59,15 @@ html {
     text-align:center;
     font-size:0;
  }
+ 
 .page_nation {
     display:inline-block;
 }
+
 .page_nation .none {
     display:none;
 }
+
 .page_nation a {
     display:block;
     margin:0 3px;
@@ -63,10 +86,12 @@ html {
 .page_nation .arrow {
     border:1px solid #ccc;
 }
+
 .page_nation .prev {
     background:#f8f8f8 url('../images/common/page_prev.png') no-repeat center center;
     margin-right:7px;
 }
+
 .page_nation .next {
     background:#f8f8f8 url('../images/common/page_next.png') no-repeat center center;
     margin-left:7px;
@@ -95,6 +120,7 @@ html {
 .form-field input[type='radio'] {
   cursor: pointer;
 }
+
 .form-field label {
   cursor: pointer;
 }
@@ -104,6 +130,7 @@ html {
   position: relative;
   text-align: center;
 }
+
 .nav2 > a {
   line-height: 80px;
   display: block;
@@ -112,6 +139,7 @@ html {
   position: absolute;
   left: 30px;
 }
+
 .nav2 > select {
   padding: 0 20px;
   height: 30px;
@@ -124,9 +152,17 @@ html {
   border: 2px solid #fff;
   border-radius: 30px;
 }
+
+.nav2 > .test {
+  padding: 0 20px;
+  height: 30px;
+  position: inherit;
+}
+
 .nav2 > ul {
   display: inline-block;
 }
+
 .nav2 > ul li {
   float: left;
   list-style: none;

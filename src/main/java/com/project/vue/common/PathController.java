@@ -34,9 +34,10 @@ public class PathController {
 	 * @return String
 	 */
 	@GetMapping("{page}")
-	public String page(@PathVariable String page) {
+	public String page(@PathVariable String page, Model model) {
 		log.debug("page: {}", page);
 		String view = getView(page);
+		String userId = SecurityContextHolder.getContext().getAuthentication().getName();
 
 		/** resource 경로 */
 		Resource resource = resourceLoader.getResource(
@@ -47,9 +48,11 @@ public class PathController {
 			throw new PathException("Not Found page : " + page, ErrorCode.NOT_FOUND);
 		}
 
-		if (page.contains("member") && !SecurityContextHolder.getContext().getAuthentication().getName().equals("anonymousUser")) {
+		if (page.contains("member") && !userId.equals("anonymousUser")) {
 			view = "redirect:board";
 		}
+
+		model.addAttribute("userId", userId);
 		return view;
 	}
 

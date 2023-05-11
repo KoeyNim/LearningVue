@@ -9,6 +9,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import com.project.vue.common.exception.BizException;
+import com.project.vue.common.exception.ErrorCode;
 import com.project.vue.user.member.MemberEntity;
 import com.project.vue.user.member.MemberRepository;
 
@@ -24,24 +26,26 @@ public class WebAuthenticationProvider implements AuthenticationProvider {
 	private final BCryptPasswordEncoder passwordEncoder;
 
 	@Override
-	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+	public Authentication authenticate(Authentication authentication) {
 		log.debug("## WebAuthenticationProvider");
 		log.debug("## authentication {}", authentication);
+		try {
+			String userId = authentication.getName();
+			String userPwd = (String) authentication.getCredentials();
+			log.trace("## userId: {}, userPwd: {}", userId, userPwd);
 
-		String userId = authentication.getName();
-		String userPwd = (String) authentication.getCredentials();
-		log.debug("## userId: {}", userId);
-		log.trace("## userPwd: {}", userPwd);
+			MemberEntity memberEntity = memberRepository.findByUserId(userId)
+					.orElseThrow(() -> new UsernameNotFoundException("Username Not Found"));
 
-		MemberEntity find = memberRepository.findByUserId(userId)
-				.orElseThrow(() -> new UsernameNotFoundException("Username Not Found"));
+			if(!(passwordEncoder.matches(userPwd, memberEntity.getUserPwd()))) {
+				throw new BadCredentialsException("Bad Credential");
+			}
 
-		if(!(passwordEncoder.matches(userPwd, find.getUserPwd()))) {
-			throw new BadCredentialsException("Bad Credential");
+			/** Role을 넣지 않으면 에러 발생 */
+			return new UsernamePasswordAuthenticationToken(userId, userPwd, memberEntity.getAuthorities());
+		} catch (AuthenticationException ex) {
+			throw new BizException("WebAuthenticationProvider Error", ex, ErrorCode.INTERNAL_SERVER_ERROR);
 		}
-
-		/** Role을 넣지 않으면 에러 발생 */
-		return new UsernamePasswordAuthenticationToken(userId, userPwd, find.getAuthorities());
 	}
 
 	/** authenticate Method 진입 전 정상적인 토큰 인지 확인 */
