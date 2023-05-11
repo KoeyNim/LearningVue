@@ -41,7 +41,7 @@ public class WebAuthenticationProvider implements AuthenticationProvider {
 				throw new BadCredentialsException("Bad Credential");
 			}
 
-			/** Role을 넣지 않으면 에러 발생 */
+//			return new WebAuthenticationToken(userId, userPwd);
 			return new UsernamePasswordAuthenticationToken(userId, userPwd, memberEntity.getAuthorities());
 		} catch (AuthenticationException ex) {
 			throw new BizException("WebAuthenticationProvider Error", ex, ErrorCode.INTERNAL_SERVER_ERROR);
