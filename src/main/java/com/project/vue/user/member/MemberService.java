@@ -2,19 +2,14 @@ package com.project.vue.user.member;
 
 import java.util.Collection;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Service;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.project.vue.common.auth.WebAuthenticationProvider;
 import com.project.vue.common.exception.BizException;
@@ -33,7 +28,7 @@ public class MemberService {
 	private final RoleRepository roleRepository;
 	private final BCryptPasswordEncoder passwordEncoder;
 	private final WebAuthenticationProvider webAuthenticationProvider;
-    private final SessionRegistry sessionRegistry;
+//    private final SessionRegistry sessionRegistry;
 
 	/**
 	 * 유저 정보 DB 저장
@@ -77,16 +72,16 @@ public class MemberService {
      * @param authorities 유저 권한
      */
     private void autoLogin(String userId, String userPwd, Collection<? extends GrantedAuthority> authorities) {
-    	HttpServletRequest req = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+//    	HttpServletRequest req = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
 
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(userId, userPwd, authorities);
 
-        authenticationToken.setDetails(new WebAuthenticationDetails(req)); // IP 주소, 세션 ID 등과 같은 요청 세부사항을 저장하는 데 사용
+//        authenticationToken.setDetails(new WebAuthenticationDetails(req)); // IP 주소, 세션 ID 등과 같은 요청 세부사항을 저장하는 데 사용
         Authentication authenticatedUser = webAuthenticationProvider.authenticate(authenticationToken);
 
         SecurityContextHolder.getContext().setAuthentication(authenticatedUser); // 인증 객체를 SecurityContextHolder에 설정
 
-        sessionRegistry.registerNewSession(req.getSession().getId(), authenticatedUser.getPrincipal()); // 세션 등록
+//        sessionRegistry.registerNewSession(req.getSession().getId(), authenticatedUser.getPrincipal()); // 세션 등록
     }
 }
