@@ -23,6 +23,11 @@ public class PathController {
 	private final ResourceLoader resourceLoader;
 	private final ThymeleafProperties thymeleafProperties;
 
+	/**
+	 * root url
+	 * @param model
+	 * @return String
+	 */
 	@GetMapping
 	public String root(Model model) {
 		model.addAttribute("userId", SecurityContextHolder.getContext().getAuthentication().getName());
@@ -30,37 +35,39 @@ public class PathController {
 	}
 
 	/**
+	 * page url
 	 * @param page 페이지 경로
 	 * @return String
 	 */
 	@GetMapping("{page}")
 	public String page(@PathVariable String page, Model model) {
 		log.debug("page: {}", page);
-		String view = getView(page);
+		String path = getPath(page);
 		String userId = SecurityContextHolder.getContext().getAuthentication().getName();
 
 		/** resource 경로 */
 		Resource resource = resourceLoader.getResource(
-				thymeleafProperties.getPrefix() + view + thymeleafProperties.getSuffix());
+				thymeleafProperties.getPrefix() + path + thymeleafProperties.getSuffix());
 		log.trace("@@ PathController resource: {}", resource.getDescription());
 
 		if(!resource.exists()) {
 			throw new PathException("Not Found page : " + page, ErrorCode.NOT_FOUND);
 		}
 
-		if (page.contains("member") && !userId.equals("anonymousUser")) {
-			view = "redirect:board";
+		if (page.contains(PathConstants.MEMBER) && !userId.equals("anonymousUser")) {
+			path = "redirect:board";
 		}
 
 		model.addAttribute("userId", userId);
-		return view;
+		return path;
 	}
 
 	/**
+	 * path
 	 * @param page 페이지 경로
 	 * @return String view
 	 */
-	private String getView(String page) {
+	private String getPath(String page) {
 		if (page.contains(PathConstants.BOARD)) return PathConstants.BOARD + "/" + page;
 		if (page.contains(PathConstants.MEMBER)) return PathConstants.MEMBER + "/" + page;
 		return null;

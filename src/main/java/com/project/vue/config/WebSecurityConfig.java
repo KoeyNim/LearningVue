@@ -15,6 +15,7 @@ import org.springframework.security.config.annotation.web.configurers.RequestCac
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -24,7 +25,8 @@ import com.project.vue.common.Constants;
 import com.project.vue.common.PathConstants;
 import com.project.vue.common.auth.AjaxAuthenticationEntryPoint;
 import com.project.vue.common.auth.WebAuthenticationFailureHandler;
-import com.project.vue.common.auth.WebAuthenticationSucessHandler;
+import com.project.vue.common.auth.WebAuthenticationFilter;
+import com.project.vue.common.auth.WebAuthenticationSuccessHandler;
 import com.project.vue.user.role.RoleService;
 
 import lombok.RequiredArgsConstructor;
@@ -33,7 +35,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class WebSecurityConfig {
 
-	private final WebAuthenticationSucessHandler sucessHandler;
+	private final WebAuthenticationSuccessHandler successHandler;
 	private final WebAuthenticationFailureHandler failureHandler;
 
 	private final RoleService roleService;
@@ -43,6 +45,14 @@ public class WebSecurityConfig {
 	 */
 	@Value("${admin.url}")
 	private String adminURL;
+	
+	private WebAuthenticationFilter webAuthenticationFilter() throws Exception {
+		WebAuthenticationFilter filter = new WebAuthenticationFilter(Constants.REQUEST_MAPPING_PREFIX + "/member-login/security");
+//        filter.setAuthenticationManager(authenticationManagerBean());
+        filter.setAuthenticationSuccessHandler(successHandler);
+        filter.setAuthenticationFailureHandler(failureHandler);
+		return filter;
+	}
 
     /**
      * 유저 비밀번호 암호화 Bean
@@ -174,13 +184,14 @@ public class WebSecurityConfig {
                         .expressionHandler(expressionHandler()) // 권한 계층 커스텀 Handler
                         .anyRequest().authenticated()) // 지정하지 않은 모든 요청에 로그인을 요구 (화이트 리스트)
 //                		.anyRequest().permitAll() //  지정하지 않은 모든 요청에 로그인을 요구 하지 않음 (블랙 리스트)
-                .formLogin(form -> form // 로그인
-                        .loginPage("/member-login").permitAll() // 로그인 페이지
-                        .loginProcessingUrl(Constants.REQUEST_MAPPING_PREFIX + "/member-login/security") // 로그인 검증 URL
-                        .usernameParameter("userId") // 검증시 가지고 갈 아이디 (기본값 username)
-                        .passwordParameter("userPwd") // 검증시 가지고 갈 비밀번호 (기본값 password)
-                        .successHandler(sucessHandler) // 로그인 성공 Handler
-                        .failureHandler(failureHandler)) // 로그인 실패 Handler
+//                .formLogin(form -> form // 로그인
+//                        .loginPage("/member-login").permitAll() // 로그인 페이지
+//                        .loginProcessingUrl(Constants.REQUEST_MAPPING_PREFIX + "/member-login/security") // 로그인 검증 URL
+//                        .usernameParameter("userId") // 검증시 가지고 갈 아이디 (기본값 username)
+//                        .passwordParameter("userPwd") // 검증시 가지고 갈 비밀번호 (기본값 password)
+//                        .successHandler(successHandler) // 로그인 성공 Handler
+//                        .failureHandler(failureHandler)) // 로그인 실패 Handler
+                .addFilterBefore(webAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class) // custom 로그인
                 .sessionManagement(session -> session
                         .maximumSessions(1) // 허용 session 갯수, -1인 경우 무제한 세션
                         .expiredUrl("/member-login?expire=true")) // session 만료 시 이동 url

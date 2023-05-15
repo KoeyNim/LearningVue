@@ -17,7 +17,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import com.project.vue.common.StringCryptoConverter;
 import com.project.vue.user.role.RoleEntity;
@@ -40,7 +39,7 @@ import lombok.ToString;
 		sequenceName = "MEMBER_SEQ_NO_01",
 		initialValue = 1, allocationSize = 1
 )
-public class MemberEntity implements UserDetails {
+public class MemberEntity {
 
 	@Id @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "MEMBER_SEQ_NO_01_GENERATOR")
 	private Long memberSeqno;
@@ -81,7 +80,10 @@ public class MemberEntity implements UserDetails {
 	@JoinColumn(name="role", referencedColumnName = "role_Key")
 	private RoleEntity role;
 
-	@Override
+	/**
+	 * 권한 가져오기 UserDetails implements 제거
+	 * @return Collection<? extends GrantedAuthority>
+	 */
 	public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> collect = new ArrayList<>();
         collect.add(new GrantedAuthority() {
@@ -92,55 +94,4 @@ public class MemberEntity implements UserDetails {
         });
         return collect;
 	}
-
-	@Override
-	public String getPassword() {
-		return this.userPwd;
-	}
-
-	@Override
-	public String getUsername() {
-		return this.userId;
-	}
-
-    /**
-     * 계정 만료 여부
-     *  true : 만료안됨
-     *  false : 만료됨
-     */
-	@Override
-	public boolean isAccountNonExpired() {
-		return true;
-	}
-
-    /**
-     * 계정 잠김 여부
-     *  true : 잠기지 않음
-     *  false : 잠김
-     */
-	@Override
-	public boolean isAccountNonLocked() {
-		return true;
-	}
-
-    /**
-     * 계정 비밀번호 만료 여부
-     *  true : 만료 안됨
-     *  false : 만료됨
-     */
-	@Override
-	public boolean isCredentialsNonExpired() {
-		return true;
-	}
-
-    /**
-     * 계정 활성화 여부
-     *  true : 활성화됨
-     *  false : 활성화 안됨
-     */
-	@Override
-	public boolean isEnabled() {
-		return true;
-	}
-
 }

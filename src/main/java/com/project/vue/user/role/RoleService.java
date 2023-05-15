@@ -3,12 +3,16 @@ package com.project.vue.user.role;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
 import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Service;
+
+import com.project.vue.common.exception.BizException;
+import com.project.vue.common.exception.ErrorCode;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,37 +32,36 @@ public class RoleService {
 			log.debug("## initRole");
 			List<RoleEntity> list = new ArrayList<>();
 			/** ADMIN 권한 체크 후 list에 추가 */
-			for (RoleEnum role : RoleEnum.values()) {
+			for (var role : RoleEnum.values()) {
 				RoleEntity entity = new RoleEntity();
-				if (role.getRoleKey().equals("ROLE_ADMIN")) {
+				if (role.getRoleKey().equals(RoleEnum.ADMIN.getRoleKey())) {
 					entity.setRoleKey(role.getRoleKey());
 					list.add(entity);
 					continue;
 				}
-			entity.setRoleKey(role.getRoleKey());
-			entity.setParent(list.get(list.size()-1));
-			list.add(entity);
+				entity.setRoleKey(role.getRoleKey());
+				entity.setParent(list.get(list.size()-1));
+				list.add(entity);
 			}
 			roleRepository.saveAll(list);
 		}
 	}
 
-	/** 계층권한 String Builder **/
+	/** 계층권한 String Builder */
 	public String BuildRoleHierarchy() {
         log.debug("## BuildRoleHierarchy");
-        List<RoleEntity> list = roleRepository.findAll();
+        Iterator<RoleEntity> iterator = Optional.of(roleRepository.findAll().iterator())
+        		.orElseThrow(() -> new BizException("데이터베이스 에서 데이터를 찾을 수 없습니다.", ErrorCode.NOT_FOUND));
 
-        Iterator<RoleEntity> iterator = list.iterator();
         StringBuilder concatRoles = new StringBuilder();
-        while (iterator.hasNext()) {
-        	RoleEntity entity = iterator.next();
+        iterator.forEachRemaining(entity -> {
             if (ObjectUtils.isNotEmpty(entity.getParent())) {
                 concatRoles.append(entity.getParent().getRoleKey());
                 concatRoles.append(" > ");
                 concatRoles.append(entity.getRoleKey());
                 concatRoles.append("\n");
             }
-        }
+        });
         return concatRoles.toString();
 	}
 

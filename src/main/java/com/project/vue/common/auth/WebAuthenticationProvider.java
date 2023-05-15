@@ -2,7 +2,6 @@ package com.project.vue.common.auth;
 
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -41,8 +40,8 @@ public class WebAuthenticationProvider implements AuthenticationProvider {
 				throw new BadCredentialsException("Bad Credential");
 			}
 
-//			return new WebAuthenticationToken(userId, userPwd);
-			return new UsernamePasswordAuthenticationToken(userId, userPwd, memberEntity.getAuthorities());
+			return new WebAuthenticationToken(userId, userPwd);
+//			return new UsernamePasswordAuthenticationToken(userId, userPwd, memberEntity.getAuthorities());
 		} catch (AuthenticationException ex) {
 			throw new BizException("WebAuthenticationProvider Error", ex, ErrorCode.INTERNAL_SERVER_ERROR);
 		}
@@ -51,8 +50,9 @@ public class WebAuthenticationProvider implements AuthenticationProvider {
 	/** authenticate Method 진입 전 정상적인 토큰 인지 확인 */
 	@Override
 	public boolean supports(Class<?> authentication) {
-		log.debug("## WebAuthenticationProvider.supports");
+		log.debug("## WebAuthenticationProvider.supports Token: {}", authentication.getName());
+
 		/** 같은 클래스 인지 검증 */
-		return authentication.isAssignableFrom(UsernamePasswordAuthenticationToken.class);
+		return WebAuthenticationToken.class.isAssignableFrom(authentication);
 	}
 }
