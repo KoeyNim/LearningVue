@@ -27,7 +27,7 @@ public class WebAuthenticationProvider implements AuthenticationProvider {
 	@Override
 	public Authentication authenticate(Authentication authentication) {
 		log.debug("## WebAuthenticationProvider");
-		log.debug("## authentication {}", authentication);
+		log.trace("## WebAuthenticationProvider.authenticate authentication: {}", authentication);
 		try {
 			String userId = authentication.getName();
 			String userPwd = (String) authentication.getCredentials();

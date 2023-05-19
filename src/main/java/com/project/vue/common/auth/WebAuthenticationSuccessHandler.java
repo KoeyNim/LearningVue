@@ -40,6 +40,4 @@ public class WebAuthenticationSuccessHandler implements AuthenticationSuccessHan
 		if (session == null) return;
 		session.removeAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
 	}
-
-
 }

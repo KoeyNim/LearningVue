@@ -8,6 +8,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
@@ -45,13 +48,22 @@ public class WebSecurityConfig {
 	 */
 	@Value("${admin.url}")
 	private String adminURL;
-	
+
+	/**
+	 * Spring Security 커스텀 인증 필터
+	 * @return WebAuthenticationFilter
+	 * @throws Exception
+	 */
 	private WebAuthenticationFilter webAuthenticationFilter() throws Exception {
 		WebAuthenticationFilter filter = new WebAuthenticationFilter(Constants.REQUEST_MAPPING_PREFIX + "/member-login/security");
-//        filter.setAuthenticationManager(authenticationManagerBean());
         filter.setAuthenticationSuccessHandler(successHandler);
         filter.setAuthenticationFailureHandler(failureHandler);
 		return filter;
+	}
+
+	@Bean
+	public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+	  return authenticationConfiguration.getAuthenticationManager();
 	}
 
     /**
@@ -165,19 +177,19 @@ public class WebSecurityConfig {
                          * X-Frame-Options 헤더를 설정하여 현재 페이지와 
                          * 같은 출처(origin)에서만 프레임(frame) 내부의 콘텐츠를 로드
                          */
-                        .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)) 
+                        .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
                 /**
                  * HTTP Basic 인증 방식을 사용하지 않도록 설정
                  * HTTP Basic : 요청 헤더에 인증 정보를 포함하여 서버에 인증을 요청하는 방식 (보안 취약)
                  */
-                .httpBasic().disable()
+        		.httpBasic(Customizer.withDefaults())
                 .csrf(csrf -> csrf
                 		/**
                 		 * CSRF(Cross-Site Request Forgery) : 웹 사이트에 대한 요청을 위조하여 수행하는 공격
                 		 * CSRF 토큰을 포함하는 쿠키의 httpOnly 속성을 비활성화
                 		 */ 
-                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
-                .cors(cors -> cors.configurationSource(corsConfiguration())) // CORS 설정
+                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
+        		.cors(cors -> cors.configurationSource(corsConfiguration())) // CORS 설정
                 .authorizeRequests(auth -> auth
                         .antMatchers(HttpMethod.GET, "/**").permitAll() // 모든 GET 요청에 대해 로그인을 요구하지 않음
                         .antMatchers(Constants.REQUEST_MAPPING_PREFIX + "/" + PathConstants.MEMBER + "/**").permitAll() // 해당하는 URL 접근에 대해 로그인을 요구하지 않음
@@ -201,10 +213,10 @@ public class WebSecurityConfig {
                         .logoutSuccessUrl("/member-login") // 성공 url
 //    		        	.logoutRequestMatcher(new AntPathRequestMatcher("/logout")) // 로그아웃 요청을 처리할 RequestMatcher
                         .clearAuthentication(true) // 인증 객체를 삭제
-//                        .invalidateHttpSession(true) //  세션 삭제 여부 (기본값 true) true 일 경우 삭제
+//						.invalidateHttpSession(true) //  세션 삭제 여부 (기본값 true) true 일 경우 삭제
                         .deleteCookies("JSESSIONID")) // 삭제할 쿠키의 이름을 지정 (여러 개의 쿠키를 삭제하려면 쉼표로 구분)
-                .exceptionHandling(exception -> exception // Exception Handling
-                        .authenticationEntryPoint(new AjaxAuthenticationEntryPoint("/member-login"))) // ajax 명령 호출시 검증 클래스
-                .build();
+		                .exceptionHandling(exception -> exception // Exception Handling
+		                        .authenticationEntryPoint(new AjaxAuthenticationEntryPoint("/member-login"))) // ajax 명령 호출시 검증 클래스
+		                .build();
     }
 }
