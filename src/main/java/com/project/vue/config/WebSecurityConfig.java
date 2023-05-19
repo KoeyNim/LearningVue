@@ -54,13 +54,19 @@ public class WebSecurityConfig {
 	 * @return WebAuthenticationFilter
 	 * @throws Exception
 	 */
-	private WebAuthenticationFilter webAuthenticationFilter() throws Exception {
-		WebAuthenticationFilter filter = new WebAuthenticationFilter(Constants.REQUEST_MAPPING_PREFIX + "/member-login/security");
+	private WebAuthenticationFilter webAuthenticationFilter(AuthenticationManager authenticationManager) throws Exception {
+		WebAuthenticationFilter filter = new WebAuthenticationFilter(Constants.REQUEST_MAPPING_PREFIX + "/member-login/security", authenticationManager);
         filter.setAuthenticationSuccessHandler(successHandler);
         filter.setAuthenticationFailureHandler(failureHandler);
 		return filter;
 	}
 
+	/**
+	 * 
+	 * @param authenticationConfiguration
+	 * @return
+	 * @throws Exception
+	 */
 	@Bean
 	public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
 	  return authenticationConfiguration.getAuthenticationManager();
@@ -165,7 +171,7 @@ public class WebSecurityConfig {
      * @throws Exception
      */
     @Bean
-    SecurityFilterChain security(HttpSecurity http) throws Exception {
+    SecurityFilterChain security(HttpSecurity http, AuthenticationManager authenticationManager) throws Exception {
         return http
                 .headers(headers -> headers
                 		/**
@@ -203,7 +209,7 @@ public class WebSecurityConfig {
 //                        .passwordParameter("userPwd") // 검증시 가지고 갈 비밀번호 (기본값 password)
 //                        .successHandler(successHandler) // 로그인 성공 Handler
 //                        .failureHandler(failureHandler)) // 로그인 실패 Handler
-                .addFilterBefore(webAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class) // custom 로그인
+                .addFilterBefore(webAuthenticationFilter(authenticationManager), UsernamePasswordAuthenticationFilter.class) // custom 로그인
                 .sessionManagement(session -> session
                         .maximumSessions(1) // 허용 session 갯수, -1인 경우 무제한 세션
                         .expiredUrl("/member-login?expire=true")) // session 만료 시 이동 url

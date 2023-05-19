@@ -20,10 +20,6 @@ public class WebAuthenticationFilter extends AbstractAuthenticationProcessingFil
     public WebAuthenticationFilter(String url, AuthenticationManager authenticationManager) {
         super(new AntPathRequestMatcher(url, "POST"), authenticationManager);
     }
-    
-    public WebAuthenticationFilter(String url) {
-        super(new AntPathRequestMatcher(url, "POST"));
-    }
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) {
