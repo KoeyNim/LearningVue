@@ -9,7 +9,6 @@ import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -68,7 +67,7 @@ public class WebSecurityConfig {
 	 * @throws Exception
 	 */
 	@Bean
-	public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+	AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
 	  return authenticationConfiguration.getAuthenticationManager();
 	}
 
@@ -188,13 +187,13 @@ public class WebSecurityConfig {
                  * HTTP Basic 인증 방식을 사용하지 않도록 설정
                  * HTTP Basic : 요청 헤더에 인증 정보를 포함하여 서버에 인증을 요청하는 방식 (보안 취약)
                  */
-        		.httpBasic(Customizer.withDefaults())
+        		.httpBasic(basic -> basic.disable())
                 .csrf(csrf -> csrf
-                		/**
-                		 * CSRF(Cross-Site Request Forgery) : 웹 사이트에 대한 요청을 위조하여 수행하는 공격
-                		 * CSRF 토큰을 포함하는 쿠키의 httpOnly 속성을 비활성화
-                		 */ 
-                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
+					/**
+					 * CSRF(Cross-Site Request Forgery) : 웹 사이트에 대한 요청을 위조하여 수행하는 공격
+					 * CSRF 토큰을 포함하는 쿠키의 httpOnly 속성을 비활성화
+					 */ 
+					.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
         		.cors(cors -> cors.configurationSource(corsConfiguration())) // CORS 설정
                 .authorizeRequests(auth -> auth
                         .antMatchers(HttpMethod.GET, "/**").permitAll() // 모든 GET 요청에 대해 로그인을 요구하지 않음
@@ -202,13 +201,15 @@ public class WebSecurityConfig {
                         .expressionHandler(expressionHandler()) // 권한 계층 커스텀 Handler
                         .anyRequest().authenticated()) // 지정하지 않은 모든 요청에 로그인을 요구 (화이트 리스트)
 //                		.anyRequest().permitAll() //  지정하지 않은 모든 요청에 로그인을 요구 하지 않음 (블랙 리스트)
-//                .formLogin(form -> form // 로그인
-//                        .loginPage("/member-login").permitAll() // 로그인 페이지
-//                        .loginProcessingUrl(Constants.REQUEST_MAPPING_PREFIX + "/member-login/security") // 로그인 검증 URL
-//                        .usernameParameter("userId") // 검증시 가지고 갈 아이디 (기본값 username)
-//                        .passwordParameter("userPwd") // 검증시 가지고 갈 비밀번호 (기본값 password)
-//                        .successHandler(successHandler) // 로그인 성공 Handler
-//                        .failureHandler(failureHandler)) // 로그인 실패 Handler
+                /** 2023-05-23 사용하지 않음
+                .formLogin(form -> form // 로그인
+                        .loginPage("/member-login").permitAll() // 로그인 페이지
+                        .loginProcessingUrl(Constants.REQUEST_MAPPING_PREFIX + "/member-login/security") // 로그인 검증 URL
+                        .usernameParameter("userId") // 검증시 가지고 갈 아이디 (기본값 username)
+                        .passwordParameter("userPwd") // 검증시 가지고 갈 비밀번호 (기본값 password)
+                        .successHandler(successHandler) // 로그인 성공 Handler
+                        .failureHandler(failureHandler)) // 로그인 실패 Handler
+                */
                 .addFilterBefore(webAuthenticationFilter(authenticationManager), UsernamePasswordAuthenticationFilter.class) // custom 로그인
                 .sessionManagement(session -> session
                         .maximumSessions(1) // 허용 session 갯수, -1인 경우 무제한 세션
@@ -221,8 +222,8 @@ public class WebSecurityConfig {
                         .clearAuthentication(true) // 인증 객체를 삭제
 //						.invalidateHttpSession(true) //  세션 삭제 여부 (기본값 true) true 일 경우 삭제
                         .deleteCookies("JSESSIONID")) // 삭제할 쿠키의 이름을 지정 (여러 개의 쿠키를 삭제하려면 쉼표로 구분)
-		                .exceptionHandling(exception -> exception // Exception Handling
-		                        .authenticationEntryPoint(new AjaxAuthenticationEntryPoint("/member-login"))) // ajax 명령 호출시 검증 클래스
+                .exceptionHandling(exception -> exception // Exception Handling
+                        .authenticationEntryPoint(new AjaxAuthenticationEntryPoint("/member-login"))) // ajax 명령 호출시 검증 클래스
 		                .build();
     }
 }

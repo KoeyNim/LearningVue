@@ -2,6 +2,7 @@ package com.project.vue.common.auth;
 
 import java.util.Collection;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.SpringSecurityCoreVersion;
@@ -13,17 +14,14 @@ public class WebAuthenticationToken extends AbstractAuthenticationToken {
 	private String userPwd;
 
 	public WebAuthenticationToken(String userId, String userPwd) {
-		super(null);
-		this.userId = userId;
-		this.userPwd = userPwd;
-		super.setAuthenticated(false);
+		this(userId, userPwd, null);
 	}
 
 	public WebAuthenticationToken(String userId, String userPwd, Collection<? extends GrantedAuthority> authorities) {
 		super(authorities);
 		this.userId = userId;
 		this.userPwd = userPwd;
-		super.setAuthenticated(true);
+		super.setAuthenticated(ObjectUtils.isEmpty(authorities) && true);
 	}
 
 	@Override

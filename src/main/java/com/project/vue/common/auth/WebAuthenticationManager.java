@@ -19,4 +19,4 @@ public class WebAuthenticationManager implements AuthenticationManager {
 }
 */
 
-// 사용하지 않음.
+// 2023-05-23 사용하지 않음.

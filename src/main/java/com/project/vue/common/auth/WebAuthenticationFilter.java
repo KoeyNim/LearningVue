@@ -31,6 +31,6 @@ public class WebAuthenticationFilter extends AbstractAuthenticationProcessingFil
         WebAuthenticationToken authenticationToken = new WebAuthenticationToken(username, password);
 
         // 인증 매니저에 인증 요청
-        return getAuthenticationManager().authenticate(authenticationToken);
+        return this.getAuthenticationManager().authenticate(authenticationToken);
     }
 }
