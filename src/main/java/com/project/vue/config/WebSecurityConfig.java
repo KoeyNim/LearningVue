@@ -200,7 +200,7 @@ public class WebSecurityConfig {
                         .antMatchers(Constants.REQUEST_MAPPING_PREFIX + "/" + PathConstants.MEMBER + "/**").permitAll() // 해당하는 URL 접근에 대해 로그인을 요구하지 않음
                         .expressionHandler(expressionHandler()) // 권한 계층 커스텀 Handler
                         .anyRequest().authenticated()) // 지정하지 않은 모든 요청에 로그인을 요구 (화이트 리스트)
-//                		.anyRequest().permitAll() //  지정하지 않은 모든 요청에 로그인을 요구 하지 않음 (블랙 리스트)
+//                		.anyRequest().permitAll()) //  지정하지 않은 모든 요청에 로그인을 요구 하지 않음 (블랙 리스트)
                 /** 2023-05-23 사용하지 않음
                 .formLogin(form -> form // 로그인
                         .loginPage("/member-login").permitAll() // 로그인 페이지

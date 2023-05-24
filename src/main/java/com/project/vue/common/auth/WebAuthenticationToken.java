@@ -21,7 +21,7 @@ public class WebAuthenticationToken extends AbstractAuthenticationToken {
 		super(authorities);
 		this.userId = userId;
 		this.userPwd = userPwd;
-		super.setAuthenticated(ObjectUtils.isEmpty(authorities) && true);
+		super.setAuthenticated(ObjectUtils.isNotEmpty(authorities) && true);
 	}
 
 	@Override
@@ -32,5 +32,11 @@ public class WebAuthenticationToken extends AbstractAuthenticationToken {
 	@Override
 	public Object getPrincipal() {
 		return this.userId;
+	}
+
+	@Override
+	public void eraseCredentials() {
+		super.eraseCredentials();
+		this.userPwd = null;
 	}
 }

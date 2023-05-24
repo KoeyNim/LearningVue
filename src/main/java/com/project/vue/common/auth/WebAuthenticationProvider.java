@@ -30,9 +30,9 @@ public class WebAuthenticationProvider implements AuthenticationProvider {
 		String userPwd = (String) authentication.getCredentials();
 		log.trace("## userId: {}, userPwd: {}", userId, userPwd);
 
-		MemberEntity memberEntity = memberRepository.findByUserId(userId).orElseThrow(() -> new UsernameNotFoundException("Username not Found"));
+		MemberEntity memberEntity = memberRepository.findByUserId(userId).orElseThrow(() -> new UsernameNotFoundException("유저 정보를 찾을 수 없음."));
 
-		if(!(passwordEncoder.matches(userPwd, memberEntity.getUserPwd()))) throw new BadCredentialsException("Bad Credential");
+		if(!(passwordEncoder.matches(userPwd, memberEntity.getUserPwd()))) throw new BadCredentialsException("유효하지 않은 패스워드.");
 
 		return new WebAuthenticationToken(userId, userPwd, memberEntity.getAuthorities());
 	}
