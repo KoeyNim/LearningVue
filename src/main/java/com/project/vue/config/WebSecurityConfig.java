@@ -49,7 +49,7 @@ public class WebSecurityConfig {
 	private String adminURL;
 
 	/**
-	 * Spring Security 커스텀 인증 필터
+	 * Spring Security 커스텀 인증 필터 Method
 	 * @return WebAuthenticationFilter
 	 * @throws Exception
 	 */
@@ -60,10 +60,23 @@ public class WebSecurityConfig {
 		return filter;
 	}
 
+    /**
+     * 권한 계층 Method
+     * @return {@link DefaultWebSecurityExpressionHandler}
+     */
+    private DefaultWebSecurityExpressionHandler expressionHandler() {
+        RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
+        DefaultWebSecurityExpressionHandler securityExpressionHandler = new DefaultWebSecurityExpressionHandler();
+
+        roleHierarchy.setHierarchy(roleService.BuildRoleHierarchy()); // 상위 권한 설정
+        securityExpressionHandler.setRoleHierarchy(roleHierarchy); // 권한 계층 커스터마이징
+        return securityExpressionHandler;
+    }
+
 	/**
-	 * 
+	 * 인증 매니저 Bean
 	 * @param authenticationConfiguration
-	 * @return
+	 * @return AuthenticationManager
 	 * @throws Exception
 	 */
 	@Bean
@@ -73,6 +86,7 @@ public class WebSecurityConfig {
 
     /**
      * 유저 비밀번호 암호화 Bean
+     * @return BCryptPasswordEncoder
      */
     @Bean
     BCryptPasswordEncoder bCryptPasswordEncoder() {
@@ -80,25 +94,11 @@ public class WebSecurityConfig {
     }
 
     /**
-     * 권한 계층 Handler Bean
-     * @return {@link DefaultWebSecurityExpressionHandler}
-     */
-    @Bean
-    DefaultWebSecurityExpressionHandler expressionHandler() {
-        RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
-        DefaultWebSecurityExpressionHandler securityExpressionHandler = new DefaultWebSecurityExpressionHandler();
-
-        roleHierarchy.setHierarchy(roleService.BuildRoleHierarchy()); // 상위 권한 설정
-        securityExpressionHandler.setRoleHierarchy(roleHierarchy); // 권한 계층 커스터마이징
-        return securityExpressionHandler;
-    }
-
-    /**
      * CORS (응답 서버에서만 설정) Bean
      * @return {@link CorsConfigurationSource}
      */
     @Bean
-    CorsConfigurationSource corsConfiguration() {
+    CorsConfigurationSource corsConfig() {
         CorsConfiguration config = new CorsConfiguration();
 
         config.addAllowedOrigin(adminURL); // CORS 허용 요청 URL
@@ -170,7 +170,7 @@ public class WebSecurityConfig {
      * @throws Exception
      */
     @Bean
-    SecurityFilterChain security(HttpSecurity http, AuthenticationManager authenticationManager) throws Exception {
+    SecurityFilterChain security(HttpSecurity http, CorsConfigurationSource corsConfig, AuthenticationManager authenticationManager) throws Exception {
         return http
                 .headers(headers -> headers
                 		/**
@@ -194,7 +194,7 @@ public class WebSecurityConfig {
 					 * CSRF 토큰을 포함하는 쿠키의 httpOnly 속성을 비활성화
 					 */ 
 					.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
-        		.cors(cors -> cors.configurationSource(corsConfiguration())) // CORS 설정
+        		.cors(cors -> cors.configurationSource(corsConfig)) // CORS 설정
                 .authorizeRequests(auth -> auth
                         .antMatchers(HttpMethod.GET, "/**").permitAll() // 모든 GET 요청에 대해 로그인을 요구하지 않음
                         .antMatchers(Constants.REQUEST_MAPPING_PREFIX + "/" + PathConstants.MEMBER + "/**").permitAll() // 해당하는 URL 접근에 대해 로그인을 요구하지 않음
