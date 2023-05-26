@@ -50,7 +50,7 @@ public class WebSecurityConfig {
 
 	/**
 	 * Spring Security 커스텀 인증 필터 Method
-	 * @return WebAuthenticationFilter
+	 * @return {@link WebAuthenticationFilter}
 	 * @throws Exception
 	 */
 	private WebAuthenticationFilter webAuthenticationFilter(AuthenticationManager authenticationManager) throws Exception {
@@ -73,32 +73,11 @@ public class WebSecurityConfig {
         return securityExpressionHandler;
     }
 
-	/**
-	 * 인증 매니저 Bean
-	 * @param authenticationConfiguration
-	 * @return AuthenticationManager
-	 * @throws Exception
-	 */
-	@Bean
-	AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
-	  return authenticationConfiguration.getAuthenticationManager();
-	}
-
     /**
-     * 유저 비밀번호 암호화 Bean
-     * @return BCryptPasswordEncoder
-     */
-    @Bean
-    BCryptPasswordEncoder bCryptPasswordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    /**
-     * CORS (응답 서버에서만 설정) Bean
+     * CORS 설정 (응답 서버에서만 설정)
      * @return {@link CorsConfigurationSource}
      */
-    @Bean
-    CorsConfigurationSource corsConfig() {
+    private CorsConfigurationSource corsConfig() {
         CorsConfiguration config = new CorsConfiguration();
 
         config.addAllowedOrigin(adminURL); // CORS 허용 요청 URL
@@ -129,11 +108,31 @@ public class WebSecurityConfig {
         return source;
     }
 
+	/**
+	 * 인증 매니저 Bean
+	 * @param authenticationConfiguration
+	 * @return {@link AuthenticationManager}
+	 * @throws Exception
+	 */
+	@Bean
+	AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+	  return authenticationConfiguration.getAuthenticationManager();
+	}
+
+    /**
+     * 유저 비밀번호 암호화 Bean
+     * @return {@link BCryptPasswordEncoder}
+     */
+    @Bean
+    BCryptPasswordEncoder bCryptPasswordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
     /**
      * 정적 데이터(resources) 관련 설정 Bean
      * Order -> 실행 우선순위
      * @param http HttpSecurity
-     * @return SecurityFilterChain
+     * @return {@link SecurityFilterChain}
      * @throws Exception
      */
     @Bean
@@ -166,11 +165,11 @@ public class WebSecurityConfig {
     /**
      * 각종 Security 설정 Bean
      * @param http HttpSecurity
-     * @return SecurityFilterChain
+     * @return {@link SecurityFilterChain}
      * @throws Exception
      */
     @Bean
-    SecurityFilterChain security(HttpSecurity http, CorsConfigurationSource corsConfig, AuthenticationManager authenticationManager) throws Exception {
+    SecurityFilterChain security(HttpSecurity http, AuthenticationManager authenticationManager) throws Exception {
         return http
                 .headers(headers -> headers
                 		/**
@@ -194,7 +193,7 @@ public class WebSecurityConfig {
 					 * CSRF 토큰을 포함하는 쿠키의 httpOnly 속성을 비활성화
 					 */ 
 					.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
-        		.cors(cors -> cors.configurationSource(corsConfig)) // CORS 설정
+        		.cors(cors -> cors.configurationSource(corsConfig())) // CORS 설정
                 .authorizeRequests(auth -> auth
                         .antMatchers(HttpMethod.GET, "/**").permitAll() // 모든 GET 요청에 대해 로그인을 요구하지 않음
                         .antMatchers(Constants.REQUEST_MAPPING_PREFIX + "/" + PathConstants.MEMBER + "/**").permitAll() // 해당하는 URL 접근에 대해 로그인을 요구하지 않음
