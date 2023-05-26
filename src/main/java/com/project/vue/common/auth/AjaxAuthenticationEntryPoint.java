@@ -39,7 +39,7 @@ public class AjaxAuthenticationEntryPoint extends LoginUrlAuthenticationEntryPoi
 				Map<String, Object> result = new HashMap<>();
 				result.put("success", false);
 				result.put("errType", header);
-				result.put("message", this.buildRedirectUrlToLoginPage(req, res, exception));
+				result.put("message", buildRedirectUrlToLoginPage(req, res, exception));
 				
 				res.setContentType("application/json");
 				res.setStatus(HttpStatus.UNAUTHORIZED.value());

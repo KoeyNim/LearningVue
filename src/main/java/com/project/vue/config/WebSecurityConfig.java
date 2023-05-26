@@ -140,7 +140,7 @@ public class WebSecurityConfig {
     @Order(0)
     SecurityFilterChain resources(HttpSecurity http) throws Exception {
         return http
-                .requestMatchers(matchers -> matchers.antMatchers("/static/**", "/error/**"))
+                .requestMatchers(matchers -> matchers.antMatchers("/static/**", "/error/**", "/custom-swagger/**"))
                 .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
                 /**
                  * Request Cache 기능을 비활성화
@@ -210,7 +210,8 @@ public class WebSecurityConfig {
                         .successHandler(successHandler) // 로그인 성공 Handler
                         .failureHandler(failureHandler)) // 로그인 실패 Handler
                 */
-                .addFilterBefore(webAuthenticationFilter(authenticationManager), UsernamePasswordAuthenticationFilter.class) // custom 로그인
+                /** custom 로그인 UsernamePasswordAuthenticationFilter 대체 (동일한 클래스 거나 상속받는 경우 Override 됨) */
+                .addFilterBefore(webAuthenticationFilter(authenticationManager), UsernamePasswordAuthenticationFilter.class)
                 .sessionManagement(session -> session
                         .maximumSessions(1) // 허용 session 갯수, -1인 경우 무제한 세션
                         .expiredUrl("/member-login?expire=true")) // session 만료 시 이동 url
@@ -222,8 +223,8 @@ public class WebSecurityConfig {
                         .clearAuthentication(true) // 인증 객체를 삭제
 //						.invalidateHttpSession(true) //  세션 삭제 여부 (기본값 true) true 일 경우 삭제
                         .deleteCookies("JSESSIONID")) // 삭제할 쿠키의 이름을 지정 (여러 개의 쿠키를 삭제하려면 쉼표로 구분)
-                .exceptionHandling(exception -> exception // Exception Handling
-                        .authenticationEntryPoint(new AjaxAuthenticationEntryPoint("/member-login"))) // ajax 명령 호출시 검증 클래스
+                .exceptionHandling(handler -> handler // Exception Handling
+                        .authenticationEntryPoint(new AjaxAuthenticationEntryPoint("/member-login"))) // ajax 명령 호출시 검증 handler
 		                .build();
     }
 }

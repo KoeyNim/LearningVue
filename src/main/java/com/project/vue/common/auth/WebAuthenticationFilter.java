@@ -14,7 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 public class WebAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 
     /**
-     * 인증 처리 URL 설정
+     * 인증 처리 URL, 매니저 설정
      * @param url URL 경로
      */
     public WebAuthenticationFilter(String url, AuthenticationManager authenticationManager) {
@@ -24,13 +24,12 @@ public class WebAuthenticationFilter extends AbstractAuthenticationProcessingFil
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) {
     	log.debug("## WebAuthenticationFilter");
-        String username = request.getParameter("userId");
-        String password = request.getParameter("userPwd");
 
         // 커스텀 토큰 생성
-        WebAuthenticationToken authenticationToken = new WebAuthenticationToken(username, password);
+        WebAuthenticationToken authenticationToken = 
+        		new WebAuthenticationToken(request.getParameter("userId"), request.getParameter("userPwd"));
 
         // 인증 매니저에 인증 요청
-        return this.getAuthenticationManager().authenticate(authenticationToken);
+        return getAuthenticationManager().authenticate(authenticationToken);
     }
 }

@@ -22,8 +22,6 @@ public class WebAuthenticationSuccessHandler extends SavedRequestAwareAuthentica
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
 			Authentication authentication) throws IOException, ServletException {
 		log.debug("## AdminAuthenticationSuccessHandler");
-		log.debug("## authentication.getPrincipal(): {}", authentication.getPrincipal());
-		log.debug("## authentication.getCredentials(): {}", authentication.getCredentials());
 
 		/* Ajax를 사용하므로 동작하지 않음.
 		super.setDefaultTargetUrl("/board");

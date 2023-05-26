@@ -21,7 +21,7 @@ public class WebAuthenticationToken extends AbstractAuthenticationToken {
 		super(authorities);
 		this.userId = userId;
 		this.userPwd = userPwd;
-		super.setAuthenticated(ObjectUtils.isNotEmpty(authorities) && true);
+		super.setAuthenticated(ObjectUtils.isNotEmpty(authorities) && true); // 인증 여부
 	}
 
 	@Override
@@ -34,6 +34,9 @@ public class WebAuthenticationToken extends AbstractAuthenticationToken {
 		return this.userId;
 	}
 
+	/**
+	 *	비밀번호 삭제
+	 */
 	@Override
 	public void eraseCredentials() {
 		super.eraseCredentials();

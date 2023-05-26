@@ -28,6 +28,8 @@ spring:
         enabled: false
   mvc:
     static-path-pattern: /static/** # static path 경로
+    pathmatch:
+      matching-strategy: ant-path-matcher # swagger 호환 이슈
   thymeleaf:
     mode: HTML
     encoding: UTF-8
@@ -56,3 +58,8 @@ site:
 api:
   publicData:
      ServiceKey: Ah33nedGlORpg%2B8WYnFa3d%2BnzJ5PLyV5323uW%2FIYyy4uMvSMp7L%2Bk0hjW9%2BHn5ox11R06p2SWNQ8ENblZyrfkA%3D%3D
+
+springfox: # Swagger-ui 설정
+  documentation:
+    swagger-ui:
+      base-url: /custom-swagger
