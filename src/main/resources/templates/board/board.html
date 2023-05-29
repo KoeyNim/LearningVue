@@ -4,7 +4,7 @@
 <script th:src="@{/static/js/board/board.js}"></script>
 </head>
 <body>
-<div id="content" layout:fragment="content">
+<div id="content" layout:fragment="content" class="board-container">
 	<div class="tbl-sort-box flex-box flex-spc-btw">
 		<span class="pagetit">게시글 리스트</span>
 
@@ -22,7 +22,7 @@
 		</select>
 	</div>
 	<table class="list-tbl">
-		<tr>
+		<tr class="post-title">
 			<th>No</th>
 			<th>제목</th>
 			<!--<th>내용</th>-->
@@ -31,12 +31,12 @@
 			<th>조회수</th>
 		</tr>
 	<tbody v-if="page.empty">
-		<tr>
+		<tr class="post-list">
 		 <td colspan="15" class="fs16 fc-lightgrey" style="text-align: center;">조회된 내용이 없습니다.</td>
 		</tr>
 	</tbody>
-	<tbody class="list" v-else>
-		<tr v-for="(data, index) in page.content" @click="fnDetail($event, data.boardSeqno)">
+	<tbody v-else>
+		<tr v-for="(data, index) in page.content" @click="fnDetail($event, data.boardSeqno)" class="post-list">
 			<td class="efw500">{{page.totalElements - index - (page.pageable.pageNumber * page.pageable.pageSize)}}</td>
 			<td>{{data.title}}</td>
 			<!--/**<td style="text-overflow: ellipsis; overflow: hidden">{{data.content.replace(/(<([^>]+)>)/ig,"")}}</td>**/-->
@@ -52,7 +52,7 @@
 	<div class="card-btn-box noline flex-box flex-spc-btw">
 		<div class="lt"></div>
 		<div class="rt">
-		  <a class="blue btn md sm-h solidbtn" @click.prevent="fnDwldExcel($event)">엑셀 다운로드</a>
+		  <a class="btn solidbtn md sm-h blue" @click.prevent="fnDwldExcel($event)">엑셀 다운로드</a>
 		  <button type="button" class="btn solidbtn md mo-full sm-h pink" @click.prevent="fnRegist($event)">등록</button>
 		  <button type="button" class="btn solidbtn md mo-full sm-h lightblue" @click.prevent="location.href='/'">이전</button>
 		</div>
