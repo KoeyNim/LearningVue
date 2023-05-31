@@ -9,23 +9,23 @@ $(() => {
         el: '#content',
         data: {
             srch: !!history.state ? history.state.srch : {
-            	page:0,
-            	size:5,
-            	sort:'boardSeqno,desc',
+            	page: 0,
+            	size: 5,
+            	sort: 'boardSeqno,desc',
             	srchKey: undefined,
             	srchVal: undefined,
             },
             page: !!history.state ? history.state.page : {
             	pageCount: 5,
             	totalPages: 0,
-            	numbers:[],
+            	numbers: [],
             },
             list:{},
             options: pageSizeArr,
             srchOptions: [
-                {text: '전체', value: undefined},
-                {text: '제목', value: 'title'},
-                {text: '작성자', value: 'userid'},
+                {text: '전체',   value: undefined},
+                {text: '제목',   value: 'title'},
+                {text: '작성자', value: 'userId'},
             ],
         },
         created() {
@@ -52,41 +52,34 @@ $(() => {
             fnPage(e, page) {
                 console.log('fnPage', arguments);
                 let me = this;
+                me.srch.page = page;
 
                 // 요청페이지가 존재하지 않거나 존재하지만 최소값 보다 낮을 경우 0으로 초기화
-                if (!page || (!!page && page < 0)) {
-                    me.srch.page = 0;
-                    me.fnGets(e);
-                    return;
-                }
+                if (!page || (!!page && page < 0)) me.srch.page = 0;
 
                 // 요청 페이지 번호가 total값 보다 높을 경우 total값으로 초기화
-            	if (me.page.totalPages > 0 && page >= me.page.totalPages) {
-            	    me.srch.page = me.page.totalPages -1;
-            	    me.fnGets(e);
-            	    return;
-            	}
-            	me.srch.page = page;
-            	me.fnGets(e);
+              	if (me.page.totalPages > 0 && page >= me.page.totalPages) me.srch.page = me.page.totalPages -1;
+
+              	me.fnGets(e);
             },
             fnSrch(e) {
-            	console.log('fnSrch', arguments);
-            	let me = this;
-            	Object.assign(me.srch, {page:0});
-            	me.fnGets(e);
+              	console.log('fnSrch', arguments);
+              	let me = this;
+              	Object.assign(me.srch, {page:0});
+              	me.fnGets(e);
             },
             fnRegist(e) {
-            	console.log('fnRegist', arguments);
-            	location.href ='/board-form';
+              	console.log('fnRegist', arguments);
+              	location.href ='/board-form';
             },
             fnDetail(e, boardSeqno) {
-            	console.log('fnDetail', arguments);
-            	sessionStorage.setItem('boardSeqno', boardSeqno);
-            	location.href ='/board-detail';
+              	console.log('fnDetail', arguments);
+              	sessionStorage.setItem('boardSeqno', boardSeqno);
+              	location.href ='/board-detail';
             },
             fnDwldExcel(e) {
-            	console.log('fnDwldExcel', arguments);
-            	location.href= API_VERSION + '/board/excel';
+              	console.log('fnDwldExcel', arguments);
+              	location.href= API_VERSION + '/board/excel';
             },
         }
     });

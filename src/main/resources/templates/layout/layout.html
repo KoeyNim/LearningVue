@@ -37,7 +37,7 @@
 <body>
 <th:block layout:fragment="header">
   <nav class="nav2">
-    <a class="logo" th:href="@{/}"></a>
+    <a class="logo hover-rotate" th:href="@{/}"></a>
 
     <ul>
       <li><a th:href="@{/board}">게시판</a></li>
@@ -47,14 +47,14 @@
       <li><a th:href="@{#}">네비4</a></li>
     </ul>
 
-    <div class="test">
-    <h2 th:text="${userId}"></h2>
-    <a th:if="${userId == 'anonymousUser'}" th:href="@{/member-login}">로그인</a>
-    <form th:unless="${userId == 'anonymousUser'}" method="post" th:action="@{/logout}">
-        <!-- @click : List sessionStorage option 삭제 -->
-        <button type="submit" @click="sessionStorage.removeItem('pageOptions');">로그아웃</button>
-    </form>
-    <a th:if="${userId == 'anonymousUser'}" th:href="@{/member-signup}">회원가입</a>
+    <div class="user_area">
+	    <h2 th:text="${userId == 'anonymousUser' ? '로그인 하세요' : '환영합니다!&nbsp;' + userId  + '&nbsp;님'}"></h2>
+	    <a th:if="${userId == 'anonymousUser'}" th:href="@{/member-login}">로그인</a>
+	    <form th:unless="${userId == 'anonymousUser'}" method="post" th:action="@{/logout}">
+	        <!-- @click : List sessionStorage option 삭제 -->
+	        <button type="submit" @click="sessionStorage.removeItem('pageOptions');">로그아웃</button>
+	    </form>
+	    <a th:if="${userId == 'anonymousUser'}" th:href="@{/member-signup}">회원가입</a>
     </div>
 
 		<select>

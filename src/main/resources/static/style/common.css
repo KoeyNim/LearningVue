@@ -1,50 +1,47 @@
 @charset "UTF-8";
 
 html {
-  font-size: 18px;
+  font-size: 20px;
 }
 
-.test {
-  bottom: 8px;
-  right: 16px;
-  text-align: right;
-}
-
+/** logo */
 .logo {
   width: 100px;
   height: 100px;
-  margin: 60px auto;
+  margin: 55px auto;
+  left: 30px;
   background:#f8f8f8 url('../images/common/logo.png') no-repeat center center;
   background-size: cover; /** 크기 자동 맞춤 */
   transition: all ease 1s;
+  position: absolute;
 }
 
-/** mouse hover시 회전 */
-.logo:hover {
-  transform: rotate( 360deg ); 
+.hover-rotate:hover {
+  transform: rotate( 360deg );
 }
 
+/** page title */
 .pagetit {
 	font-weight: 500;
-	font-size: 1.5rem;
+	font-size: 1rem;
 }
 
+/** table list */
 .list-tbl {
-    border-collapse: collapse;
+  border-collapse: collapse;
 }
 
 .list-tbl th {
-    border: 1px solid #444444;
+  border: 1px solid #444444;
 }
 
 .list-tbl tr td {
-    border: 1px solid #444444;
+  border: 1px solid #444444;
 }
 
 .list tr {
 	text-align: center;
 	cursor: pointer;
-	
 }
 
 .list tr:hover {
@@ -52,58 +49,58 @@ html {
 	color : rgb(255,0,0);
 }
 
-/* page */
+/* page nation */
 .page_wrap {
 	padding-top: 1rem;
-    margin-top: 1rem;
-    text-align:center;
-    font-size:0;
+  margin-top: 1rem;
+  text-align:center;
+  font-size:0;
  }
  
 .page_nation {
-    display:inline-block;
+  display:inline-block;
 }
 
 .page_nation .none {
-    display:none;
+  display:none;
 }
 
 .page_nation a {
-    display:block;
-    margin:0 3px;
-    float:left;
-    border:1px solid #e6e6e6;
-    width:28px;
-    height:28px;
-    line-height:28px;
-    text-align:center;
-    background-color:#fff;
-    font-size:13px;
-    color:#999999;
-    text-decoration:none;
-    cursor: pointer;
+	display:block;
+	margin:0 3px;
+	float:left;
+	border:1px solid #e6e6e6;
+	width:28px;
+	height:28px;
+	line-height:28px;
+	text-align:center;
+	background-color:#fff;
+	font-size: 0.8rem;
+	color:#999999;
+	text-decoration:none;
+	cursor: pointer;
 }
 .page_nation .arrow {
-    border:1px solid #ccc;
+  border:1px solid #ccc;
 }
 
 .page_nation .prev {
-    background:#f8f8f8 url('../images/common/page_prev.png') no-repeat center center;
-    margin-right:7px;
+  background:#f8f8f8 url('../images/common/page_prev.png') no-repeat center center;
+  margin-right:7px;
 }
 
 .page_nation .next {
-    background:#f8f8f8 url('../images/common/page_next.png') no-repeat center center;
-    margin-left:7px;
+  background:#f8f8f8 url('../images/common/page_next.png') no-repeat center center;
+  margin-left:7px;
 }
 
 .page_nation .block_prev {
-    background:#f8f8f8 url('../images/common/page_block_prev.png') no-repeat center center;
-    margin-right:7px;
+  background:#f8f8f8 url('../images/common/page_block_prev.png') no-repeat center center;
+  margin-right:7px;
 }
 .page_nation .block_next {
-    background:#f8f8f8 url('../images/common/page_block_next.png') no-repeat center center;
-    margin-left:7px;
+  background:#f8f8f8 url('../images/common/page_block_next.png') no-repeat center center;
+  margin-left:7px;
 }
 
 .page_nation a.active {
@@ -125,19 +122,11 @@ html {
   cursor: pointer;
 }
 
+/** navigation */
 .nav2 {
   width: 100%;
   position: relative;
   text-align: center;
-}
-
-.nav2 > a {
-  line-height: 80px;
-  display: block;
-  font-size: 30px;
-  font-weight: 900;
-  position: absolute;
-  left: 30px;
 }
 
 .nav2 > select {
@@ -153,10 +142,13 @@ html {
   border-radius: 30px;
 }
 
-.nav2 > .test {
+.nav2 > .user_area {
   padding: 0 20px;
-  height: 30px;
+  height: 80px;
   position: inherit;
+  bottom: 8px;
+  right: 16px;
+  text-align: right;
 }
 
 .nav2 > ul {
@@ -168,4 +160,84 @@ html {
   list-style: none;
   line-height: 80px;
   padding: 0 30px;
+}
+
+.nav2 > ul li a {
+  color: inherit;
+  font-size: 1.0rem;
+  text-decoration: none;
+}
+
+.nav2 > ul li a:hover {
+/*   background-color: aqua; */
+  color: green;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+/* 게시판 컨테이너 스타일 */
+.board-container {
+  width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f0f0f0;
+  border-radius: 5px;
+}
+
+/* 글 목록 스타일 */
+.post-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+}
+
+.post-list:hover {
+  background-color : rgb(211,211,211);
+  color : rgb(255,0,0);
+}
+
+.post-list td {
+  border-bottom: 1px solid #ccc;
+  padding: 10px 0;
+}
+
+.post-title th {
+  font-weight: bold;
+}
+
+.post-date {
+  color: #888;
+  font-size: 0.8em;
+}
+
+/* 글 내용 스타일 */
+.post-content {
+  margin-top: 10px;
+  line-height: 1.5;
+}
+
+/* 작성자 정보 스타일 */
+.author-info {
+  margin-top: 10px;
+  font-size: 0.9em;
+  color: #555;
+}
+
+.author-info span {
+  margin-right: 10px;
+}
+
+/* 버튼 스타일 */
+.button {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #555;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 5px;
+}
+
+.button:hover {
+  background-color: #333;
 }

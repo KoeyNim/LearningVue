@@ -7,13 +7,10 @@ $(() => {
     mixins: [textEditorMixin],
     data: {},
     created() {
-      if(!!boardSeqno) {
-        let me = this;
-        me.fnGets();
-      }
+      let me = this;
+      if(!!boardSeqno) me.fnGets();
     },
-    mounted() {
-    },
+    mounted() {},
     methods: {
       fnGets(e) {
           console.log('fnGets', arguments);
@@ -33,21 +30,18 @@ $(() => {
           let isBoardSeqno = !!boardSeqno;
           me.$validator.validateAll().then((success) => {
               if(success) {
-                  if (me.isEditor == 'S') {
-                      if ($('#summernote').summernote('isEmpty')) {
-                          alert('내용을 입력해주세요.');
-                          return;
-                      }
+                  if (me.isEditor == 'S' && $('#summernote').summernote('isEmpty')) {
+                      alert('내용을 입력해주세요.');
+                      return;
                   }
 
                   const formData = new FormData();
                   formData.append('title', me.result.title);
                   formData.append('content', me.result.content);
-                  if(me.$refs.file.files[0] instanceof File) formData.append('file', me.$refs.file.files[0]);
+
                   if(isBoardSeqno) formData.append('boardSeqno', boardSeqno);
-                  if(!!(Array.isArray(me.result.imgList) && me.result.imgList.length !== 0)) {
-                      formData.append('imgListJson', JSON.stringify(me.result.imgList));
-                  }
+                  if(me.$refs.file.files[0] instanceof File) formData.append('file', me.$refs.file.files[0]);
+                  if(!!(Array.isArray(me.result.imgList) && me.result.imgList.length !== 0)) formData.append('imgListJson', JSON.stringify(me.result.imgList));
 
                   $ajax.api({
                       url: API_VERSION + '/board' + (isBoardSeqno ? '/update' : '/create'),
@@ -60,20 +54,23 @@ $(() => {
                   }).done((res) => {
                       console.log('done', arguments);
                       alert(res.message);
-                      /** 게시글 수정시 DB 삭제 */
-                      if(!!(isBoardSeqno && Array.isArray(me.delImgList) && me.delImgList.length !== 0)) {
-                          $ajax.api({
-                              url: API_VERSION + '/image/delete',
-                              type: 'DELETE',
-                              data: {delImgList: me.delImgList},
-                              async: false,
-                          }).done((res) => {
-                              console.log('done', arguments);
-                              location.href = '/board';
-                          });
-                      } else {
-                          location.href = '/board';
+
+                      /** 키값, 삭제할 이미지 리스트 체크 */
+                      if (isBoardSeqno || !Array.isArray(me.delImgList) || me.delImgList.length == 0) {
+                        location.href = '/board';
+                        return;
                       }
+
+                      /** 수정시 기존 이미지 데이터 삭제 */
+                      $ajax.api({
+                          url: API_VERSION + '/image/delete',
+                          type: 'DELETE',
+                          data: {delImgList: me.delImgList},
+                          async: false,
+                      }).done((res) => {
+                          console.log('done', arguments);
+                          location.href = '/board';
+                      });
                   });
               }
           });

@@ -53,7 +53,7 @@ function setPagination(totalPages, currentPage, size) {
     let startPageNumber = blockPageNumber - (size -1);
     let endPageNumber = blockPageNumber > totalPages ? totalPages : blockPageNumber;
     let page = [];
-    
+
     for (let i=startPageNumber; i<=endPageNumber; i++) {
         page.push(i);
     }
@@ -103,25 +103,25 @@ const textEditorMixin = !location.pathname.includes('form') ? undefined : {
       fnEditor(e) {
           console.log('fnEditor', arguments);
           let me = this;
-          if (!me.isEditor) return;
-          if (me.isEditor == 'S') {
-              $('#summernote').summernote('destroy');
-              $('#summernote').hide();
-              e.target.value = 'summernote';
-              e.target.innerText = 'summernote';
-              me.isEditor = 'C';
-              return;
-          }
-
-          if (me.isEditor == 'C') {
+          const Editor = {
+            C: () => {
               $('#summernote').show();
               $('#summernote').html(me.result.content);
               $('#summernote').summernote(summernoteOptions(me));
               e.target.value = 'ck-editor';
               e.target.innerText = 'ck-editor';
               me.isEditor = 'S';
-              return;
-          }
+            },
+            S: () => {
+              $('#summernote').summernote('destroy');
+              $('#summernote').hide();
+              e.target.value = 'summernote';
+              e.target.innerText = 'summernote';
+              me.isEditor = 'C';
+            },
+          };
+
+          me.isEditor && Editor[me.isEditor]();
       },
       // ckeditor toolbar 변경
       onReady(editor) {
