@@ -80,7 +80,7 @@ public class BoardService {
 		BoardEntity entity = boardRepository.findById(boardSeqno)
 				.orElseThrow(() -> new BizException("Data is Not Found", ErrorCode.NOT_FOUND));
 		entity.setAuthUserId(SecurityContextHolder.getContext().getAuthentication().getName());
-		cookieCommon.readCountCookie(boardSeqno);
+		if (cookieCommon.isReadCountCookie(boardSeqno)) boardRepository.updateCount(boardSeqno);
 		return entity;
 	}
 

@@ -12,8 +12,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import com.project.vue.user.board.BoardRepository;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -22,36 +20,34 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class CookieCommon {
 
-	private final BoardRepository boardRepository;
-
 	/**
-	 * 조회수 쿠키 생성 및 검사
+	 * 조회수 쿠키 생성
 	 * @param seqno 기본키
+	 * @return boolean 조회수 증가 여부
 	 */
-	public void readCountCookie(long seqno) {
+	public boolean isReadCountCookie(long seqno) {
 		HttpServletRequest req = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
 		HttpServletResponse res = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getResponse();
 
-		String cookieNm = "readCount";
-		String newCookieVal = "|" + seqno;
-		/** cookieNm 쿠키의 value를 가져옴, 없을시 쿠키 기본값 생성 */
-		String cookieVal = Arrays.stream(req.getCookies())
-				.filter(e -> StringUtils.equals(e.getName(), cookieNm))
+		String cookieName = "readCnt";
+		String newValue = "|" + seqno;
+		/** cookieName의 value를 가져옴, 없을시 쿠키 기본값 생성 */
+		String cookieStr = Arrays.stream(req.getCookies())
+				.filter(e -> StringUtils.equals(e.getName(), cookieName))
 				.findFirst()
 				.map(Cookie::getValue)
 				.orElse(UUID.randomUUID().toString().replaceAll("-", ""));
-		log.debug("cookieVal : {}", cookieVal);
+		log.debug("Cookie Value : {}", cookieStr);
 
 		/** 쿠키에 새로 입력할 구분값이 존재하는 지 검사 */
-		if (StringUtils.indexOfIgnoreCase(cookieVal, newCookieVal) == -1) {
-			Cookie cookie = new Cookie(cookieNm, cookieVal + newCookieVal);
+		if (StringUtils.indexOfIgnoreCase(cookieStr, newValue) == -1) {
+			Cookie cookie = new Cookie(cookieName, cookieStr + newValue);
 			log.debug("readCount value : {}", cookie.getValue());
-			/** 쿠키 설명 */
-			cookie.setComment("조회수 중복 체크");
-			/** 유효시간 설정 (초) */
-			cookie.setMaxAge(60 * 60 * 24);
+			cookie.setComment("조회수 중복 체크"); // 쿠키 설명
+			cookie.setMaxAge(60 * 60 * 24); // 유효시간 설정 (초)
 			res.addCookie(cookie);
-			boardRepository.updateCount(seqno);
+			return true;
 		}
+		return false;
 	}
 }
