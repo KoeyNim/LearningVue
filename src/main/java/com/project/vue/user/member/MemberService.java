@@ -35,9 +35,7 @@ public class MemberService {
 	 */
 	@Transactional
     public void save(MemberSignUpRequest req) {
-		if (isUserId(req.getUserId())) {
-			throw new BizException("잘못된 접근입니다.", ErrorCode.BAD_REQUEST);
-		}
+		if (isUserId(req.getUserId())) throw new BizException("잘못된 접근입니다.", ErrorCode.BAD_REQUEST);
 
     	MemberEntity memberEntity = MemberEntity.builder()
     			.userId(req.getUserId())

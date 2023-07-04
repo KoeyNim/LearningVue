@@ -21,17 +21,17 @@ public class ExcelUtils {
 	 */
 	public static List<ExcelDTO> getResources(Class<?> cls) {
 		log.debug("@@ ExcelUtils - getResource - Entity : {}", cls.getName());
-
 		List<ExcelDTO> resources = new ArrayList<>();
 
 		/** ExcelColumnOptions의 데이터 추출 (Super Class 포함) */
 		ReflectionUtils.doWithFields(cls, field -> {
 			if (field.isAnnotationPresent(ExcelColumnOptions.class)) {
+				ExcelColumnOptions annotation = field.getAnnotation(ExcelColumnOptions.class);
 				ExcelDTO resource = ExcelDTO.builder()
-						.headerNm(field.getAnnotation(ExcelColumnOptions.class).headerName())
+						.headerNm(annotation.headerName())
 						.colNm(field.getName().substring(0,1).toUpperCase() + field.getName().substring(1))
-						.colWidth(field.getAnnotation(ExcelColumnOptions.class).columnWidth())
-						.colStyle(field.getAnnotation(ExcelColumnOptions.class).columnStyle()).build();
+						.colWidth(annotation.columnWidth())
+						.colStyle(annotation.columnStyle()).build();
 				resources.add(resource);
 			}
 		});

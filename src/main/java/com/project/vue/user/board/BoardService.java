@@ -97,19 +97,16 @@ public class BoardService {
 		entity.setUserId(SecurityContextHolder.getContext().getAuthentication().getName());
 
 		/** 파일첨부 등록 */
-		if(ObjectUtils.isNotEmpty(req.getFile())) {
-			entity.setFileEntity(fileService.upld(req.getFile()));
-		}
+		if(ObjectUtils.isNotEmpty(req.getFile())) entity.setFileEntity(fileService.upld(req.getFile()));
+
 		boardRepository.save(entity);
 
 		/** 에디터 이미지 등록 */
 		if(StringUtils.isNotBlank(req.getImgListJson())) {
 			try {
-				List<ImageTempResponse> deserializeList = Arrays.asList(
-															OM.readValue(req.getImgListJson(), ImageTempResponse[].class));
-				if(CollectionUtils.isNotEmpty(deserializeList)) {
-					imageService.save(deserializeList, entity.getBoardSeqno());
-				}
+				List<ImageTempResponse> deserializeList = Arrays.asList(OM.readValue(req.getImgListJson(), ImageTempResponse[].class));
+
+				if(CollectionUtils.isNotEmpty(deserializeList)) imageService.save(deserializeList, entity.getBoardSeqno());
 			} catch (JsonProcessingException ex) {
 				throw new BizException("ObjectMapper Error", ex, ErrorCode.INTERNAL_SERVER_ERROR);
 			}
@@ -127,26 +124,20 @@ public class BoardService {
 				.orElseThrow(() -> new BizException("Data is Not Found", ErrorCode.NOT_FOUND));
 		String userid = SecurityContextHolder.getContext().getAuthentication().getName();
 
-		if(!userid.equals(entity.getUserId())) {
-			throw new BizException("Userid Is Not Equals", ErrorCode.BAD_REQUEST);
-		}
+		if(!userid.equals(entity.getUserId())) throw new BizException("Userid is Not Equals", ErrorCode.BAD_REQUEST);
 
 		entity.setTitle(req.getTitle());
 		entity.setContent(req.getContent());
 
 		/** 파일첨부 수정 */
-		if(ObjectUtils.isNotEmpty(req.getFile())) {
-			entity.setFileEntity(fileService.upld(req.getFile()));
-		}
+		if(ObjectUtils.isNotEmpty(req.getFile())) entity.setFileEntity(fileService.upld(req.getFile()));
 
 		/** 에디터 이미지 수정 */
 		if(StringUtils.isNotBlank(req.getImgListJson())) {
 			try {
-				List<ImageTempResponse> deserializeList = Arrays.asList(
-															OM.readValue(req.getImgListJson(), ImageTempResponse[].class));
-				if(CollectionUtils.isNotEmpty(deserializeList)) {
-					imageService.save(deserializeList, boardSeqno);
-				}
+				List<ImageTempResponse> deserializeList = Arrays.asList(OM.readValue(req.getImgListJson(), ImageTempResponse[].class));
+
+				if(CollectionUtils.isNotEmpty(deserializeList)) imageService.save(deserializeList, boardSeqno);
 			} catch (JsonProcessingException ex) {
 				throw new BizException("ObjectMapper Error", ex, ErrorCode.INTERNAL_SERVER_ERROR);
 			}
@@ -162,9 +153,8 @@ public class BoardService {
 	public void deleteById(long boardSeqno) {
 		BoardEntity entity = boardRepository.findById(boardSeqno)
 				.orElseThrow(() -> new BizException("Data is Not Found", ErrorCode.NOT_FOUND));
-		if(ObjectUtils.isNotEmpty(entity.getFileEntity())) {
-			fileService.delete(entity.getFileEntity());
-		}
+
+		if(ObjectUtils.isNotEmpty(entity.getFileEntity())) fileService.delete(entity.getFileEntity());
 		imageService.deleteAll(boardSeqno);
 		boardRepository.deleteById(boardSeqno);
 	}

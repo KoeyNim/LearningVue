@@ -40,9 +40,8 @@ public class FileService {
 		Path path = Paths.get(FILE_UPLOAD_PATH);
 		try {
 			/** 상위 디렉토리까지 폴더 생성 */
-			if (path.toFile().mkdirs()) {
-				log.debug("execute mkdirs - path {}", FILE_UPLOAD_PATH);
-			}
+			if (path.toFile().mkdirs()) log.debug("execute mkdirs - path {}", FILE_UPLOAD_PATH);
+
 			FileEntity entity = FileEntity.builder()
 					.fileNm(uuid)
 					.fileSize(file.getSize())
@@ -84,8 +83,6 @@ public class FileService {
 		Path filePath = Paths.get(FILE_UPLOAD_PATH).resolve(entity.getFileNm());
 		log.debug("--- path : {}", filePath.toString());
 		File file = filePath.toFile();
-		if(file.delete()) {
-			log.debug("--- delete success file : {}", file.getName());
-		}
+		if(file.delete()) log.debug("--- delete success file : {}", file.getName());
 	}
 }

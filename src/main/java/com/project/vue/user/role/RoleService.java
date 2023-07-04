@@ -1,13 +1,12 @@
 package com.project.vue.user.role;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
 
 import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 public class RoleService {
 
 	private final RoleRepository roleRepository;
-	
+
 	/** @PostConstruct : 의존성(Bean)이 초기화 된 직후에 한번만 실행 (서버 시작시 한번만 실행) */
 	@Transactional @PostConstruct
 	public void initRole() {
@@ -50,19 +49,20 @@ public class RoleService {
 	/** 계층권한 String Builder */
 	public String BuildRoleHierarchy() {
         log.debug("## BuildRoleHierarchy");
-        Iterator<RoleEntity> iterator = Optional.of(roleRepository.findAll().iterator())
-        		.orElseThrow(() -> new BizException("데이터베이스 에서 데이터를 찾을 수 없습니다.", ErrorCode.NOT_FOUND));
+        List<RoleEntity> entities = roleRepository.findAll();
+
+        if (CollectionUtils.isEmpty(entities)) 
+        	throw new BizException("데이터베이스 에서 데이터를 찾을 수 없습니다.", ErrorCode.NOT_FOUND);
 
         StringBuilder concatRoles = new StringBuilder();
-        iterator.forEachRemaining(entity -> {
+        for (var entity : entities) {
             if (ObjectUtils.isNotEmpty(entity.getParent())) {
                 concatRoles.append(entity.getParent().getRoleKey());
                 concatRoles.append(" > ");
                 concatRoles.append(entity.getRoleKey());
                 concatRoles.append("\n");
             }
-        });
+        }
         return concatRoles.toString();
 	}
-
 }

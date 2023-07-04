@@ -9,6 +9,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
@@ -48,9 +49,8 @@ public class ImageService {
 		Path path = Paths.get(TEMP_IMAGE_PATH);
 		try {
 			/** 상위 디렉토리까지 폴더 생성 */
-			if (path.toFile().mkdirs()) {
-				log.debug("execute mkdirs - path {}", TEMP_IMAGE_PATH);
-			}
+			if (path.toFile().mkdirs()) log.debug("execute mkdirs - path {}", TEMP_IMAGE_PATH);
+
 			img.transferTo(path.resolve(uuid));
 
 			ImageTempResponse res = ImageTempResponse.builder()
@@ -71,26 +71,22 @@ public class ImageService {
 	public Path getPath(String imgNm) {
 		Path path = Paths.get(TEMP_IMAGE_PATH + imgNm);
 		/** TEMP 폴더에 파일 존재여부 체크 */
-		if (!path.toFile().exists()) {
-			path = Paths.get(IMAGE_UPLOAD_PATH + imgNm);
-		}
+		if (!path.toFile().exists()) path = Paths.get(IMAGE_UPLOAD_PATH + imgNm);
 		return path;
 	}
-	
+
 	public void save(List<ImageTempResponse> imgList, Long boardSeqno) {
 		List<ImageEntity> list = new ArrayList<>();
 
 		Path tempPath = Paths.get(TEMP_IMAGE_PATH);
 		Path savePath = Paths.get(IMAGE_UPLOAD_PATH);
 
-		if (savePath.toFile().mkdirs()) {
-			log.debug("execute mkdirs - path {}", IMAGE_UPLOAD_PATH);
-		}
+		if (savePath.toFile().mkdirs()) log.debug("execute mkdirs - path {}", IMAGE_UPLOAD_PATH);
 
-		imgList.forEach(el -> {
+		for(var img : imgList) {
 			try {
-				Path tempImgPath = tempPath.resolve(el.getImgNm());
-				Path saveImgPath = savePath.resolve(el.getImgNm());
+				Path tempImgPath = tempPath.resolve(img.getImgNm());
+				Path saveImgPath = savePath.resolve(img.getImgNm());
 				/* 동일 파일 존재시 덮어쓰기 **/
 				Path path = Files.copy(tempImgPath, saveImgPath, StandardCopyOption.REPLACE_EXISTING);
 				/* TEMP 폴더에 있는 파일 삭제 **/
@@ -98,16 +94,16 @@ public class ImageService {
 
 				ImageEntity entity = ImageEntity.builder()
 						.boardSeqno(boardSeqno)
-						.fileNm(el.getImgNm())
+						.fileNm(img.getImgNm())
 						.fileSize(Files.size(path))
-						.contentType(el.getContentType())
-						.orignFileNm(el.getOrignFileNm()).build();
+						.contentType(img.getContentType())
+						.orignFileNm(img.getOrignFileNm()).build();
 
 				list.add(entity);
-			} catch (IllegalArgumentException | IOException ex) {
+			} catch (IOException ex) {
 				throw new BizException("Image Save Error", ex, ErrorCode.INTERNAL_SERVER_ERROR);
 			}
-		});
+		}
 		imageRepository.saveAll(list);
 	}
 
@@ -123,15 +119,15 @@ public class ImageService {
 	@Transactional
 	public void delete(List<String> delImgList) {
 		log.debug("--- delete image");
-		delImgList.forEach(el -> {
-			Path filePath = Paths.get(IMAGE_UPLOAD_PATH).resolve(el);
+		for (var delImg : delImgList) {
+			Path filePath = Paths.get(IMAGE_UPLOAD_PATH).resolve(delImg);
 			log.debug("--- filePath : {}", filePath.toString());
 			File file = filePath.toFile();
 			if(file.delete()) {
 				log.debug("--- delete success image : {}", file.getName());
-				imageRepository.deleteByFileNm(el);
+				imageRepository.deleteByFileNm(delImg);
 			}
-		});
+		}
 	}
 
 	/**
@@ -139,16 +135,12 @@ public class ImageService {
 	 * @param boardSeqno 게시글 키 번호
 	 */
 	public void deleteAll(long boardSeqno) {
-		List<ImageEntity> list = imageRepository.findAllByBoardSeqno(boardSeqno);
-		if(CollectionUtils.isEmpty(list)) {
+		List<ImageEntity> imageEntities = imageRepository.findAllByBoardSeqno(boardSeqno);
+		if(CollectionUtils.isEmpty(imageEntities)) {
 			log.debug("--- list is empty");
 			return;
 		}
-
-		List<String> delImgList = new ArrayList<>();
-		list.forEach(el -> {
-			delImgList.add(el.getFileNm());
-		});
+		List<String> delImgList = imageEntities.stream().map(ImageEntity::getFileNm).collect(Collectors.toList());
 		delete(delImgList);
 	}
 }
