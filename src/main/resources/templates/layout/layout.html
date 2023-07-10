@@ -36,39 +36,43 @@
 </head>
 <body>
 <th:block layout:fragment="header">
-  <nav class="nav2">
-    <a class="logo hover-rotate" th:href="@{/}"></a>
+<div id="header" class="header">
+  <a class="logo" th:href="@{/}"></a>
+  
+  <button type="button" @click="fnToggleSidebar" class="side-bar-btn" :class="{active : toggle}">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
 
-    <ul>
-      <li><a th:href="@{/board}">게시판</a></li>
-      <li><a th:href="@{/custom-swagger/swagger-ui/index.html}">Swagger</a></li>
-      <li><a th:href="@{#}">네비2</a></li>
-      <li><a th:href="@{#}">네비3</a></li>
-      <li><a th:href="@{#}">네비4</a></li>
+  <div class="side-bar" :class="{active : toggle}">
+  	<ul>
+	    <li><a th:href="@{/board}">게시판</a></li>
+	    <li><a th:href="@{/custom-swagger/swagger-ui/index.html}">Swagger</a></li>
+	    <li><a th:href="@{#}">네비2</a></li>
+	    <li><a th:href="@{#}">네비3</a></li>
+	    <li><a th:href="@{#}">네비4</a></li>
     </ul>
+  </div>
 
-    <div class="user_area">
-	    <h2 th:text="${userId == 'anonymousUser' ? '로그인 하세요' : '환영합니다!&nbsp;' + userId  + '&nbsp;님'}"></h2>
-	    <a th:if="${userId == 'anonymousUser'}" th:href="@{/member-login}">로그인</a>
-	    <form th:unless="${userId == 'anonymousUser'}" method="post" th:action="@{/logout}">
-	        <!-- @click : List sessionStorage option 삭제 -->
-	        <button type="submit" @click="sessionStorage.removeItem('pageOptions');">로그아웃</button>
-	    </form>
-	    <a th:if="${userId == 'anonymousUser'}" th:href="@{/member-signup}">회원가입</a>
-    </div>
+  <div class="user_area">
+   <h2 th:text="${userId == 'anonymousUser' ? '로그인 하세요' : '환영합니다!&nbsp;' + userId  + '&nbsp;님'}"></h2>
+   <a th:if="${userId == 'anonymousUser'}" th:href="@{/member-login}">로그인</a>
+   <form th:unless="${userId == 'anonymousUser'}" method="post" th:action="@{/logout}">
+       <!-- @click : List sessionStorage option 삭제 -->
+       <button type="submit" @click="sessionStorage.removeItem('pageOptions');">로그아웃</button>
+   </form>
+   <a th:if="${userId == 'anonymousUser'}" th:href="@{/member-signup}">회원가입</a>
+  </div>
 
-		<select>
-		  <option>option1</option>
-		  <option>option2</option>
-		  <option>option3</option>
-		</select>
-  </nav>
+	<select>
+	  <option>option1</option>
+	  <option>option2</option>
+	  <option>option3</option>
+	</select>
+</div>
 </th:block>
-
 <th:block layout:fragment="content"> 공통 content </th:block>
-<script type="text/javascript">
-$().ready(() => document.title = $('.pagetit').text() || $('.login-tit').text());
-</script>
 </body>
 <th:block layout:fragment="footer">
   <div>공통 footer</div>

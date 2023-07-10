@@ -1,10 +1,10 @@
 let vu;
-$(document).ready(function() {
+$().ready(() => {
     vu = new Vue({
         el: '#content',
         data: {
             member:{},
-            message:"메세지"
+            message:'메세지'
         },
         methods: {
         }
