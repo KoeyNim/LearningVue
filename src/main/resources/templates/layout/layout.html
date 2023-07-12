@@ -55,7 +55,7 @@
     </ul>
   </div>
 
-  <div class="user_area">
+  <div class="user-area">
    <h2 th:text="${userId == 'anonymousUser' ? '로그인 하세요' : '환영합니다!&nbsp;' + userId  + '&nbsp;님'}"></h2>
    <a th:if="${userId == 'anonymousUser'}" th:href="@{/member-login}">로그인</a>
    <form th:unless="${userId == 'anonymousUser'}" method="post" th:action="@{/logout}">

@@ -6,13 +6,13 @@ html {
 
 /** logo */
 .logo {
-  width: 100px;
-  height: 100px;
-  margin: 20px auto;
-  left: 30px;
+  width: 5rem;
+  height: 5rem;
+  margin: 1rem auto;
+  left: 1.5rem;
   background:#f8f8f8 url('../images/common/logo.png') no-repeat center center;
   background-size: cover; /** 크기 자동 맞춤 */
-  border-radius: 30px;
+  border-radius: 1.5rem;
   transition: all ease 1s;
   position: absolute;
 }
@@ -51,22 +51,22 @@ html {
 }
 
 /* page nation */
-.page_wrap {
+.page-wrap {
 	padding-top: 1rem;
   margin-top: 1rem;
   text-align:center;
   font-size:0;
  }
  
-.page_nation {
+.page-nation {
   display:inline-block;
 }
 
-.page_nation .none {
+.page-nation.none {
   display:none;
 }
 
-.page_nation a {
+.page-nation a {
 	display:block;
 	margin:0 3px;
 	float:left;
@@ -81,38 +81,38 @@ html {
 	text-decoration:none;
 	cursor: pointer;
 }
-.page_nation .arrow {
+
+.page-nation a.active {
+    background-color:#42454c;
+    color:#fff;
+    border:1px solid #42454c;
+}
+
+.page-nation a.cursor-default {
+  cursor:default;
+}
+
+.page-nation > .arrow {
   border:1px solid #ccc;
 }
 
-.page_nation .prev {
+.page-nation > .prev {
   background:#f8f8f8 url('../images/common/page_prev.png') no-repeat center center;
   margin-right:7px;
 }
 
-.page_nation .next {
+.page-nation > .next {
   background:#f8f8f8 url('../images/common/page_next.png') no-repeat center center;
   margin-left:7px;
 }
 
-.page_nation .block_prev {
+.page-nation > .block-prev {
   background:#f8f8f8 url('../images/common/page_block_prev.png') no-repeat center center;
   margin-right:7px;
 }
-.page_nation .block_next {
+.page-nation > .block-next {
   background:#f8f8f8 url('../images/common/page_block_next.png') no-repeat center center;
   margin-left:7px;
-}
-
-.page_nation a.active {
-    background-color:#42454c;
-    color:#fff;
-    border:1px solid #42454c;
-
-}
-
-.page_nation a.cursor_default {
-	cursor:default;
 }
 
 .form-field input[type='radio'] {
@@ -144,7 +144,7 @@ html {
   border-radius: 30px;
 }
 
-.header > .user_area {
+.header > .user-area {
 	position: fixed;
 	right: 30px;
   text-align: right;
@@ -169,24 +169,24 @@ html {
   box-shadow: 1px 1px 10px 0 rgba(0,0,0,0.3);
 }
 
-.side-bar > ul {
+.side-bar ul {
   display: inline-block;
 }
 
-.side-bar > ul li {
+.side-bar ul li {
   float: left;
   list-style: none;
   line-height: 80px;
   padding: 0 30px;
 }
 
-.side-bar > ul li a {
+.side-bar ul li a {
   color: inherit;
   font-size: 1.0rem;
   text-decoration: none;
 }
 
-.side-bar > ul li a:hover {
+.side-bar ul li a:hover {
 /*   background-color: aqua; */
   color: green;
   font-size: 1.0rem;
