@@ -37,7 +37,7 @@
 <body>
 <th:block layout:fragment="header">
 <div id="header" class="header">
-  <a class="logo" th:href="@{/}"></a>
+  <a class="logo" :class="{active : toggle}" th:href="@{/}"></a>
   
   <button type="button" @click="fnToggleSidebar" class="side-bar-btn" :class="{active : toggle}">
     <span></span>
