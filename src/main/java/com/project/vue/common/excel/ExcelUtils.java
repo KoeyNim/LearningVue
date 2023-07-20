@@ -6,7 +6,7 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ReflectionUtils;
 
-import com.project.vue.common.excel.annotation.ExcelColumnOptions;
+import com.project.vue.common.excel.annotation.ExcelOptions;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -23,15 +23,16 @@ public class ExcelUtils {
 		log.debug("@@ ExcelUtils - getResource - Entity : {}", cls.getName());
 		List<ExcelDTO> resources = new ArrayList<>();
 
-		/** ExcelColumnOptions의 데이터 추출 (Super Class 포함) */
+		/** ExcelOptions의 데이터 추출 (Super Class 포함) */
 		ReflectionUtils.doWithFields(cls, field -> {
-			if (field.isAnnotationPresent(ExcelColumnOptions.class)) {
-				ExcelColumnOptions annotation = field.getAnnotation(ExcelColumnOptions.class);
+			if (field.isAnnotationPresent(ExcelOptions.class)) {
+				ExcelOptions opt = field.getAnnotation(ExcelOptions.class);
 				ExcelDTO resource = ExcelDTO.builder()
-						.headerNm(annotation.headerName())
+						.headerNm(opt.headerName())
+						.headerStyle(opt.headerStyle())
 						.colNm(field.getName().substring(0,1).toUpperCase() + field.getName().substring(1))
-						.colWidth(annotation.columnWidth())
-						.colStyle(annotation.columnStyle()).build();
+						.colWidth(opt.columnWidth())
+						.colStyle(opt.columnStyle()).build();
 				resources.add(resource);
 			}
 		});

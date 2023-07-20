@@ -17,8 +17,8 @@ import org.apache.poi.ss.usermodel.BorderStyle;
 import org.hibernate.annotations.DynamicUpdate;
 
 import com.project.vue.common.TimeEntity;
-import com.project.vue.common.excel.annotation.ExcelColumnOptions;
 import com.project.vue.common.excel.annotation.ExcelFileName;
+import com.project.vue.common.excel.annotation.ExcelOptions;
 import com.project.vue.common.file.FileEntity;
 
 import lombok.EqualsAndHashCode;
@@ -40,29 +40,29 @@ import lombok.ToString;
 public class BoardEntity extends TimeEntity {
 
 	@Id @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "BOARD_SEQ_NO_01_GENERATOR")
-	@ExcelColumnOptions(headerName = "No", columnStyle = BorderStyle.DASH_DOT, columnWidth = 10000)
+	@ExcelOptions(headerName = "No", columnStyle = BorderStyle.DASH_DOT, columnWidth = 10000)
 	/** 게시글 기본키 */
 	private Long boardSeqno;
 
 	@NotBlank
-	@ExcelColumnOptions(headerName = "제목", columnStyle = BorderStyle.DOUBLE, columnWidth = 10000)
+	@ExcelOptions(headerName = "제목", columnStyle = BorderStyle.DOUBLE, columnWidth = 10000)
 	/** 제목 */
 	private String title;
 
 	@NotBlank
 	@Column(columnDefinition = "LONGTEXT")
-	@ExcelColumnOptions(headerName = "내용", columnStyle = BorderStyle.MEDIUM_DASHED, columnWidth = 10000)
+	@ExcelOptions(headerName = "내용", columnStyle = BorderStyle.MEDIUM_DASHED, columnWidth = 10000)
 	/** 내용 */
 	private String content;
 
 	@NotBlank
 	@Column(columnDefinition = "varchar(32)")
-	@ExcelColumnOptions(headerName = "작성자", columnStyle = BorderStyle.THICK, columnWidth = 5000)
+	@ExcelOptions(headerName = "작성자", columnStyle = BorderStyle.THICK, columnWidth = 5000)
 	/** 작성자 */
 	private String userId;
 
 	@Column(columnDefinition = "BIGINT default 0")
-	@ExcelColumnOptions(headerName = "조회수", columnStyle = BorderStyle.DOTTED, columnWidth = 5000)
+	@ExcelOptions(headerName = "조회수", columnStyle = BorderStyle.DOTTED, columnWidth = 5000)
 	/** 조회수 */
 	private Integer count = 0;
 

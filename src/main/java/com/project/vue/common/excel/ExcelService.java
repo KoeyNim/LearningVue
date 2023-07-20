@@ -95,7 +95,7 @@ public class ExcelService<T> {
 		for (var resource : resources) {
 			SXSSFCell headerCell = headerRow.createCell(cellIdx++, CellType.STRING);
 			headerCell.setCellValue(resource.getHeaderNm());
-			headerCell.setCellStyle(headerCellStyle());
+			headerCell.setCellStyle(headerCellStyle(resource.getHeaderStyle()));
 		}
 
 		/** data row, cell 세팅 */
@@ -148,16 +148,16 @@ public class ExcelService<T> {
 	 * 헤더 Cell 스타일
 	 * @return CellStyle
 	 */
-	private CellStyle headerCellStyle() {
+	private CellStyle headerCellStyle(BorderStyle style) {
 		CellStyle headerCellStyle = wb.createCellStyle();
 		Font font = wb.createFont();
 
 		headerCellStyle.setAlignment(HorizontalAlignment.CENTER);
 
-		headerCellStyle.setBorderLeft(BorderStyle.MEDIUM);
-		headerCellStyle.setBorderRight(BorderStyle.MEDIUM);
-		headerCellStyle.setBorderTop(BorderStyle.MEDIUM);
-		headerCellStyle.setBorderBottom(BorderStyle.MEDIUM);
+		headerCellStyle.setBorderLeft(style);
+		headerCellStyle.setBorderRight(style);
+		headerCellStyle.setBorderTop(style);
+		headerCellStyle.setBorderBottom(style);
 
 		headerCellStyle.setFont(font);
 		font.setBold(true);
