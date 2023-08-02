@@ -54,10 +54,13 @@ site:
   upload: D:/W/bin/upload/file
   image: D:/W/bin/upload/image/
   temp-image: D:/W/bin/temp/image/
-  secretKey: y/B?E(G+KbPeShVm
+  crypto:
+    secret-key: y/B?E(G+KbPeShVm
+  jwt:
+    secret-key: MDwwDQYJKoZIhvcNAQEBBQADKwAwKAIhAJ9X81Pb5aZdhtPVz+v2Gu07saN7DfzaTkZaeY78arOlAgMBAAE=
 api:
-  publicData:
-     ServiceKey: Ah33nedGlORpg%2B8WYnFa3d%2BnzJ5PLyV5323uW%2FIYyy4uMvSMp7L%2Bk0hjW9%2BHn5ox11R06p2SWNQ8ENblZyrfkA%3D%3D
+  public-data:
+     service-key: Ah33nedGlORpg%2B8WYnFa3d%2BnzJ5PLyV5323uW%2FIYyy4uMvSMp7L%2Bk0hjW9%2BHn5ox11R06p2SWNQ8ENblZyrfkA%3D%3D
 
 springfox: # Swagger-ui 설정
   documentation:

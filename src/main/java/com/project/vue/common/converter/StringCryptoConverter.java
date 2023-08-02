@@ -1,4 +1,4 @@
-package com.project.vue.common;
+package com.project.vue.common.converter;
 
 import java.security.Key;
 
@@ -19,7 +19,7 @@ import com.project.vue.common.exception.ErrorCode;
 public class StringCryptoConverter implements AttributeConverter<String, String> {
 
 	/** 시크릿 키 */
-	@Value("${site.secretKey}")
+	@Value("${site.crypto.secret-key}")
 	private String secretKey;
 
 	private static final String ALGORITHM = "AES/ECB/PKCS5Padding";

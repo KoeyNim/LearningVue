@@ -44,7 +44,7 @@ public class MemberController {
 	 */
 	@PostMapping("signup")
 	public ResponseEntity<SimpleResponse> signUp(@RequestBody MemberSignUpRequest req) {
-		log.debug("api/v1/member/signup - posts - req : {}", req);
+		log.debug("api/v1/member/signup - posts - request : {}", req);
 		memberService.save(req);
 		return ResponseEntity.ok(SimpleResponse.builder().message("회원가입이 완료되었습니다.").build());
 	}

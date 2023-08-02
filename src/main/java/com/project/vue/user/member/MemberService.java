@@ -10,6 +10,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.project.vue.common.Utils;
 import com.project.vue.common.auth.WebAuthenticationProvider;
 import com.project.vue.common.auth.WebAuthenticationToken;
 import com.project.vue.common.exception.BizException;
@@ -37,7 +38,11 @@ public class MemberService {
     public void save(MemberSignUpRequest req) {
 		if (isUserId(req.getUserId())) throw new BizException("잘못된 접근입니다.", ErrorCode.BAD_REQUEST);
 
-    	MemberEntity memberEntity = MemberEntity.builder()
+		String uuid = Utils.getUUID32();
+		while (memberRepository.existsById(uuid)) uuid = Utils.getUUID32();
+
+    	MemberEntity entity = MemberEntity.builder()
+    			.memberUid(uuid)
     			.userId(req.getUserId())
     			.userPwd(passwordEncoder.encode(req.getUserPwd()))
     			.userName(req.getUserName())
@@ -48,9 +53,9 @@ public class MemberService {
     			.role(roleRepository.findByRoleKey(RoleEnum.USER.getRoleKey())
     	    			.orElseThrow(() -> new BizException("데이터베이스 에서 해당 권한을 찾을 수 없습니다.", ErrorCode.NOT_FOUND))).build();
 
-    	memberRepository.save(memberEntity);
+    	memberRepository.save(entity);
 
-    	autoLogin(req.getUserId(), req.getUserPwd(), memberEntity.getAuthorities());
+    	autoLogin(req.getUserId(), req.getUserPwd(), entity.getAuthorities());
     }
 
     /**

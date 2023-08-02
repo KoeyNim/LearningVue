@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.lang.Nullable;
 
-public interface AdminMemberRepository extends JpaRepository<AdminMemberEntity, Long>, JpaSpecificationExecutor<AdminMemberEntity> {
+public interface AdminMemberRepository extends JpaRepository<AdminMemberEntity, String>, JpaSpecificationExecutor<AdminMemberEntity> {
 
 	@Override
 	/** left outer join 생성 (n+1 방지) */

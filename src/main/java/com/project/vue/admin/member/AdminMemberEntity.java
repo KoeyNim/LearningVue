@@ -3,18 +3,15 @@ package com.project.vue.admin.member;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.project.vue.common.StringCryptoConverter;
+import com.project.vue.common.converter.GenderConverter;
+import com.project.vue.common.converter.StringCryptoConverter;
 import com.project.vue.user.role.RoleEntity;
 
 import lombok.Data;
@@ -22,16 +19,11 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name = "member")
-@SequenceGenerator(
-		name = "MEMBER_SEQ_NO_01_GENERATOR",
-		sequenceName = "MEMBER_SEQ_NO_01",
-		initialValue = 1, allocationSize = 1
-)
 public class AdminMemberEntity {
 
-	@Id @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "MEMBER_SEQ_NO_01_GENERATOR")
-	@Column(name = "memberSeqno")
-	private Long id;
+	@Id
+	@Column(name = "memberUid", columnDefinition = "varchar(32)")
+	private String id;
 
 	@NotBlank
 	@Column(columnDefinition = "varchar(255)")
@@ -40,7 +32,6 @@ public class AdminMemberEntity {
 
 	@NotBlank
 	@Column(columnDefinition = "varchar(255)")
-    @JsonIgnore
 	private String userPwd;
 
 	@NotBlank
@@ -49,7 +40,8 @@ public class AdminMemberEntity {
 	private String userName;
 
 	@NotBlank
-	@Column(columnDefinition = "varchar(4)")
+	@Column(columnDefinition = "varchar(1)")
+	@Convert(converter = GenderConverter.class)
 	private String gender;
 
 	@NotNull

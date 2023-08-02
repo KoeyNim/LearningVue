@@ -5,7 +5,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface MemberRepository extends JpaRepository<MemberEntity, Long> {
+public interface MemberRepository extends JpaRepository<MemberEntity, String> {
 
 	/** left outer join 생성 (n+1 방지) */
 	@EntityGraph(attributePaths = {"role"}, type = EntityGraph.EntityGraphType.LOAD)

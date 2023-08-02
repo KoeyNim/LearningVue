@@ -36,7 +36,7 @@ public class ApiController {
 	private static final String PUBLIC_DATA_HOST = "apis.data.go.kr";
 
 	/** 공공데이터 API 인증키 */
-	@Value("${api.publicData.ServiceKey}")
+	@Value("${api.public-data.service-key}")
 	private String serviceKey;
 
 	/**
