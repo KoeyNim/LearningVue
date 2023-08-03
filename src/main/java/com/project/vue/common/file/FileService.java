@@ -6,12 +6,12 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.project.vue.common.Utils;
 import com.project.vue.common.exception.BizException;
 import com.project.vue.common.exception.ErrorCode;
 
@@ -34,9 +34,9 @@ public class FileService {
 	 * @param file MultipartFile
 	 * @return FileEntity
 	 */
-    public FileEntity upld(MultipartFile file) {
+    public FileEntity upload(MultipartFile file) {
 		log.debug("file upload - file name : {}", file.getOriginalFilename());
-		String uuid = UUID.randomUUID().toString().replaceAll("-", "");
+		String uuid = Utils.getUUID32();
 		Path path = Paths.get(FILE_UPLOAD_PATH);
 		try {
 			/** 상위 디렉토리까지 폴더 생성 */
@@ -62,7 +62,7 @@ public class FileService {
 	 * @param os OutputStream
 	 * @return String
 	 */
-	public String dwld(long id, OutputStream os) {
+	public String download(long id, OutputStream os) {
 		FileEntity entity = fileRepository.findById(id)
 				.orElseThrow(() -> new BizException("File Data is Not Found", ErrorCode.NOT_FOUND));
 		Path path = Paths.get(FILE_UPLOAD_PATH).resolve(entity.getFileNm());

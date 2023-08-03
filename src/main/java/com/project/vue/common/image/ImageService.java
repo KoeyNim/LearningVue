@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -14,10 +15,13 @@ import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.vue.common.exception.BizException;
 import com.project.vue.common.exception.ErrorCode;
 
@@ -38,6 +42,8 @@ public class ImageService {
 	/** 이미지 업로드 경로 */
 	@Value("${site.image}")
 	private String IMAGE_UPLOAD_PATH;
+
+	private static final ObjectMapper OM = new ObjectMapper();
 
 	/**
 	 * 이미지 temp 파일 생성
@@ -75,7 +81,18 @@ public class ImageService {
 		return path;
 	}
 
-	public void save(List<ImageTempResponse> imgList, Long boardSeqno) {
+	public void save(String imgListJson, long boardSeqno) {
+		if (StringUtils.isBlank(imgListJson)) return;
+
+		List<ImageTempResponse> deserializeList = new ArrayList<>();
+		try {
+			deserializeList = Arrays.asList(OM.readValue(imgListJson, ImageTempResponse[].class));
+		} catch (JsonProcessingException ex) {
+			throw new BizException("ObjectMapper Error", ex, ErrorCode.INTERNAL_SERVER_ERROR);
+		}
+
+		if(CollectionUtils.isEmpty(deserializeList)) return;
+
 		List<ImageEntity> list = new ArrayList<>();
 
 		Path tempPath = Paths.get(TEMP_IMAGE_PATH);
@@ -83,7 +100,7 @@ public class ImageService {
 
 		if (savePath.toFile().mkdirs()) log.debug("execute mkdirs - path {}", IMAGE_UPLOAD_PATH);
 
-		for(var img : imgList) {
+		for(var img : deserializeList) {
 			try {
 				Path tempImgPath = tempPath.resolve(img.getImgNm());
 				Path saveImgPath = savePath.resolve(img.getImgNm());

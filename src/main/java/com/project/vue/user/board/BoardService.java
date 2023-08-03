@@ -1,11 +1,9 @@
 package com.project.vue.user.board;
 
-import java.util.Arrays;
 import java.util.List;
 
 import javax.transaction.Transactional;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
@@ -13,14 +11,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.vue.common.CookieCommon;
 import com.project.vue.common.exception.BizException;
 import com.project.vue.common.exception.ErrorCode;
 import com.project.vue.common.file.FileService;
 import com.project.vue.common.image.ImageService;
-import com.project.vue.common.image.ImageTempResponse;
 import com.project.vue.user.UserSearchSpecification;
 import com.project.vue.user.payload.BoardRequest;
 import com.project.vue.user.payload.BoardSaveRequest;
@@ -35,8 +30,6 @@ public class BoardService {
 	private final CookieCommon cookieCommon;
 	private final FileService fileService;
 	private final ImageService imageService;
-
-	private static final ObjectMapper OM = new ObjectMapper();
 
 	/** 수정시간이 바뀌게되는 이슈로 인해 querydsl로 세부 조작
 	 *  22.07.18 느린 반영 및 영속성 이슈 발생으로 미사용 (참고용으로 남김)
@@ -96,21 +89,13 @@ public class BoardService {
 		entity.setContent(req.getContent());
 		entity.setUserId(SecurityContextHolder.getContext().getAuthentication().getName());
 
-		/** 파일첨부 등록 */
-		if(ObjectUtils.isNotEmpty(req.getFile())) entity.setFileEntity(fileService.upld(req.getFile()));
+		/** 첨부파일 저장 */
+		if(ObjectUtils.isNotEmpty(req.getFile())) entity.setFileEntity(fileService.upload(req.getFile()));
 
 		boardRepository.save(entity);
 
-		/** 에디터 이미지 등록 */
-		if(StringUtils.isNotBlank(req.getImgListJson())) {
-			try {
-				List<ImageTempResponse> deserializeList = Arrays.asList(OM.readValue(req.getImgListJson(), ImageTempResponse[].class));
-
-				if(CollectionUtils.isNotEmpty(deserializeList)) imageService.save(deserializeList, entity.getBoardSeqno());
-			} catch (JsonProcessingException ex) {
-				throw new BizException("ObjectMapper Error", ex, ErrorCode.INTERNAL_SERVER_ERROR);
-			}
-		}
+		/** 에디터 이미지 저장 */
+		imageService.save(req.getImgListJson(), entity.getBoardSeqno());
 	}
 
 	/**
@@ -124,25 +109,18 @@ public class BoardService {
 				.orElseThrow(() -> new BizException("Data is Not Found", ErrorCode.NOT_FOUND));
 		String userid = SecurityContextHolder.getContext().getAuthentication().getName();
 
-		if(!userid.equals(entity.getUserId())) throw new BizException("Userid is Not Equals", ErrorCode.BAD_REQUEST);
+		if(!StringUtils.equals(userid, entity.getUserId())) throw new BizException("Userid is Not Equals", ErrorCode.BAD_REQUEST);
 
 		entity.setTitle(req.getTitle());
 		entity.setContent(req.getContent());
 
-		/** 파일첨부 수정 */
-		if(ObjectUtils.isNotEmpty(req.getFile())) entity.setFileEntity(fileService.upld(req.getFile()));
+		/** 첨부파일 저장 */
+		if(ObjectUtils.isNotEmpty(req.getFile())) entity.setFileEntity(fileService.upload(req.getFile()));
 
-		/** 에디터 이미지 수정 */
-		if(StringUtils.isNotBlank(req.getImgListJson())) {
-			try {
-				List<ImageTempResponse> deserializeList = Arrays.asList(OM.readValue(req.getImgListJson(), ImageTempResponse[].class));
-
-				if(CollectionUtils.isNotEmpty(deserializeList)) imageService.save(deserializeList, boardSeqno);
-			} catch (JsonProcessingException ex) {
-				throw new BizException("ObjectMapper Error", ex, ErrorCode.INTERNAL_SERVER_ERROR);
-			}
-		}
 		boardRepository.save(entity);
+
+		/** 에디터 이미지 저장 */
+		imageService.save(req.getImgListJson(), entity.getBoardSeqno());
 	}
 
 	/**
@@ -155,7 +133,7 @@ public class BoardService {
 				.orElseThrow(() -> new BizException("Data is Not Found", ErrorCode.NOT_FOUND));
 
 		if(ObjectUtils.isNotEmpty(entity.getFileEntity())) fileService.delete(entity.getFileEntity());
-		imageService.deleteAll(boardSeqno);
-		boardRepository.deleteById(boardSeqno);
+		imageService.deleteAll(entity.getBoardSeqno());
+		boardRepository.deleteById(entity.getBoardSeqno());
 	}
 }

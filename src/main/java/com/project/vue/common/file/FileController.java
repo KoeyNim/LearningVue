@@ -33,10 +33,10 @@ public class FileController {
 	 * @return ResponseEntity<StreamingResponseBody>
 	 */
 	@GetMapping("download/{id}")
-	public ResponseEntity<StreamingResponseBody> dwld(@PathVariable Long id) {
+	public ResponseEntity<StreamingResponseBody> download(@PathVariable Long id) {
 		log.debug("api/v1/file/download - gets - id : {}", id);
 		try (ByteArrayOutputStream bs = new ByteArrayOutputStream()) {
-			String orgFileName = fileService.dwld(id, bs);
+			String orgFileName = fileService.download(id, bs);
 			return ResponseEntity.ok()
 					.contentType(MediaType.APPLICATION_OCTET_STREAM)
 					/** attachement -> 로컬에 저장, filename -> 파일 이름 */
