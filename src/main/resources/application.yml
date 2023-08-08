@@ -57,6 +57,7 @@ site:
   crypto:
     secret-key: y/B?E(G+KbPeShVm
   jwt:
+    token-expiration-min: 30 # 30분
     secret-key: MDwwDQYJKoZIhvcNAQEBBQADKwAwKAIhAJ9X81Pb5aZdhtPVz+v2Gu07saN7DfzaTkZaeY78arOlAgMBAAE=
 api:
   public-data:

@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import com.project.vue.common.auth.jwt.JwtService;
 import com.project.vue.user.member.MemberEntity;
 import com.project.vue.user.member.MemberRepository;
 
@@ -21,6 +22,7 @@ public class WebAuthenticationProvider implements AuthenticationProvider {
 
 	private final MemberRepository memberRepository;
 	private final BCryptPasswordEncoder passwordEncoder;
+	private final JwtService jwtService;
 
 	@Override
 	public Authentication authenticate(Authentication authentication) {
@@ -33,6 +35,8 @@ public class WebAuthenticationProvider implements AuthenticationProvider {
 		MemberEntity memberEntity = memberRepository.findByUserId(userId).orElseThrow(() -> new UsernameNotFoundException("유저 정보를 찾을 수 없음."));
 
 		if(!(passwordEncoder.matches(userPwd, memberEntity.getUserPwd()))) throw new BadCredentialsException("유효하지 않은 패스워드.");
+
+		jwtService.generateToken(memberEntity);
 
 		return new WebAuthenticationToken(userId, userPwd, memberEntity.getAuthorities());
 	}

@@ -154,7 +154,7 @@ html {
 .header > .user-area {
 	right: 30px;
   text-align: right;
-  position: fixed;
+  position: absolute;
 }
 
 /** side-bar */
