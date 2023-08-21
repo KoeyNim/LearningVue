@@ -1,14 +1,14 @@
 package com.project.vue.common.auth;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import com.project.vue.common.auth.jwt.JwtService;
 import com.project.vue.user.member.MemberEntity;
 import com.project.vue.user.member.MemberRepository;
 
@@ -22,7 +22,6 @@ public class WebAuthenticationProvider implements AuthenticationProvider {
 
 	private final MemberRepository memberRepository;
 	private final BCryptPasswordEncoder passwordEncoder;
-	private final JwtService jwtService;
 
 	@Override
 	public Authentication authenticate(Authentication authentication) {
@@ -32,13 +31,23 @@ public class WebAuthenticationProvider implements AuthenticationProvider {
 		String userPwd = (String) authentication.getCredentials();
 		log.trace("## userId: {}, userPwd: {}", userId, userPwd);
 
-		MemberEntity memberEntity = memberRepository.findByUserId(userId).orElseThrow(() -> new UsernameNotFoundException("유저 정보를 찾을 수 없음."));
+		/** 실패시 AuthenticationException(BadCredentialsException) -> WebAuthenticationFailureHandler로 넘김 */
+		/** 계정 데이터 체크 */
+		MemberEntity memberEntity = memberRepository.findByUserId(userId)
+				.orElseThrow(() -> new BadCredentialsException("아이디 및 비밀번호가 다릅니다."));
 
-		if(!(passwordEncoder.matches(userPwd, memberEntity.getUserPwd()))) throw new BadCredentialsException("유효하지 않은 패스워드.");
+		/** 비밀번호 체크 */
+		if(!passwordEncoder.matches(userPwd, memberEntity.getUserPwd()))
+			throw new BadCredentialsException("아이디 및 비밀번호가 다릅니다.");
 
-		jwtService.generateToken(memberEntity);
+		/** 권한을 가진 인증 토큰 생성 */
+		UsernamePasswordAuthenticationToken token = 
+				new UsernamePasswordAuthenticationToken(userId, userPwd, memberEntity.getAuthorities());
 
-		return new WebAuthenticationToken(userId, userPwd, memberEntity.getAuthorities());
+		/** 권한이 없을 경우 인증 거부 */
+		if (CollectionUtils.isEmpty(token.getAuthorities())) token.setAuthenticated(false);
+
+		return token;
 	}
 
 	/** authenticate Method 진입 전 정상적인 토큰 인지 확인 */

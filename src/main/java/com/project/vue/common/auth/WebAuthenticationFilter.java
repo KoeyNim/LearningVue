@@ -1,5 +1,5 @@
 package com.project.vue.common.auth;
-
+/*
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -13,10 +13,10 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class WebAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 
-    /**
+
      * 인증 처리 URL, 매니저 설정
      * @param url URL 경로
-     */
+
     public WebAuthenticationFilter(String url, AuthenticationManager authenticationManager) {
         super(new AntPathRequestMatcher(url, "POST"), authenticationManager);
     }
@@ -33,3 +33,6 @@ public class WebAuthenticationFilter extends AbstractAuthenticationProcessingFil
         return getAuthenticationManager().authenticate(authenticationToken);
     }
 }
+*/ 
+
+// 2023-08-21 사용하지 않음.

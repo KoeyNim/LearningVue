@@ -21,8 +21,6 @@ public class WebAuthenticationFailureHandler implements AuthenticationFailureHan
 	public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
 			AuthenticationException exception) throws IOException, ServletException {
 		log.debug("## WebAuthenticationFailureHandler");
-		log.debug("## authentication exception: {}", exception.getMessage());
-
 		response.sendError(HttpStatus.BAD_REQUEST.value(), exception.getMessage());
 	}
 

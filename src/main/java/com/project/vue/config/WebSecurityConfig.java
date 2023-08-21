@@ -17,7 +17,6 @@ import org.springframework.security.config.annotation.web.configurers.RequestCac
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -27,7 +26,6 @@ import com.project.vue.common.Constants;
 import com.project.vue.common.PathConstants;
 import com.project.vue.common.auth.AjaxAuthenticationEntryPoint;
 import com.project.vue.common.auth.WebAuthenticationFailureHandler;
-import com.project.vue.common.auth.WebAuthenticationFilter;
 import com.project.vue.common.auth.WebAuthenticationSuccessHandler;
 import com.project.vue.user.role.RoleService;
 
@@ -47,18 +45,6 @@ public class WebSecurityConfig {
 	 */
 	@Value("${admin.url}")
 	private String adminURL;
-
-	/**
-	 * Spring Security 커스텀 인증 필터 Method
-	 * @return {@link WebAuthenticationFilter}
-	 * @throws Exception
-	 */
-	private WebAuthenticationFilter webAuthenticationFilter(AuthenticationManager authenticationManager) throws Exception {
-		WebAuthenticationFilter filter = new WebAuthenticationFilter(Constants.REQUEST_MAPPING_PREFIX + "/member-login/security", authenticationManager);
-        filter.setAuthenticationSuccessHandler(successHandler);
-        filter.setAuthenticationFailureHandler(failureHandler);
-		return filter;
-	}
 
     /**
      * 권한 계층 Method
@@ -169,7 +155,7 @@ public class WebSecurityConfig {
      * @throws Exception
      */
     @Bean
-    SecurityFilterChain security(HttpSecurity http, AuthenticationManager authenticationManager) throws Exception {
+    SecurityFilterChain security(HttpSecurity http) throws Exception {
         return http
                 .headers(headers -> headers
                 		/**
@@ -200,7 +186,6 @@ public class WebSecurityConfig {
                         .expressionHandler(expressionHandler()) // 권한 계층 커스텀 Handler
                         .anyRequest().authenticated()) // 지정하지 않은 모든 요청에 로그인을 요구 (화이트 리스트)
 //                		.anyRequest().permitAll()) //  지정하지 않은 모든 요청에 로그인을 요구 하지 않음 (블랙 리스트)
-                /** 2023-05-23 사용하지 않음
                 .formLogin(form -> form // 로그인
                         .loginPage("/member-login").permitAll() // 로그인 페이지
                         .loginProcessingUrl(Constants.REQUEST_MAPPING_PREFIX + "/member-login/security") // 로그인 검증 URL
@@ -208,9 +193,6 @@ public class WebSecurityConfig {
                         .passwordParameter("userPwd") // 검증시 가지고 갈 비밀번호 (기본값 password)
                         .successHandler(successHandler) // 로그인 성공 Handler
                         .failureHandler(failureHandler)) // 로그인 실패 Handler
-                */
-                /** custom 로그인 UsernamePasswordAuthenticationFilter 대체 (동일한 클래스 거나 상속받는 경우 Override 됨) */
-                .addFilterBefore(webAuthenticationFilter(authenticationManager), UsernamePasswordAuthenticationFilter.class)
                 .sessionManagement(session -> session
                         .maximumSessions(1) // 허용 session 갯수, -1인 경우 무제한 세션
                         .expiredUrl("/member-login?expire=true")) // session 만료 시 이동 url

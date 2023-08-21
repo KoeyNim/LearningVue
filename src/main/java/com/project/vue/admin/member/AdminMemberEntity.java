@@ -10,6 +10,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.vue.common.converter.GenderConverter;
 import com.project.vue.common.converter.StringCryptoConverter;
 import com.project.vue.user.role.RoleEntity;
@@ -32,6 +33,7 @@ public class AdminMemberEntity {
 
 	@NotBlank
 	@Column(columnDefinition = "varchar(255)")
+	@JsonIgnore
 	private String userPwd;
 
 	@NotBlank

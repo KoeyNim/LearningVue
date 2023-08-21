@@ -6,11 +6,12 @@ import java.util.Date;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.project.vue.user.member.MemberEntity;
+import com.project.vue.common.Constants;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -30,7 +31,7 @@ public class JwtService {
 
     /** Jwt 토근 생성 */
 	@Transactional
-    public JwtTokenInfo generateToken(MemberEntity memberEntity) {
+    public JwtTokenInfo generateToken(Authentication authentication, String memberUid) {
 
 		/** 토큰 만료 시간 */
     	Date expDate = Date.from(LocalDateTime.now()
@@ -40,14 +41,14 @@ public class JwtService {
 //    	Key key = Keys.hmacShaKeyFor(Base64.Decoder(secretKey));
 
     	/** 권한 */
-        String authorities = memberEntity.getAuthorities().stream()
+        String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
 
         /** access Token 생성 */
         String accessToken = Jwts.builder()
-                .setSubject(memberEntity.getUserId())
-                .claim("auth", authorities)
+                .setSubject(authentication.getName())
+                .claim(Constants.AUTH_HEADER, authorities)
                 .setExpiration(expDate)
                 .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
@@ -61,10 +62,10 @@ public class JwtService {
         /** token 정보 저장 */
         repository.save(JwtEntity.builder()
         		.refreshTokenUid(refreshToken)
-        		.memberUid(memberEntity.getMemberUid()).build());
+        		.memberUid(memberUid).build());
 
         return JwtTokenInfo.builder()
-                .grantType("Bearer")
+                .grantType(Constants.TOKEN_TYPE)
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .build();

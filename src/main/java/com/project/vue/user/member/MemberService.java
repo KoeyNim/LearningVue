@@ -1,18 +1,15 @@
 package com.project.vue.user.member;
 
-import java.util.Collection;
-
 import javax.transaction.Transactional;
 
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.project.vue.common.Utils;
 import com.project.vue.common.auth.WebAuthenticationProvider;
-import com.project.vue.common.auth.WebAuthenticationToken;
 import com.project.vue.common.exception.BizException;
 import com.project.vue.common.exception.ErrorCode;
 import com.project.vue.user.payload.MemberSignUpRequest;
@@ -55,7 +52,7 @@ public class MemberService {
 
     	memberRepository.save(entity);
 
-    	autoLogin(req.getUserId(), req.getUserPwd(), entity.getAuthorities());
+    	autoLogin(req.getUserId(), req.getUserPwd());
     }
 
     /**
@@ -71,11 +68,10 @@ public class MemberService {
      * 자동 로그인
      * @param userId 유저 ID
      * @param userPwd 유저 비밀번호
-     * @param authorities 유저 권한
      */
-    private void autoLogin(String userId, String userPwd, Collection<? extends GrantedAuthority> authorities) {
+    private void autoLogin(String userId, String userPwd) {
         Authentication authenticatedUser = 
-        		webAuthenticationProvider.authenticate(new WebAuthenticationToken(userId, userPwd, authorities));
+        		webAuthenticationProvider.authenticate(new UsernamePasswordAuthenticationToken(userId, userPwd));
         SecurityContextHolder.getContext().setAuthentication(authenticatedUser); // 인증 객체를 SecurityContextHolder에 설정
     }
 }

@@ -47,7 +47,8 @@ logging:
     org.hibernate.SQL: debug # sql
     org.hibernate.type.descriptor.sql.BasicBinder: trace # input bind
     # org.hibernate.type.descriptor.sql.BasicExtractor: trace # output bind
-    com.project.vue: trace # 해당 패키지의 log 범위 (TRACE > DEBUG > INFO > WARN > ERROR > FATAL)
+    # org.springframework.security: trace # spring security log 범위 (기본 info)
+    com.project.vue: debug # 해당 패키지의 log 범위 (TRACE > DEBUG > INFO > WARN > ERROR > FATAL)
 admin:
   url: http://localhost:3000
 site:

@@ -18,11 +18,14 @@ import com.project.vue.common.exception.ErrorCode;
 @Convert
 public class StringCryptoConverter implements AttributeConverter<String, String> {
 
-	/** 시크릿 키 */
-	@Value("${site.crypto.secret-key}")
-	private String secretKey;
-
 	private static final String ALGORITHM = "AES/ECB/PKCS5Padding";
+    private final Key key;
+    private final Cipher cipher;
+
+	public StringCryptoConverter(@Value("${site.crypto.secret-key}") String secretKey) throws Exception {
+        this.key = new SecretKeySpec(secretKey.getBytes(), "AES");
+        this.cipher = Cipher.getInstance(ALGORITHM);
+	}
 
 	/**
 	 * 암호화
@@ -30,10 +33,7 @@ public class StringCryptoConverter implements AttributeConverter<String, String>
 	@Override
 	public String convertToDatabaseColumn(String attribute) {
 		if (StringUtils.isBlank(attribute)) throw new BizException("Null" + attribute, ErrorCode.INTERNAL_SERVER_ERROR);
-
 		try {
-			Key key = new SecretKeySpec(secretKey.getBytes(), "AES");
-			Cipher cipher = Cipher.getInstance(ALGORITHM);
 			cipher.init(Cipher.ENCRYPT_MODE, key);
 			return new String(Hex.encode(cipher.doFinal(attribute.getBytes("UTF-8"))));
 //			return new String(Base64Utils.encode(cipher.doFinal(attribute.getBytes("UTF-8"))));
@@ -50,8 +50,6 @@ public class StringCryptoConverter implements AttributeConverter<String, String>
 	@Override
 	public String convertToEntityAttribute(String dbData) {
 		try {
-			Key key = new SecretKeySpec(secretKey.getBytes(), "AES");
-			Cipher cipher = Cipher.getInstance(ALGORITHM);
 			cipher.init(Cipher.DECRYPT_MODE, key);
 			return new String(cipher.doFinal(Hex.decode(dbData)), "UTF-8");
 //			return new String(cipher.doFinal(Base64Utils.decode(dbData.getBytes("UTF-8"))));
