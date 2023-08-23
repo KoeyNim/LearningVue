@@ -32,23 +32,20 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ExcelService<T> {
 
-	private SXSSFWorkbook wb; // 쓰기전용이며 읽기 불가능
-	private List<ExcelDTO> resources;
+	private SXSSFWorkbook wb = new SXSSFWorkbook(100); // flush 범위 (기본값 100, -1 일 경우 제한 없음), 쓰기전용이며 읽기 불가능
 	private SXSSFSheet sheet;
-	private String excelNm;
 	private List<T> excelData;
+	private Class<T> cls;
 	private int rowNo;
 
 	/**
 	 * Constructor
 	 * @param data 실 데이터 리스트
-	 * @param cls 클래스 타입
+	 * @param cls 클래스
 	 */
 	public ExcelService(List<T> data, Class<T> cls) {
-		this.wb = new SXSSFWorkbook(100); // flush 범위 (기본값 100, -1 일 경우 제한 없음)
-		this.resources = ExcelUtils.getResources(cls);
 		this.excelData = data;
-		this.excelNm = cls.getAnnotation(ExcelFileName.class).fileName();
+		this.cls = cls;
 	}
 
 	/**
@@ -58,10 +55,11 @@ public class ExcelService<T> {
 	 * @throws IOException
 	 */
 	public String create(OutputStream os) throws IOException {
+		String excelNm = cls.getAnnotation(ExcelFileName.class).fileName();
 		rowNo = 0;
 		sheet = wb.createSheet(excelNm);
 
-		renderExcel(excelData, resources);
+		renderExcel(excelData, ExcelUtils.getResources(cls));
 
 		wb.write(os);
 		wb.dispose();
