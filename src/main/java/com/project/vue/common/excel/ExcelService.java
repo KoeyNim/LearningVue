@@ -6,6 +6,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,13 +22,17 @@ import org.apache.poi.xssf.streaming.SXSSFRow;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ReflectionUtils;
 
 import com.project.vue.common.excel.annotation.ExcelFileName;
+import com.project.vue.common.excel.annotation.ExcelOptions;
 import com.project.vue.common.exception.BizException;
 import com.project.vue.common.exception.ErrorCode;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class ExcelService<T> {
@@ -59,7 +64,7 @@ public class ExcelService<T> {
 		rowNo = 0;
 		sheet = wb.createSheet(excelNm);
 
-		renderExcel(excelData, ExcelUtils.getResources(cls));
+		renderExcel(excelData, getResources());
 
 		wb.write(os);
 		wb.dispose();
@@ -180,5 +185,29 @@ public class ExcelService<T> {
 		dataCellStyle.setFont(font);
 
 		return dataCellStyle;
+	}
+
+	/**
+	 * Entity 에서 지정한 옵션값을 추출하여 재 가공
+	 * @return ExcelDTO
+	 */
+	private List<ExcelDTO> getResources() {
+		log.debug("@@ ExcelService - getResource - Entity : {}", cls.getName());
+		List<ExcelDTO> resources = new ArrayList<>();
+
+		/** ExcelOptions의 데이터 추출 (Super Class 포함) */
+		ReflectionUtils.doWithFields(cls, field -> {
+			if (field.isAnnotationPresent(ExcelOptions.class)) {
+				ExcelOptions opt = field.getAnnotation(ExcelOptions.class);
+				ExcelDTO resource = ExcelDTO.builder()
+						.headerNm(opt.headerName())
+						.headerStyle(opt.headerStyle())
+						.colNm(field.getName().substring(0,1).toUpperCase() + field.getName().substring(1))
+						.colWidth(opt.columnWidth())
+						.colStyle(opt.columnStyle()).build();
+				resources.add(resource);
+			}
+		});
+		return resources;
 	}
 }
