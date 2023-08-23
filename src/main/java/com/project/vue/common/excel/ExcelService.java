@@ -29,12 +29,12 @@ import com.project.vue.common.excel.annotation.ExcelOptions;
 import com.project.vue.common.exception.BizException;
 import com.project.vue.common.exception.ErrorCode;
 
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
-@RequiredArgsConstructor
+@NoArgsConstructor
 public class ExcelService<T> {
 
 	private SXSSFWorkbook wb = new SXSSFWorkbook(100); // flush 범위 (기본값 100, -1 일 경우 제한 없음), 쓰기전용이며 읽기 불가능
@@ -61,8 +61,8 @@ public class ExcelService<T> {
 	 */
 	public String create(OutputStream os) throws IOException {
 		String excelNm = cls.getAnnotation(ExcelFileName.class).fileName();
-		rowNo = 0;
 		sheet = wb.createSheet(excelNm);
+		rowNo = 0;
 
 		renderExcel(excelData, getResources());
 
@@ -71,10 +71,10 @@ public class ExcelService<T> {
 		wb.close();
 
 		StringBuilder fileNm = new StringBuilder();
-		fileNm.append(excelNm);
-		fileNm.append("_");
-		fileNm.append(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy.MM.dd")));
-		fileNm.append(FilenameUtils.EXTENSION_SEPARATOR + "xlsx");
+		fileNm.append(excelNm)
+			.append("_")
+			.append(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy.MM.dd")))
+			.append(FilenameUtils.EXTENSION_SEPARATOR + "xlsx");
 
 		return fileNm.toString();
 	}
