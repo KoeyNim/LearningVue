@@ -14,10 +14,10 @@
 		</div>
         <span>{{ errors.first('content') }}</span>
 		<span class="form-label">내용​ *</span>
-		    <button type="button" class="btn solidbtn md mo-full sm-h blue" value='ck-editor' @click.prevent="fnEditor">ck-editor</button>
+		    <button type="button" class="btn solidbtn md mo-full sm-h blue" @click.prevent="fnEditor">{{ isEditor === 'C' ? 'ck-editor' : 'summernote'}}</button>
 		<div class="form-field editor-field">
 			<div id="summernote"></div>
-			<ckeditor v-if="isEditor == 'C'" :editor="editor" @ready="onReady" id="ckeditor" name="content" v-model="result.content" :config="editorConfig" tag-name="textarea" v-validate="'required'"></ckeditor>
+			<ckeditor v-if="isEditor == 'C'" :editor="editor" @ready="fnOnReady" id="ckeditor" name="content" v-model="result.content" :config="editorConfig" tag-name="textarea" v-validate="'required'"></ckeditor>
 		</div>
 		<div v-if="result.fileEntity">
 			<span class="form-label">파일</span>
